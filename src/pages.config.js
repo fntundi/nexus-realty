@@ -64,6 +64,7 @@ import TaskTemplates from './pages/TaskTemplates';
 import TerritoryManager from './pages/TerritoryManager';
 import Reminders from './pages/Reminders';
 import ReminderSettings from './pages/ReminderSettings';
+import TeamDeals from './pages/TeamDeals';
 
 
 export const PAGES = {
@@ -84,6 +85,7 @@ export const PAGES = {
     "TerritoryManager": TerritoryManager,
     "Reminders": Reminders,
     "ReminderSettings": ReminderSettings,
+    "TeamDeals": TeamDeals,
 }
 
 export const pagesConfig = {
