@@ -32,13 +32,22 @@ export default function AssignmentConfig() {
 
   React.useEffect(() => {
     if (selectedMarket?.assignment_rules) {
-      setWeights(selectedMarket.assignment_rules);
+      setWeights({
+        territory_weight: selectedMarket.assignment_rules.territory_weight || 0.25,
+        workload_weight: selectedMarket.assignment_rules.workload_weight || 0.2,
+        rotation_weight: selectedMarket.assignment_rules.rotation_weight || 0.15,
+        success_rate_weight: selectedMarket.assignment_rules.success_rate_weight || 0.2,
+        property_performance_weight: selectedMarket.assignment_rules.property_performance_weight || 0.1,
+        lead_source_weight: selectedMarket.assignment_rules.lead_source_weight || 0.1
+      });
     } else {
       setWeights({
-        territory_weight: 0.4,
-        workload_weight: 0.3,
-        rotation_weight: 0.2,
-        success_rate_weight: 0.1
+        territory_weight: 0.25,
+        workload_weight: 0.2,
+        rotation_weight: 0.15,
+        success_rate_weight: 0.2,
+        property_performance_weight: 0.1,
+        lead_source_weight: 0.1
       });
     }
   }, [selectedMarket]);
@@ -190,7 +199,45 @@ export default function AssignmentConfig() {
                     className="w-full"
                   />
                   <p className="text-xs text-slate-600">
-                    Consider agent performance with similar property types and price ranges
+                    Consider agent's overall conversion rate and closing performance
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <Label>Property Performance</Label>
+                    <span className="text-sm font-medium text-slate-700">
+                      {((weights.property_performance_weight || 0) * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <Slider
+                    value={[weights.property_performance_weight || 0]}
+                    onValueChange={(v) => handleWeightChange('property_performance_weight', v)}
+                    max={1}
+                    step={0.05}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-slate-600">
+                    Match leads to agents with proven success in similar property types and price ranges
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <Label>Lead Source Effectiveness</Label>
+                    <span className="text-sm font-medium text-slate-700">
+                      {((weights.lead_source_weight || 0) * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                  <Slider
+                    value={[weights.lead_source_weight || 0]}
+                    onValueChange={(v) => handleWeightChange('lead_source_weight', v)}
+                    max={1}
+                    step={0.05}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-slate-600">
+                    Prioritize agents with high conversion rates from specific lead sources
                   </p>
                 </div>
               </div>
