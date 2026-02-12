@@ -245,14 +245,22 @@ export default function BorrowerDocumentPortal({ transactionId }) {
                   <div key={doc.id} className={`p-4 rounded-lg border ${getStatusColor(doc.verification_status || 'pending')}`}>
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-3 flex-1">
-                        {getStatusIcon(doc.verification_status || 'pending')}
-                        <div>
-                          <p className="font-semibold text-slate-900">{doc.file_name}</p>
-                          <p className="text-xs text-slate-600">
-                            Uploaded {new Date(doc.uploaded_at).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
+                             {getStatusIcon(doc.verification_status || 'pending')}
+                             <div>
+                               <p className="font-semibold text-slate-900">{doc.file_name}</p>
+                               <div className="flex items-center gap-2 text-xs text-slate-600 mt-1">
+                                 <span>Uploaded {new Date(doc.uploaded_at).toLocaleDateString()}</span>
+                                 {doc.category && (
+                                   <>
+                                     <span>•</span>
+                                     <span className="px-2 py-0.5 bg-slate-200 rounded text-slate-700">
+                                       {DOCUMENT_CATEGORIES.find(c => c.value === doc.category)?.label || doc.category}
+                                     </span>
+                                   </>
+                                 )}
+                               </div>
+                             </div>
+                           </div>
                       <div className="flex items-center gap-2">
                         <span className={`text-xs px-2 py-1 rounded font-medium ${
                           doc.verification_status === 'verified' ? 'bg-green-100 text-green-800' :
