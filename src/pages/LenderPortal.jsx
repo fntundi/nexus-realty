@@ -20,6 +20,8 @@ import MessageThread from '../components/messaging/MessageThread';
 export default function LenderPortal() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [eligibilityResults, setEligibilityResults] = useState(null);
+  const [checkingEligibility, setCheckingEligibility] = useState(null);
 
   const { data: user } = useQuery({
     queryKey: ['user'],
