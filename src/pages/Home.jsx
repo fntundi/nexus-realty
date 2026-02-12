@@ -1,11 +1,9 @@
 import React from 'react';
-import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { 
-  Users, TrendingUp, Home as HomeIcon, Building2, UserCheck,
+  Users, TrendingUp, Building2, UserCheck,
   Zap, BarChart3, MapPin, MessageSquare, Calendar, Settings,
   ArrowRight
 } from 'lucide-react';
@@ -13,25 +11,6 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 
 export default function Home() {
-  const { data: user } = useQuery({
-    queryKey: ['user'],
-    queryFn: () => base44.auth.me()
-  });
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  // Builder/Admin gets dedicated dashboard
-  if (user.role === 'admin') {
-    return <BuilderDashboard />;
-  }
-
-  // Public marketing home for other roles
   return <AudienceTabsHome />;
 }
 
