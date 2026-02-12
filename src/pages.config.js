@@ -61,6 +61,7 @@ import PropertySearch from './pages/PropertySearch';
 import DocuSignSettings from './pages/DocuSignSettings';
 import CalendarSettings from './pages/CalendarSettings';
 import Reports from './pages/Reports';
+import AlertSettings from './pages/AlertSettings';
 
 
 export const PAGES = {
@@ -78,6 +79,7 @@ export const PAGES = {
     "DocuSignSettings": DocuSignSettings,
     "CalendarSettings": CalendarSettings,
     "Reports": Reports,
+    "AlertSettings": AlertSettings,
 }
 
 export const pagesConfig = {
