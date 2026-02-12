@@ -53,6 +53,7 @@ import AgentTransactions from './pages/AgentTransactions';
 import AlertSettings from './pages/AlertSettings';
 import AssignmentConfig from './pages/AssignmentConfig';
 import BuyerPortal from './pages/BuyerPortal';
+import CRMIntegrations from './pages/CRMIntegrations';
 import CRMReportingDashboard from './pages/CRMReportingDashboard';
 import Calendar from './pages/Calendar';
 import CalendarSettings from './pages/CalendarSettings';
@@ -74,7 +75,6 @@ import Reports from './pages/Reports';
 import TaskTemplates from './pages/TaskTemplates';
 import TeamDeals from './pages/TeamDeals';
 import TerritoryManager from './pages/TerritoryManager';
-import CRMIntegrations from './pages/CRMIntegrations';
 import WorkflowAnalytics from './pages/WorkflowAnalytics';
 import PersonalizationAndSync from './pages/PersonalizationAndSync';
 
@@ -86,6 +86,7 @@ export const PAGES = {
     "AlertSettings": AlertSettings,
     "AssignmentConfig": AssignmentConfig,
     "BuyerPortal": BuyerPortal,
+    "CRMIntegrations": CRMIntegrations,
     "CRMReportingDashboard": CRMReportingDashboard,
     "Calendar": Calendar,
     "CalendarSettings": CalendarSettings,
@@ -107,7 +108,6 @@ export const PAGES = {
     "TaskTemplates": TaskTemplates,
     "TeamDeals": TeamDeals,
     "TerritoryManager": TerritoryManager,
-    "CRMIntegrations": CRMIntegrations,
     "WorkflowAnalytics": WorkflowAnalytics,
     "PersonalizationAndSync": PersonalizationAndSync,
 }
