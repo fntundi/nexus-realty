@@ -127,27 +127,48 @@ export default function BorrowerDocumentPortal({ transactionId }) {
             />
 
             {selectedFiles.length > 0 && (
-              <div className="space-y-3">
-                {selectedFiles.map((file, idx) => (
-                  <div key={idx} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-slate-700">{file.name}</span>
-                      <span className="text-xs text-slate-500">{(file.size / 1024).toFixed(1)} KB</span>
-                    </div>
-                    <textarea
-                      placeholder="Add any notes about this document (optional)..."
-                      value={documentNotes[file.name] || ''}
-                      onChange={(e) => setDocumentNotes({
-                        ...documentNotes,
-                        [file.name]: e.target.value
-                      })}
-                      className="w-full text-xs p-2 border border-slate-200 rounded bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                      rows="2"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
+               <div className="space-y-3">
+                 {selectedFiles.map((file, idx) => (
+                   <div key={idx} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                     <div className="flex items-center justify-between mb-3">
+                       <span className="text-sm font-medium text-slate-700">{file.name}</span>
+                       <span className="text-xs text-slate-500">{(file.size / 1024).toFixed(1)} KB</span>
+                     </div>
+                     <div className="mb-2">
+                       <label className="text-xs font-medium text-slate-600 block mb-1">Category *</label>
+                       <Select 
+                         value={documentCategories[file.name] || ''}
+                         onValueChange={(value) => setDocumentCategories({
+                           ...documentCategories,
+                           [file.name]: value
+                         })}
+                       >
+                         <SelectTrigger className="w-full h-8">
+                           <SelectValue placeholder="Select category" />
+                         </SelectTrigger>
+                         <SelectContent>
+                           {DOCUMENT_CATEGORIES.map(cat => (
+                             <SelectItem key={cat.value} value={cat.value}>
+                               {cat.label}
+                             </SelectItem>
+                           ))}
+                         </SelectContent>
+                       </Select>
+                     </div>
+                     <textarea
+                       placeholder="Add any notes about this document (optional)..."
+                       value={documentNotes[file.name] || ''}
+                       onChange={(e) => setDocumentNotes({
+                         ...documentNotes,
+                         [file.name]: e.target.value
+                       })}
+                       className="w-full text-xs p-2 border border-slate-200 rounded bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                       rows="2"
+                     />
+                   </div>
+                 ))}
+               </div>
+             )}
 
             <Button
               onClick={handleUpload}
