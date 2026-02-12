@@ -75,6 +75,7 @@ import TaskTemplates from './pages/TaskTemplates';
 import TeamDeals from './pages/TeamDeals';
 import TerritoryManager from './pages/TerritoryManager';
 import CRMIntegrations from './pages/CRMIntegrations';
+import WorkflowAnalytics from './pages/WorkflowAnalytics';
 
 
 export const PAGES = {
@@ -106,6 +107,7 @@ export const PAGES = {
     "TeamDeals": TeamDeals,
     "TerritoryManager": TerritoryManager,
     "CRMIntegrations": CRMIntegrations,
+    "WorkflowAnalytics": WorkflowAnalytics,
 }
 
 export const pagesConfig = {
