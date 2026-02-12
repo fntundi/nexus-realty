@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +10,11 @@ import { toast } from 'sonner';
 import { format } from 'date-fns';
 
 export default function InteractionLogger({ contactId, onSuccess }) {
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
   const [formData, setFormData] = useState({
     interaction_type: 'call',
     subject: '',
@@ -26,7 +31,7 @@ export default function InteractionLogger({ contactId, onSuccess }) {
     mutationFn: (data) => base44.entities.Interaction.create({
       ...data,
       contact_id: contactId,
-      conducted_by: (await base44.auth.me()).email
+      conducted_by: user?.email
     }),
     onSuccess: () => {
       toast.success('Interaction logged successfully');
@@ -48,18 +53,15 @@ export default function InteractionLogger({ contactId, onSuccess }) {
     }
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.subject || !formData.interaction_date) {
       toast.error('Subject and interaction date are required');
       return;
     }
     
-    const user = await base44.auth.me();
     createMutation.mutate({
       ...formData,
-      contact_id: contactId,
-      conducted_by: user.email,
       duration_minutes: formData.duration_minutes ? parseInt(formData.duration_minutes) : null
     });
   };
