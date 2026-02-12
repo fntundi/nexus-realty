@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Home, MessageSquare, FileText, Upload, ListChecks } from 'lucide-react';
 import { format } from 'date-fns';
 import MessageThread from '../components/messaging/MessageThread';
-import MilestoneTracker from '../components/milestones/MilestoneTracker';
+import TaskManager from '../components/tasks/TaskManager';
 
 export default function BuyerPortal() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -184,9 +184,9 @@ export default function BuyerPortal() {
                     <MessageSquare className="w-4 h-4 mr-2" />
                     Messages
                   </TabsTrigger>
-                  <TabsTrigger value="milestones">
+                  <TabsTrigger value="tasks">
                     <ListChecks className="w-4 h-4 mr-2" />
-                    Progress
+                    Tasks
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="messages" className="h-full">
@@ -195,11 +195,11 @@ export default function BuyerPortal() {
                     currentUserEmail={user.email}
                   />
                 </TabsContent>
-                <TabsContent value="milestones" className="overflow-y-auto h-full">
-                  <MilestoneTracker
+                <TabsContent value="tasks" className="overflow-y-auto h-full">
+                  <TaskManager
                     transaction={selectedTransaction}
+                    currentUser={user}
                     userRole="buyer"
-                    userEmail={user.email}
                   />
                 </TabsContent>
               </Tabs>
