@@ -79,6 +79,8 @@ import WorkflowAnalytics from './pages/WorkflowAnalytics';
 import PersonalizationAndSync from './pages/PersonalizationAndSync';
 import BuilderDashboard from './pages/BuilderDashboard';
 import AgentDashboard from './pages/AgentDashboard';
+import DeveloperProjectShowcase from './pages/DeveloperProjectShowcase';
+import ProjectDetails from './pages/ProjectDetails';
 import __Layout from './Layout.jsx';
 
 
@@ -115,6 +117,8 @@ export const PAGES = {
     "PersonalizationAndSync": PersonalizationAndSync,
     "BuilderDashboard": BuilderDashboard,
     "AgentDashboard": AgentDashboard,
+    "DeveloperProjectShowcase": DeveloperProjectShowcase,
+    "ProjectDetails": ProjectDetails,
 }
 
 export const pagesConfig = {
