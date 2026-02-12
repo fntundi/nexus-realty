@@ -24,6 +24,8 @@ import { createPageUrl } from '@/utils';
 export default function EmailAutomation() {
   const [showTemplateForm, setShowTemplateForm] = useState(false);
   const [showSequenceForm, setShowSequenceForm] = useState(false);
+  const [selectedSequenceForSchedule, setSelectedSequenceForSchedule] = useState(null);
+  const [selectedSequenceForAB, setSelectedSequenceForAB] = useState(null);
 
   const { data: templates = [] } = useQuery({
     queryKey: ['emailTemplates'],
