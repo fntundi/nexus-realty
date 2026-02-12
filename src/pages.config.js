@@ -73,6 +73,7 @@ import TaskTemplates from './pages/TaskTemplates';
 import TeamDeals from './pages/TeamDeals';
 import TerritoryManager from './pages/TerritoryManager';
 import Calendar from './pages/Calendar';
+import NurtureWorkflows from './pages/NurtureWorkflows';
 
 
 export const PAGES = {
@@ -102,6 +103,7 @@ export const PAGES = {
     "TeamDeals": TeamDeals,
     "TerritoryManager": TerritoryManager,
     "Calendar": Calendar,
+    "NurtureWorkflows": NurtureWorkflows,
 }
 
 export const pagesConfig = {
