@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import LenderDocumentManager from '../components/lender/LenderDocumentManager';
 import LenderDashboardSummary from '../components/lender/LenderDashboardSummary';
+import LenderAnalytics from '../components/lender/LenderAnalytics';
 import MessageThread from '../components/messaging/MessageThread';
 
 export default function LenderPortal() {
@@ -120,10 +121,11 @@ export default function LenderPortal() {
 
         {/* Main Content Tabs */}
          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-           <TabsList className="grid w-full grid-cols-4">
+           <TabsList className="grid w-full grid-cols-5">
              <TabsTrigger value="overview">Dashboard</TabsTrigger>
+             <TabsTrigger value="analytics">Analytics</TabsTrigger>
              <TabsTrigger value="active">Active Loans</TabsTrigger>
-             <TabsTrigger value="eligibility">Eligibility Check</TabsTrigger>
+             <TabsTrigger value="eligibility">Eligibility</TabsTrigger>
              <TabsTrigger value="documents">Documents</TabsTrigger>
            </TabsList>
 
@@ -134,10 +136,17 @@ export default function LenderPortal() {
                documents={documents}
                onViewDocument={(doc) => {
                  setSelectedDocument(doc);
-                 // Open document preview or details
                  window.open(doc.file_url, '_blank');
                }}
                onViewFlagged={() => setActiveTab('documents')}
+             />
+           </TabsContent>
+
+           {/* Analytics Tab */}
+           <TabsContent value="analytics" className="space-y-4 mt-6">
+             <LenderAnalytics
+               transactions={transactions}
+               documents={documents}
              />
            </TabsContent>
 
