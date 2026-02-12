@@ -65,6 +65,7 @@ import TerritoryManager from './pages/TerritoryManager';
 import Reminders from './pages/Reminders';
 import ReminderSettings from './pages/ReminderSettings';
 import TeamDeals from './pages/TeamDeals';
+import AgentPerformanceReport from './pages/AgentPerformanceReport';
 
 
 export const PAGES = {
@@ -86,6 +87,7 @@ export const PAGES = {
     "Reminders": Reminders,
     "ReminderSettings": ReminderSettings,
     "TeamDeals": TeamDeals,
+    "AgentPerformanceReport": AgentPerformanceReport,
 }
 
 export const pagesConfig = {
