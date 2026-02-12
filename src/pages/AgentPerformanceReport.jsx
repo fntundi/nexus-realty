@@ -9,7 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TrendingUp, Users, DollarSign, Star, CheckCircle, Calendar } from 'lucide-react';
 import { format, subDays } from 'date-fns';
-import AgentPerformanceMetrics from '../components/reports/AgentPerformanceMetrics';
 import AgentPerformanceCharts from '../components/reports/AgentPerformanceCharts';
 import AgentPerformanceTable from '../components/reports/AgentPerformanceTable';
 
