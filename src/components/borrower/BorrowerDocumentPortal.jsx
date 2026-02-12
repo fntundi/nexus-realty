@@ -71,12 +71,13 @@ export default function BorrowerDocumentPortal({ transactionId }) {
       return doc;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['uploaded-documents', transactionId] });
-      queryClient.invalidateQueries({ queryKey: ['required-documents', transactionId] });
-      setSelectedFiles([]);
-      setDocumentNotes({});
-      setUploadingFile(null);
-    },
+       queryClient.invalidateQueries({ queryKey: ['uploaded-documents', transactionId] });
+       queryClient.invalidateQueries({ queryKey: ['required-documents', transactionId] });
+       setSelectedFiles([]);
+       setDocumentNotes({});
+       setDocumentCategories({});
+       setUploadingFile(null);
+     },
     onError: (error) => {
       setUploadingFile(null);
       alert('Upload failed: ' + error.message);
