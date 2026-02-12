@@ -8,8 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { 
   DollarSign, FileText, MessageSquare, TrendingUp, 
-  Clock, CheckCircle2, AlertCircle, Home 
+  Clock, CheckCircle2, AlertCircle, Home, Zap, Loader
 } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
