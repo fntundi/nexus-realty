@@ -213,8 +213,12 @@ export default function AgentTransactions() {
               <DialogTitle>Transaction Details</DialogTitle>
             </DialogHeader>
             {selectedTransaction && (
-              <Tabs defaultValue="messages" className="h-[500px]">
+              <Tabs defaultValue="ai-insights" className="h-[500px]">
                 <TabsList>
+                  <TabsTrigger value="ai-insights">
+                    <Briefcase className="w-4 h-4 mr-2" />
+                    AI Insights
+                  </TabsTrigger>
                   <TabsTrigger value="messages">
                     <MessageSquare className="w-4 h-4 mr-2" />
                     Messages
@@ -240,6 +244,9 @@ export default function AgentTransactions() {
                     Documents
                   </TabsTrigger>
                 </TabsList>
+                <TabsContent value="ai-insights" className="overflow-y-auto h-full p-4">
+                  <DealAIInsights transactionId={selectedTransaction.id} />
+                </TabsContent>
                 <TabsContent value="messages" className="h-full">
                   <MessageThread
                     transactionId={selectedTransaction.id}
