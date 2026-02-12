@@ -162,7 +162,7 @@ function AudienceTabsHome() {
         
         <div className="relative max-w-6xl mx-auto px-6 py-24 text-center space-y-8">
           <div className="inline-block px-5 py-2.5 bg-yellow-600 bg-opacity-15 rounded-full border border-yellow-700 border-opacity-50 backdrop-blur-sm">
-            <span className="text-yellow-400 text-xs font-semibold tracking-widest uppercase">Luxury Real Estate Intelligence</span>
+            <span className="text-yellow-400 text-xs font-semibold tracking-widest uppercase">Real Estate Intelligence</span>
           </div>
           <div>
             <h1 className="text-7xl md:text-8xl font-bold tracking-tight mb-2">
