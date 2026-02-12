@@ -6,9 +6,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Briefcase, MessageSquare, FileText, CheckCircle2, ListChecks } from 'lucide-react';
+import { Briefcase, MessageSquare, FileText, CheckCircle2, ListChecks, Calendar } from 'lucide-react';
 import MessageThread from '../components/messaging/MessageThread';
 import TaskManager from '../components/tasks/TaskManager';
+import ShowingScheduler from '../components/showings/ShowingScheduler';
 
 export default function AgentTransactions() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
