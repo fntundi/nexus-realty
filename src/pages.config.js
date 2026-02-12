@@ -78,6 +78,7 @@ import TerritoryManager from './pages/TerritoryManager';
 import WorkflowAnalytics from './pages/WorkflowAnalytics';
 import PersonalizationAndSync from './pages/PersonalizationAndSync';
 import BuilderDashboard from './pages/BuilderDashboard';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -117,4 +118,5 @@ export const PAGES = {
 export const pagesConfig = {
     mainPage: "Home",
     Pages: PAGES,
+    Layout: __Layout,
 };

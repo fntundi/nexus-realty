@@ -152,19 +152,28 @@ function BuilderDashboard() {
 
 function AudienceTabsHome() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-50">
-      {/* Header */}
-      <div className="bg-slate-900 text-white py-16 px-6">
-        <div className="max-w-6xl mx-auto text-center space-y-4">
-          <h1 className="text-5xl font-bold">Real Estate OS</h1>
-          <p className="text-xl text-slate-300">Powerful tools designed for every role in real estate</p>
+    <div className="min-h-screen bg-white">
+      {/* Luxury Hero Section */}
+      <div className="relative bg-gradient-to-br from-black via-gray-900 to-black text-white overflow-hidden">
+        {/* Decorative gold accent lines */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600"></div>
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600"></div>
+        
+        <div className="max-w-6xl mx-auto px-6 py-20 text-center space-y-6">
+          <div className="inline-block px-4 py-2 bg-yellow-600 bg-opacity-20 rounded-full border border-yellow-500 mb-4">
+            <span className="text-yellow-500 text-sm font-semibold">Premium Real Estate Platform</span>
+          </div>
+          <h1 className="text-6xl md:text-7xl font-bold tracking-tight">Real Estate OS</h1>
+          <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto font-light">
+            Enterprise-grade platform trusted by premium brokerages. Sophisticated tools for modern real estate professionals.
+          </p>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="max-w-6xl mx-auto px-6 py-12">
+      {/* Premium Tabs Section */}
+      <div className="max-w-6xl mx-auto px-6 py-16">
         <Tabs defaultValue="agent" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-12">
+          <TabsList className="grid w-full grid-cols-4 mb-12 bg-gray-50 border-b-2 border-gray-200 p-1 rounded-none">
             <TabsTrigger value="agent" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               <span className="hidden sm:inline">Agent</span>
@@ -184,30 +193,30 @@ function AudienceTabsHome() {
           </TabsList>
 
           {/* Agent Tab */}
-          <TabsContent value="agent" className="space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold text-slate-900">For Agents</h2>
-              <p className="text-lg text-slate-600">Close more deals faster with AI-powered insights and seamless workflows</p>
+          <TabsContent value="agent" className="space-y-8 pt-8">
+            <div className="space-y-4 border-b-2 border-gray-200 pb-8">
+              <h2 className="text-4xl font-bold text-black">For Agents</h2>
+              <p className="text-lg text-gray-700">Close more deals faster with AI-powered insights and seamless workflows</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FeatureCard
-                icon={<Zap className="w-6 h-6 text-amber-500" />}
+                icon={<Zap className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Lead Scoring & Routing"
                 description="Automatically prioritize high-value leads with AI-powered scoring. Know exactly which prospects are most likely to convert."
               />
               <FeatureCard
-                icon={<MessageSquare className="w-6 h-6 text-blue-500" />}
+                icon={<MessageSquare className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Smart Nurture Workflows"
                 description="Create personalized follow-up sequences that adapt based on buyer behavior. Stay top-of-mind effortlessly."
               />
               <FeatureCard
-                icon={<Calendar className="w-6 h-6 text-green-500" />}
+                icon={<Calendar className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Showing Management"
                 description="Schedule and manage property showings with integrated calendar sync. Never miss an opportunity."
               />
               <FeatureCard
-                icon={<BarChart3 className="w-6 h-6 text-purple-500" />}
+                icon={<BarChart3 className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Performance Analytics"
                 description="Track your KPIs in real-time. See what's working and optimize your strategy for maximum results."
               />
@@ -215,30 +224,30 @@ function AudienceTabsHome() {
           </TabsContent>
 
           {/* Buyer Tab */}
-          <TabsContent value="buyer" className="space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold text-slate-900">For Buyers</h2>
-              <p className="text-lg text-slate-600">Find your dream property with personalized recommendations and expert guidance</p>
+          <TabsContent value="buyer" className="space-y-8 pt-8">
+            <div className="space-y-4 border-b-2 border-gray-200 pb-8">
+              <h2 className="text-4xl font-bold text-black">For Buyers</h2>
+              <p className="text-lg text-gray-700">Find your dream property with personalized recommendations and expert guidance</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FeatureCard
-                icon={<MapPin className="w-6 h-6 text-amber-500" />}
+                icon={<MapPin className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Smart Property Search"
                 description="Filter by location, price, amenities, and more. Save your favorite searches and get instant alerts on new listings."
               />
               <FeatureCard
-                icon={<MessageSquare className="w-6 h-6 text-blue-500" />}
+                icon={<MessageSquare className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Agent Communication"
                 description="Chat directly with your agent, ask questions, and get expert advice whenever you need it."
               />
               <FeatureCard
-                icon={<Calendar className="w-6 h-6 text-green-500" />}
+                icon={<Calendar className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Showing Scheduler"
                 description="Book property showings at your convenience. Get instant confirmations and directions."
               />
               <FeatureCard
-                icon={<BarChart3 className="w-6 h-6 text-purple-500" />}
+                icon={<BarChart3 className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Deal Transparency"
                 description="Track your transaction from offer to closing. Access documents and status updates in one place."
               />
@@ -246,30 +255,30 @@ function AudienceTabsHome() {
           </TabsContent>
 
           {/* Developer Tab */}
-          <TabsContent value="developer" className="space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold text-slate-900">For Developers</h2>
-              <p className="text-lg text-slate-600">Build powerful integrations and extend functionality with our flexible API</p>
+          <TabsContent value="developer" className="space-y-8 pt-8">
+            <div className="space-y-4 border-b-2 border-gray-200 pb-8">
+              <h2 className="text-4xl font-bold text-black">For Developers</h2>
+              <p className="text-lg text-gray-700">Build powerful integrations and extend functionality with our flexible API</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FeatureCard
-                icon={<Zap className="w-6 h-6 text-amber-500" />}
+                icon={<Zap className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="RESTful API"
                 description="Well-documented APIs for entities, workflows, and integrations. Build custom solutions tailored to your needs."
               />
               <FeatureCard
-                icon={<MessageSquare className="w-6 h-6 text-blue-500" />}
+                icon={<MessageSquare className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Webhook Support"
                 description="Real-time event notifications. React instantly to lead assignments, status changes, and deal milestones."
               />
               <FeatureCard
-                icon={<Settings className="w-6 h-6 text-green-500" />}
+                icon={<Settings className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Backend Functions"
                 description="Deploy custom logic without managing infrastructure. Our serverless platform handles scaling for you."
               />
               <FeatureCard
-                icon={<BarChart3 className="w-6 h-6 text-purple-500" />}
+                icon={<BarChart3 className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="CRM Integrations"
                 description="Seamless bidirectional sync with Salesforce, HubSpot, and custom systems. Keep data in sync automatically."
               />
@@ -277,41 +286,41 @@ function AudienceTabsHome() {
           </TabsContent>
 
           {/* Builder Tab */}
-          <TabsContent value="builder" className="space-y-8">
-            <div className="space-y-4">
-              <h2 className="text-3xl font-bold text-slate-900">For Builders & Teams</h2>
-              <p className="text-lg text-slate-600">Manage your entire real estate operation from a single, powerful platform</p>
+          <TabsContent value="builder" className="space-y-8 pt-8">
+            <div className="space-y-4 border-b-2 border-gray-200 pb-8">
+              <h2 className="text-4xl font-bold text-black">For Builders & Teams</h2>
+              <p className="text-lg text-gray-700">Manage your entire real estate operation from a single, powerful platform</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FeatureCard
-                icon={<Users className="w-6 h-6 text-amber-500" />}
+                icon={<Users className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Team Management"
                 description="Hire and manage agents. Track performance, commissions, and team metrics in real-time."
               />
               <FeatureCard
-                icon={<TrendingUp className="w-6 h-6 text-blue-500" />}
+                icon={<TrendingUp className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Pipeline Intelligence"
                 description="Visualize your entire deal pipeline. Forecast revenue and identify bottlenecks before they become problems."
               />
               <FeatureCard
-                icon={<Settings className="w-6 h-6 text-green-500" />}
+                icon={<Settings className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Workflow Automation"
                 description="Automate repetitive tasks with smart triggers and actions. Custom scoring models, nurture workflows, and more."
               />
               <FeatureCard
-                icon={<BarChart3 className="w-6 h-6 text-purple-500" />}
+                icon={<BarChart3 className="w-6 h-6" style={{ color: '#D4AF37' }} />}
                 title="Advanced Analytics"
                 description="Get actionable insights on team performance, market trends, and deal metrics. Make data-driven decisions."
               />
             </div>
 
-            {/* CTA for Builder Dashboard */}
-            <div className="mt-12 p-8 bg-blue-50 border border-blue-200 rounded-xl text-center">
-              <h3 className="text-2xl font-bold text-slate-900 mb-4">Ready to manage your operation?</h3>
-              <p className="text-slate-600 mb-6">Access your complete dashboard with all team management tools and analytics</p>
+            {/* Premium CTA */}
+            <div className="mt-12 p-8 bg-gradient-to-br from-gray-900 to-black border border-gray-300 rounded-lg text-center">
+              <h3 className="text-2xl font-bold text-white mb-4">Ready to lead your operation?</h3>
+              <p className="text-gray-300 mb-6">Access your premium dashboard with advanced team management and analytics</p>
               <Link to={createPageUrl('LeadPool')}>
-                <Button className="bg-blue-600 hover:bg-blue-700 text-lg px-8">
+                <Button className="bg-yellow-600 hover:bg-yellow-700 text-black text-lg px-8 font-semibold">
                   Go to Dashboard
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
@@ -326,14 +335,14 @@ function AudienceTabsHome() {
 
 function FeatureCard({ icon, title, description }) {
   return (
-    <Card className="border-slate-200 hover:shadow-lg transition-shadow">
+    <Card className="border border-gray-200 hover:border-yellow-500 hover:shadow-xl transition-all bg-white">
       <CardContent className="pt-6">
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             {icon}
-            <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+            <h3 className="text-lg font-semibold text-black">{title}</h3>
           </div>
-          <p className="text-slate-600 leading-relaxed">{description}</p>
+          <p className="text-gray-600 leading-relaxed">{description}</p>
         </div>
       </CardContent>
     </Card>
