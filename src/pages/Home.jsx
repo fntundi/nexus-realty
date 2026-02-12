@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { 
   Users, TrendingUp, Building2, UserCheck,
   Zap, BarChart3, Home as HomeIcon, MessageSquare, Calendar, Briefcase,
-  ArrowRight, DollarSign, FileText, Lock, MapPin
+  ArrowRight, DollarSign, FileText, Lock, MapPin, Settings
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
