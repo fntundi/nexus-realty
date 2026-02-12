@@ -71,6 +71,27 @@ export default function LenderPortal() {
   const getProperty = (propertyId) => properties.find(p => p.id === propertyId);
   const getTransactionDocuments = (txnId) => documents.filter(d => d.transaction_id === txnId);
 
+  // Eligibility check mutation
+  const eligibilityMutation = useMutation({
+    mutationFn: async (transactionId) => {
+      setCheckingEligibility(transactionId);
+      const response = await base44.functions.invoke('checkLoanEligibility', { transactionId });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      setEligibilityResults(data);
+      setCheckingEligibility(null);
+    },
+    onError: (error) => {
+      setEligibilityResults({ error: error.message });
+      setCheckingEligibility(null);
+    }
+  });
+
+  const handleCheckEligibility = (txnId) => {
+    eligibilityMutation.mutate(txnId);
+  };
+
   // Calculate metrics
   const activeLoans = transactions.filter(t => t.status === 'active');
   const closingLoans = transactions.filter(t => t.current_stage === 'closing');
