@@ -10,6 +10,7 @@ import { Briefcase, MessageSquare, FileText, CheckCircle2, ListChecks, Calendar 
 import MessageThread from '../components/messaging/MessageThread';
 import TaskManager from '../components/tasks/TaskManager';
 import ShowingScheduler from '../components/showings/ShowingScheduler';
+import DocumentManager from '../components/documents/DocumentManager';
 
 export default function AgentTransactions() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -169,6 +170,10 @@ export default function AgentTransactions() {
                     <Calendar className="w-4 h-4 mr-2" />
                     Showings
                   </TabsTrigger>
+                  <TabsTrigger value="documents">
+                    <FileText className="w-4 h-4 mr-2" />
+                    Documents
+                  </TabsTrigger>
                 </TabsList>
                 <TabsContent value="messages" className="h-full">
                   <MessageThread
@@ -185,6 +190,13 @@ export default function AgentTransactions() {
                 </TabsContent>
                 <TabsContent value="showings" className="overflow-y-auto h-full">
                   <ShowingScheduler
+                    transaction={selectedTransaction}
+                    currentUser={user}
+                    userRole="agent"
+                  />
+                </TabsContent>
+                <TabsContent value="documents" className="overflow-y-auto h-full">
+                  <DocumentManager
                     transaction={selectedTransaction}
                     currentUser={user}
                     userRole="agent"
