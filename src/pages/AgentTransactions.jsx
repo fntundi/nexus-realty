@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Briefcase, MessageSquare, FileText, CheckCircle2, ListChecks, Calendar } from 'lucide-react';
+import { Briefcase, MessageSquare, FileText, CheckCircle2, ListChecks, Calendar, RefreshCw } from 'lucide-react';
 import MessageThread from '../components/messaging/MessageThread';
 import TaskManager from '../components/tasks/TaskManager';
 import ShowingScheduler from '../components/showings/ShowingScheduler';
 import DocumentManager from '../components/documents/DocumentManager';
+import KeyMetrics from '../components/agent/KeyMetrics';
+import ProactiveAlerts from '../components/agent/ProactiveAlerts';
+import AIInsights from '../components/agent/AIInsights';
 
 export default function AgentTransactions() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -38,8 +41,28 @@ export default function AgentTransactions() {
     queryFn: () => base44.entities.Property.list()
   });
 
+  const { data: insights, isLoading: insightsLoading, refetch: refetchInsights } = useQuery({
+    queryKey: ['agent-insights', agent?.id],
+    queryFn: async () => {
+      const response = await base44.functions.invoke('generateAgentInsights', {
+        agent_id: agent.id
+      });
+      return response.data;
+    },
+    enabled: !!agent,
+    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+  });
+
   const getProperty = (propertyId) => {
     return properties.find(p => p.id === propertyId);
+  };
+
+  const handleViewTransaction = (transactionId) => {
+    const transaction = transactions.find(t => t.id === transactionId);
+    if (transaction) {
+      setSelectedTransaction(transaction);
+      setMessageDialogOpen(true);
+    }
   };
 
   const getUnreadCount = (transactionId) => {
@@ -69,9 +92,37 @@ export default function AgentTransactions() {
       <div className="max-w-7xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">My Transactions</h1>
-            <p className="text-slate-600 mt-1">Manage your active deals and communicate with clients</p>
+            <h1 className="text-3xl font-bold text-slate-900">My Dashboard</h1>
+            <p className="text-slate-600 mt-1">AI-powered insights and transaction management</p>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetchInsights()}
+            disabled={insightsLoading}
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${insightsLoading ? 'animate-spin' : ''}`} />
+            Refresh Insights
+          </Button>
+        </div>
+
+        {insights && (
+          <>
+            <KeyMetrics metrics={insights.metrics} />
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <ProactiveAlerts 
+                alerts={insights.alerts} 
+                properties={properties}
+                onViewTransaction={handleViewTransaction}
+              />
+              <AIInsights insights={insights.insights} />
+            </div>
+          </>
+        )}
+
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Active Transactions</h2>
         </div>
 
         <div className="grid gap-4">
