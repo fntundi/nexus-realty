@@ -48,58 +48,58 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import AgentAnalytics from './pages/AgentAnalytics';
+import AgentPerformanceReport from './pages/AgentPerformanceReport';
 import AgentTransactions from './pages/AgentTransactions';
 import AlertSettings from './pages/AlertSettings';
 import AssignmentConfig from './pages/AssignmentConfig';
 import BuyerPortal from './pages/BuyerPortal';
+import CRMReportingDashboard from './pages/CRMReportingDashboard';
 import CalendarSettings from './pages/CalendarSettings';
+import ContactDetails from './pages/ContactDetails';
+import ContactSegments from './pages/ContactSegments';
+import Contacts from './pages/Contacts';
 import DocuSignSettings from './pages/DocuSignSettings';
+import EmailAutomation from './pages/EmailAutomation';
 import Home from './pages/Home';
 import LeadPool from './pages/LeadPool';
+import LeadScoringRules from './pages/LeadScoringRules';
 import LenderPortal from './pages/LenderPortal';
 import MilestoneConfig from './pages/MilestoneConfig';
 import PropertySearch from './pages/PropertySearch';
+import ReminderSettings from './pages/ReminderSettings';
+import Reminders from './pages/Reminders';
 import Reports from './pages/Reports';
 import TaskTemplates from './pages/TaskTemplates';
-import TerritoryManager from './pages/TerritoryManager';
-import Reminders from './pages/Reminders';
-import ReminderSettings from './pages/ReminderSettings';
 import TeamDeals from './pages/TeamDeals';
-import AgentPerformanceReport from './pages/AgentPerformanceReport';
-import Contacts from './pages/Contacts';
-import ContactDetails from './pages/ContactDetails';
-import LeadScoringRules from './pages/LeadScoringRules';
-import CRMReportingDashboard from './pages/CRMReportingDashboard';
-import EmailAutomation from './pages/EmailAutomation';
-import ContactSegments from './pages/ContactSegments';
+import TerritoryManager from './pages/TerritoryManager';
 
 
 export const PAGES = {
     "AgentAnalytics": AgentAnalytics,
+    "AgentPerformanceReport": AgentPerformanceReport,
     "AgentTransactions": AgentTransactions,
     "AlertSettings": AlertSettings,
     "AssignmentConfig": AssignmentConfig,
     "BuyerPortal": BuyerPortal,
+    "CRMReportingDashboard": CRMReportingDashboard,
     "CalendarSettings": CalendarSettings,
+    "ContactDetails": ContactDetails,
+    "ContactSegments": ContactSegments,
+    "Contacts": Contacts,
     "DocuSignSettings": DocuSignSettings,
+    "EmailAutomation": EmailAutomation,
     "Home": Home,
     "LeadPool": LeadPool,
+    "LeadScoringRules": LeadScoringRules,
     "LenderPortal": LenderPortal,
     "MilestoneConfig": MilestoneConfig,
     "PropertySearch": PropertySearch,
+    "ReminderSettings": ReminderSettings,
+    "Reminders": Reminders,
     "Reports": Reports,
     "TaskTemplates": TaskTemplates,
-    "TerritoryManager": TerritoryManager,
-    "Reminders": Reminders,
-    "ReminderSettings": ReminderSettings,
     "TeamDeals": TeamDeals,
-    "AgentPerformanceReport": AgentPerformanceReport,
-    "Contacts": Contacts,
-    "ContactDetails": ContactDetails,
-    "LeadScoringRules": LeadScoringRules,
-    "CRMReportingDashboard": CRMReportingDashboard,
-    "EmailAutomation": EmailAutomation,
-    "ContactSegments": ContactSegments,
+    "TerritoryManager": TerritoryManager,
 }
 
 export const pagesConfig = {

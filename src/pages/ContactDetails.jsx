@@ -12,6 +12,8 @@ import { createPageUrl } from '@/utils';
 import ContactActivityFeed from '../components/crm/ContactActivityFeed';
 import InteractionLogger from '../components/crm/InteractionLogger';
 import LeadScoreDisplay from '../components/crm/LeadScoreDisplay';
+import ContactEmailHistory from '../components/crm/ContactEmailHistory';
+import ContactSegmentMembership from '../components/crm/ContactSegmentMembership';
 import {
   Dialog,
   DialogContent,
