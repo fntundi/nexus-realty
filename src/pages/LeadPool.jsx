@@ -8,8 +8,9 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Users, Search, Filter, UserPlus, ArrowRight, Zap } from 'lucide-react';
+import { Users, Search, Filter, UserPlus, ArrowRight, Zap, Clock } from 'lucide-react';
 import { toast } from 'sonner';
+import OutreachTimingSuggestion from '../components/leads/OutreachTimingSuggestion';
 
 export default function LeadPool() {
   const [searchTerm, setSearchTerm] = useState('');
