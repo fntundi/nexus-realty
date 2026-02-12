@@ -153,8 +153,9 @@ export default function LenderPortal() {
 
         {/* Main Content Tabs */}
         <Tabs defaultValue="active" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="active">Active Loans</TabsTrigger>
+            <TabsTrigger value="eligibility">Eligibility Check</TabsTrigger>
             <TabsTrigger value="documents">Documents</TabsTrigger>
           </TabsList>
 
