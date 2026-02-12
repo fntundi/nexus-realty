@@ -14,6 +14,8 @@ import InteractionLogger from '../components/crm/InteractionLogger';
 import LeadScoreDisplay from '../components/crm/LeadScoreDisplay';
 import ContactEmailHistory from '../components/crm/ContactEmailHistory';
 import ContactSegmentMembership from '../components/crm/ContactSegmentMembership';
+import ScheduleTaskDialog from '../components/tasks/ScheduleTaskDialog';
+import TaskCard from '../components/tasks/TaskCard';
 import {
   Dialog,
   DialogContent,
