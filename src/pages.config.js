@@ -54,6 +54,7 @@ import AlertSettings from './pages/AlertSettings';
 import AssignmentConfig from './pages/AssignmentConfig';
 import BuyerPortal from './pages/BuyerPortal';
 import CRMReportingDashboard from './pages/CRMReportingDashboard';
+import Calendar from './pages/Calendar';
 import CalendarSettings from './pages/CalendarSettings';
 import ContactDetails from './pages/ContactDetails';
 import ContactSegments from './pages/ContactSegments';
@@ -65,6 +66,7 @@ import LeadPool from './pages/LeadPool';
 import LeadScoringRules from './pages/LeadScoringRules';
 import LenderPortal from './pages/LenderPortal';
 import MilestoneConfig from './pages/MilestoneConfig';
+import NurtureWorkflows from './pages/NurtureWorkflows';
 import PropertySearch from './pages/PropertySearch';
 import ReminderSettings from './pages/ReminderSettings';
 import Reminders from './pages/Reminders';
@@ -72,8 +74,7 @@ import Reports from './pages/Reports';
 import TaskTemplates from './pages/TaskTemplates';
 import TeamDeals from './pages/TeamDeals';
 import TerritoryManager from './pages/TerritoryManager';
-import Calendar from './pages/Calendar';
-import NurtureWorkflows from './pages/NurtureWorkflows';
+import CRMIntegrations from './pages/CRMIntegrations';
 
 
 export const PAGES = {
@@ -84,6 +85,7 @@ export const PAGES = {
     "AssignmentConfig": AssignmentConfig,
     "BuyerPortal": BuyerPortal,
     "CRMReportingDashboard": CRMReportingDashboard,
+    "Calendar": Calendar,
     "CalendarSettings": CalendarSettings,
     "ContactDetails": ContactDetails,
     "ContactSegments": ContactSegments,
@@ -95,6 +97,7 @@ export const PAGES = {
     "LeadScoringRules": LeadScoringRules,
     "LenderPortal": LenderPortal,
     "MilestoneConfig": MilestoneConfig,
+    "NurtureWorkflows": NurtureWorkflows,
     "PropertySearch": PropertySearch,
     "ReminderSettings": ReminderSettings,
     "Reminders": Reminders,
@@ -102,8 +105,7 @@ export const PAGES = {
     "TaskTemplates": TaskTemplates,
     "TeamDeals": TeamDeals,
     "TerritoryManager": TerritoryManager,
-    "Calendar": Calendar,
-    "NurtureWorkflows": NurtureWorkflows,
+    "CRMIntegrations": CRMIntegrations,
 }
 
 export const pagesConfig = {
