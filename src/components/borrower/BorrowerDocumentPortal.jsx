@@ -9,6 +9,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 export default function BorrowerDocumentPortal({ transactionId }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadingFile, setUploadingFile] = useState(null);
+  const [documentNotes, setDocumentNotes] = useState({});
+  const [selectedDoc, setSelectedDoc] = useState(null);
+  const [docSigningOpen, setDocSigningOpen] = useState(false);
   const queryClient = useQueryClient();
 
   // Fetch required documents for this transaction
