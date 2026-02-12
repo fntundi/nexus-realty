@@ -179,7 +179,7 @@ export default function BorrowerDocumentPortal({ transactionId }) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-green-600" />
+            <FileText className="w-5 h-5 text-slate-600" />
             Uploaded Documents ({uploadedDocs.length})
           </CardTitle>
         </CardHeader>
@@ -188,28 +188,135 @@ export default function BorrowerDocumentPortal({ transactionId }) {
             <p className="text-slate-500 text-center py-8">No documents uploaded yet</p>
           ) : (
             <div className="space-y-3">
-              {uploadedDocs.map(doc => (
-                <div key={doc.id} className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
-                  <div className="flex items-center gap-3 flex-1">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    <div>
-                      <p className="font-semibold text-slate-900">{doc.file_name}</p>
-                      <p className="text-xs text-slate-600">
-                        Uploaded {new Date(doc.uploaded_at).toLocaleDateString()}
-                      </p>
+              {uploadedDocs.map(doc => {
+                const getStatusColor = (status) => {
+                  switch(status) {
+                    case 'verified': return 'bg-green-50 border-green-200';
+                    case 'pending': return 'bg-amber-50 border-amber-200';
+                    case 'rejected': return 'bg-red-50 border-red-200';
+                    default: return 'bg-slate-50 border-slate-200';
+                  }
+                };
+
+                const getStatusIcon = (status) => {
+                  switch(status) {
+                    case 'verified': return <CheckCircle className="w-5 h-5 text-green-600" />;
+                    case 'pending': return <Clock className="w-5 h-5 text-amber-600" />;
+                    case 'rejected': return <AlertCircle className="w-5 h-5 text-red-600" />;
+                    default: return <FileText className="w-5 h-5 text-slate-400" />;
+                  }
+                };
+
+                return (
+                  <div key={doc.id} className={`p-4 rounded-lg border ${getStatusColor(doc.verification_status || 'pending')}`}>
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-3 flex-1">
+                        {getStatusIcon(doc.verification_status || 'pending')}
+                        <div>
+                          <p className="font-semibold text-slate-900">{doc.file_name}</p>
+                          <p className="text-xs text-slate-600">
+                            Uploaded {new Date(doc.uploaded_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs px-2 py-1 rounded font-medium ${
+                          doc.verification_status === 'verified' ? 'bg-green-100 text-green-800' :
+                          doc.verification_status === 'rejected' ? 'bg-red-100 text-red-800' :
+                          'bg-amber-100 text-amber-800'
+                        }`}>
+                          {doc.verification_status === 'verified' ? '✓ Verified' :
+                           doc.verification_status === 'rejected' ? '✗ Rejected' :
+                           '⏳ Under Review'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {doc.borrower_notes && (
+                      <div className="mt-3 p-2 bg-white bg-opacity-50 rounded text-xs text-slate-600 italic border-l-2 border-slate-300">
+                        <p className="font-semibold mb-1">Your notes:</p>
+                        {doc.borrower_notes}
+                      </div>
+                    )}
+
+                    {doc.verification_notes && (
+                      <div className="mt-3 p-2 bg-white bg-opacity-50 rounded text-xs text-slate-600 border-l-2 border-blue-300">
+                        <p className="font-semibold mb-1">Lender feedback:</p>
+                        {doc.verification_notes}
+                      </div>
+                    )}
+
+                    <div className="flex gap-2 mt-3">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm" className="text-xs">
+                            <Eye className="w-3 h-3 mr-1" />
+                            View
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>{doc.file_name}</DialogTitle>
+                          </DialogHeader>
+                          <div className="bg-slate-100 p-4 rounded-lg min-h-96 flex items-center justify-center">
+                            <p className="text-slate-600">Document preview: {doc.file_url}</p>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+
+                      {doc.verification_status !== 'verified' && doc.verification_status !== 'rejected' && (
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="text-xs"
+                          onClick={() => {
+                            setSelectedDoc(doc);
+                            setDocSigningOpen(true);
+                          }}
+                        >
+                          <PenTool className="w-3 h-3 mr-1" />
+                          Sign
+                        </Button>
+                      )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                      Verified
-                    </span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
       </Card>
+
+      {/* Digital Signature Dialog */}
+      <Dialog open={docSigningOpen} onOpenChange={setDocSigningOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sign Document</DialogTitle>
+          </DialogHeader>
+          {selectedDoc && (
+            <div className="space-y-4">
+              <p className="text-sm text-slate-600">
+                You're about to digitally sign <strong>{selectedDoc.file_name}</strong>
+              </p>
+              <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center">
+                <p className="text-slate-500 mb-4">Signature Area</p>
+                <canvas 
+                  id="signatureCanvas" 
+                  className="w-full h-40 border border-slate-200 rounded cursor-crosshair bg-white"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setDocSigningOpen(false)}>
+                  Cancel
+                </Button>
+                <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
+                  Complete Signature
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Security Notice */}
       <Card className="bg-blue-50 border-blue-200">
