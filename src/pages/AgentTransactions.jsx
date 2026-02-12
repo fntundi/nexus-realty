@@ -6,8 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Briefcase, MessageSquare, FileText, CheckCircle2 } from 'lucide-react';
+import { Briefcase, MessageSquare, FileText, CheckCircle2, ListChecks } from 'lucide-react';
 import MessageThread from '../components/messaging/MessageThread';
+import MilestoneTracker from '../components/milestones/MilestoneTracker';
 
 export default function AgentTransactions() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -148,15 +149,36 @@ export default function AgentTransactions() {
         </div>
 
         <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
-          <DialogContent className="max-w-4xl h-[600px] flex flex-col">
+          <DialogContent className="max-w-4xl max-h-[80vh]">
             <DialogHeader>
-              <DialogTitle>Transaction Messages</DialogTitle>
+              <DialogTitle>Transaction Details</DialogTitle>
             </DialogHeader>
             {selectedTransaction && (
-              <MessageThread
-                transactionId={selectedTransaction.id}
-                currentUserEmail={user.email}
-              />
+              <Tabs defaultValue="messages" className="h-[500px]">
+                <TabsList>
+                  <TabsTrigger value="messages">
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Messages
+                  </TabsTrigger>
+                  <TabsTrigger value="milestones">
+                    <ListChecks className="w-4 h-4 mr-2" />
+                    Milestones
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="messages" className="h-full">
+                  <MessageThread
+                    transactionId={selectedTransaction.id}
+                    currentUserEmail={user.email}
+                  />
+                </TabsContent>
+                <TabsContent value="milestones" className="overflow-y-auto h-full">
+                  <MilestoneTracker
+                    transaction={selectedTransaction}
+                    userRole="agent"
+                    userEmail={user.email}
+                  />
+                </TabsContent>
+              </Tabs>
             )}
           </DialogContent>
         </Dialog>
