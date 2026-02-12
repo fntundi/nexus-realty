@@ -49,37 +49,41 @@
  */
 import AgentAnalytics from './pages/AgentAnalytics';
 import AgentTransactions from './pages/AgentTransactions';
+import AlertSettings from './pages/AlertSettings';
 import AssignmentConfig from './pages/AssignmentConfig';
 import BuyerPortal from './pages/BuyerPortal';
+import CalendarSettings from './pages/CalendarSettings';
+import DocuSignSettings from './pages/DocuSignSettings';
 import Home from './pages/Home';
 import LeadPool from './pages/LeadPool';
 import LenderPortal from './pages/LenderPortal';
 import MilestoneConfig from './pages/MilestoneConfig';
-import TerritoryManager from './pages/TerritoryManager';
-import TaskTemplates from './pages/TaskTemplates';
 import PropertySearch from './pages/PropertySearch';
-import DocuSignSettings from './pages/DocuSignSettings';
-import CalendarSettings from './pages/CalendarSettings';
 import Reports from './pages/Reports';
-import AlertSettings from './pages/AlertSettings';
+import TaskTemplates from './pages/TaskTemplates';
+import TerritoryManager from './pages/TerritoryManager';
+import Reminders from './pages/Reminders';
+import ReminderSettings from './pages/ReminderSettings';
 
 
 export const PAGES = {
     "AgentAnalytics": AgentAnalytics,
     "AgentTransactions": AgentTransactions,
+    "AlertSettings": AlertSettings,
     "AssignmentConfig": AssignmentConfig,
     "BuyerPortal": BuyerPortal,
+    "CalendarSettings": CalendarSettings,
+    "DocuSignSettings": DocuSignSettings,
     "Home": Home,
     "LeadPool": LeadPool,
     "LenderPortal": LenderPortal,
     "MilestoneConfig": MilestoneConfig,
-    "TerritoryManager": TerritoryManager,
-    "TaskTemplates": TaskTemplates,
     "PropertySearch": PropertySearch,
-    "DocuSignSettings": DocuSignSettings,
-    "CalendarSettings": CalendarSettings,
     "Reports": Reports,
-    "AlertSettings": AlertSettings,
+    "TaskTemplates": TaskTemplates,
+    "TerritoryManager": TerritoryManager,
+    "Reminders": Reminders,
+    "ReminderSettings": ReminderSettings,
 }
 
 export const pagesConfig = {
