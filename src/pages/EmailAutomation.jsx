@@ -14,8 +14,12 @@ import {
 import EmailTemplateForm from '../components/email/EmailTemplateForm';
 import EmailSequenceForm from '../components/email/EmailSequenceForm';
 import CampaignAnalytics from '../components/email/CampaignAnalytics';
+import AdvancedCampaignAnalytics from '../components/email/AdvancedCampaignAnalytics';
+import ScheduleEmailSequenceDialog from '../components/email/ScheduleEmailSequenceDialog';
+import ABTestingSetup from '../components/email/ABTestingSetup';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { createPageUrl } from '@/utils';
 
 export default function EmailAutomation() {
   const [showTemplateForm, setShowTemplateForm] = useState(false);
