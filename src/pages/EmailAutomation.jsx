@@ -161,6 +161,40 @@ export default function EmailAutomation() {
                       <p className="text-sm text-slate-600">Times Executed:</p>
                       <p className="text-slate-900 font-semibold">{sequence.execution_count || 0}</p>
                     </div>
+                    <div className="flex gap-2 pt-2">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="outline" onClick={() => setSelectedSequenceForSchedule(sequence.id)}>
+                            Schedule
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-lg">
+                          <DialogHeader>
+                            <DialogTitle>Schedule: {sequence.name}</DialogTitle>
+                          </DialogHeader>
+                          <ScheduleEmailSequenceDialog
+                            sequenceId={sequence.id}
+                            onSuccess={() => setSelectedSequenceForSchedule(null)}
+                          />
+                        </DialogContent>
+                      </Dialog>
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="outline" onClick={() => setSelectedSequenceForAB(sequence.id)}>
+                            A/B Test
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl">
+                          <DialogHeader>
+                            <DialogTitle>A/B Test: {sequence.name}</DialogTitle>
+                          </DialogHeader>
+                          <ABTestingSetup
+                            sequenceId={sequence.id}
+                            onSuccess={() => setSelectedSequenceForAB(null)}
+                          />
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
