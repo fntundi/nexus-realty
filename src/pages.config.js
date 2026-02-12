@@ -58,6 +58,7 @@ import MilestoneConfig from './pages/MilestoneConfig';
 import TerritoryManager from './pages/TerritoryManager';
 import TaskTemplates from './pages/TaskTemplates';
 import PropertySearch from './pages/PropertySearch';
+import DocuSignSettings from './pages/DocuSignSettings';
 
 
 export const PAGES = {
@@ -72,6 +73,7 @@ export const PAGES = {
     "TerritoryManager": TerritoryManager,
     "TaskTemplates": TaskTemplates,
     "PropertySearch": PropertySearch,
+    "DocuSignSettings": DocuSignSettings,
 }
 
 export const pagesConfig = {

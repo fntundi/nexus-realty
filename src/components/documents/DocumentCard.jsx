@@ -2,15 +2,19 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Eye, Download, Trash2, CheckCircle, XCircle, History } from 'lucide-react';
+import { FileText, Eye, Download, Trash2, CheckCircle, XCircle, History, PenTool } from 'lucide-react';
 import { format } from 'date-fns';
+import SignatureStatus from './SignatureStatus';
 
-export default function DocumentCard({ document, userRole, onPreview, onApprove, onReject, onDelete }) {
+export default function DocumentCard({ document, userRole, onPreview, onApprove, onReject, onDelete, onRequestSignature }) {
   const statusColors = {
     pending_review: 'bg-yellow-100 text-yellow-800',
     approved: 'bg-green-100 text-green-800',
     rejected: 'bg-red-100 text-red-800',
-    expired: 'bg-slate-100 text-slate-800'
+    expired: 'bg-slate-100 text-slate-800',
+    awaiting_signatures: 'bg-blue-100 text-blue-800',
+    partially_signed: 'bg-purple-100 text-purple-800',
+    fully_signed: 'bg-emerald-100 text-emerald-800'
   };
 
   const categoryLabels = {
@@ -99,6 +103,12 @@ export default function DocumentCard({ document, userRole, onPreview, onApprove,
                   {document.version_history.length} previous version(s)
                 </div>
               )}
+
+              {document.signature_request && (
+                <div className="mt-3 pt-3 border-t border-slate-200">
+                  <SignatureStatus document={document} />
+                </div>
+              )}
             </div>
           </div>
 
@@ -113,6 +123,11 @@ export default function DocumentCard({ document, userRole, onPreview, onApprove,
             >
               <Download className="w-4 h-4" />
             </Button>
+            {(userRole === 'agent' || userRole === 'admin') && !document.signature_request && document.status !== 'awaiting_signatures' && (
+              <Button size="sm" variant="outline" onClick={onRequestSignature}>
+                <PenTool className="w-4 h-4 text-blue-600" />
+              </Button>
+            )}
             {(userRole === 'agent' || userRole === 'admin') && document.status === 'pending_review' && (
               <>
                 <Button size="sm" variant="outline" onClick={onApprove}>

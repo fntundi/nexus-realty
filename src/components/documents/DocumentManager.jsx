@@ -9,12 +9,14 @@ import { FileText, Upload, Plus, Eye, Download, History, Trash2 } from 'lucide-r
 import DocumentUpload from './DocumentUpload';
 import DocumentCard from './DocumentCard';
 import DocumentPreview from './DocumentPreview';
+import SignatureRequest from './SignatureRequest';
 
 export default function DocumentManager({ transaction, currentUser, userRole }) {
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [selectedStage, setSelectedStage] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [previewDocument, setPreviewDocument] = useState(null);
+  const [signatureDocument, setSignatureDocument] = useState(null);
 
   const queryClient = useQueryClient();
 
@@ -186,6 +188,7 @@ export default function DocumentManager({ transaction, currentUser, userRole }) 
               onApprove={() => handleApprove(doc.id)}
               onReject={() => handleReject(doc.id)}
               onDelete={() => deleteDocumentMutation.mutate(doc.id)}
+              onRequestSignature={() => setSignatureDocument(doc)}
             />
           ))}
         </div>
@@ -210,6 +213,17 @@ export default function DocumentManager({ transaction, currentUser, userRole }) 
           setUploadDialogOpen(true);
         }}
       />
+
+      {/* Signature Request Dialog */}
+      {signatureDocument && (
+        <SignatureRequest
+          document={signatureDocument}
+          open={!!signatureDocument}
+          onOpenChange={(open) => !open && setSignatureDocument(null)}
+          transaction={transaction}
+          currentUser={currentUser}
+        />
+      )}
     </div>
   );
 }
