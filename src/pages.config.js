@@ -76,6 +76,7 @@ import TeamDeals from './pages/TeamDeals';
 import TerritoryManager from './pages/TerritoryManager';
 import CRMIntegrations from './pages/CRMIntegrations';
 import WorkflowAnalytics from './pages/WorkflowAnalytics';
+import PersonalizationAndSync from './pages/PersonalizationAndSync';
 
 
 export const PAGES = {
@@ -108,6 +109,7 @@ export const PAGES = {
     "TerritoryManager": TerritoryManager,
     "CRMIntegrations": CRMIntegrations,
     "WorkflowAnalytics": WorkflowAnalytics,
+    "PersonalizationAndSync": PersonalizationAndSync,
 }
 
 export const pagesConfig = {
