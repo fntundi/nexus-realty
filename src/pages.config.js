@@ -68,6 +68,7 @@ import TeamDeals from './pages/TeamDeals';
 import AgentPerformanceReport from './pages/AgentPerformanceReport';
 import Contacts from './pages/Contacts';
 import ContactDetails from './pages/ContactDetails';
+import LeadScoringRules from './pages/LeadScoringRules';
 
 
 export const PAGES = {
@@ -92,6 +93,7 @@ export const PAGES = {
     "AgentPerformanceReport": AgentPerformanceReport,
     "Contacts": Contacts,
     "ContactDetails": ContactDetails,
+    "LeadScoringRules": LeadScoringRules,
 }
 
 export const pagesConfig = {
