@@ -8,11 +8,33 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 
 export default function BuilderDashboard() {
+  // All hooks must be called at the top, before any conditionals
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: () => base44.auth.me()
   });
 
+  const { data: leads = [], isLoading: leadsLoading } = useQuery({
+    queryKey: ['leads'],
+    queryFn: () => base44.entities.Lead.list('-created_date')
+  });
+
+  const { data: agents = [] } = useQuery({
+    queryKey: ['agents'],
+    queryFn: () => base44.entities.Agent.list()
+  });
+
+  const { data: transactions = [] } = useQuery({
+    queryKey: ['transactions'],
+    queryFn: () => base44.entities.Transaction.list()
+  });
+
+  const { data: markets = [] } = useQuery({
+    queryKey: ['markets'],
+    queryFn: () => base44.entities.Market.list()
+  });
+
+  // Now check conditions after all hooks are called
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -35,26 +57,6 @@ export default function BuilderDashboard() {
       </div>
     );
   }
-
-  const { data: leads = [], isLoading: leadsLoading } = useQuery({
-    queryKey: ['leads'],
-    queryFn: () => base44.entities.Lead.list('-created_date')
-  });
-
-  const { data: agents = [] } = useQuery({
-    queryKey: ['agents'],
-    queryFn: () => base44.entities.Agent.list()
-  });
-
-  const { data: transactions = [] } = useQuery({
-    queryKey: ['transactions'],
-    queryFn: () => base44.entities.Transaction.list()
-  });
-
-  const { data: markets = [] } = useQuery({
-    queryKey: ['markets'],
-    queryFn: () => base44.entities.Market.list()
-  });
 
   const stats = {
     totalLeads: leads.length,
