@@ -48,10 +48,12 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import AgentAnalytics from './pages/AgentAnalytics';
+import AgentDashboard from './pages/AgentDashboard';
 import AgentPerformanceReport from './pages/AgentPerformanceReport';
 import AgentTransactions from './pages/AgentTransactions';
 import AlertSettings from './pages/AlertSettings';
 import AssignmentConfig from './pages/AssignmentConfig';
+import BuilderDashboard from './pages/BuilderDashboard';
 import BuyerPortal from './pages/BuyerPortal';
 import CRMIntegrations from './pages/CRMIntegrations';
 import CRMReportingDashboard from './pages/CRMReportingDashboard';
@@ -60,6 +62,7 @@ import CalendarSettings from './pages/CalendarSettings';
 import ContactDetails from './pages/ContactDetails';
 import ContactSegments from './pages/ContactSegments';
 import Contacts from './pages/Contacts';
+import DeveloperProjectShowcase from './pages/DeveloperProjectShowcase';
 import DocuSignSettings from './pages/DocuSignSettings';
 import EmailAutomation from './pages/EmailAutomation';
 import Home from './pages/Home';
@@ -68,6 +71,8 @@ import LeadScoringRules from './pages/LeadScoringRules';
 import LenderPortal from './pages/LenderPortal';
 import MilestoneConfig from './pages/MilestoneConfig';
 import NurtureWorkflows from './pages/NurtureWorkflows';
+import PersonalizationAndSync from './pages/PersonalizationAndSync';
+import ProjectDetails from './pages/ProjectDetails';
 import PropertySearch from './pages/PropertySearch';
 import ReminderSettings from './pages/ReminderSettings';
 import Reminders from './pages/Reminders';
@@ -76,20 +81,17 @@ import TaskTemplates from './pages/TaskTemplates';
 import TeamDeals from './pages/TeamDeals';
 import TerritoryManager from './pages/TerritoryManager';
 import WorkflowAnalytics from './pages/WorkflowAnalytics';
-import PersonalizationAndSync from './pages/PersonalizationAndSync';
-import BuilderDashboard from './pages/BuilderDashboard';
-import AgentDashboard from './pages/AgentDashboard';
-import DeveloperProjectShowcase from './pages/DeveloperProjectShowcase';
-import ProjectDetails from './pages/ProjectDetails';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AgentAnalytics": AgentAnalytics,
+    "AgentDashboard": AgentDashboard,
     "AgentPerformanceReport": AgentPerformanceReport,
     "AgentTransactions": AgentTransactions,
     "AlertSettings": AlertSettings,
     "AssignmentConfig": AssignmentConfig,
+    "BuilderDashboard": BuilderDashboard,
     "BuyerPortal": BuyerPortal,
     "CRMIntegrations": CRMIntegrations,
     "CRMReportingDashboard": CRMReportingDashboard,
@@ -98,6 +100,7 @@ export const PAGES = {
     "ContactDetails": ContactDetails,
     "ContactSegments": ContactSegments,
     "Contacts": Contacts,
+    "DeveloperProjectShowcase": DeveloperProjectShowcase,
     "DocuSignSettings": DocuSignSettings,
     "EmailAutomation": EmailAutomation,
     "Home": Home,
@@ -106,6 +109,8 @@ export const PAGES = {
     "LenderPortal": LenderPortal,
     "MilestoneConfig": MilestoneConfig,
     "NurtureWorkflows": NurtureWorkflows,
+    "PersonalizationAndSync": PersonalizationAndSync,
+    "ProjectDetails": ProjectDetails,
     "PropertySearch": PropertySearch,
     "ReminderSettings": ReminderSettings,
     "Reminders": Reminders,
@@ -114,11 +119,6 @@ export const PAGES = {
     "TeamDeals": TeamDeals,
     "TerritoryManager": TerritoryManager,
     "WorkflowAnalytics": WorkflowAnalytics,
-    "PersonalizationAndSync": PersonalizationAndSync,
-    "BuilderDashboard": BuilderDashboard,
-    "AgentDashboard": AgentDashboard,
-    "DeveloperProjectShowcase": DeveloperProjectShowcase,
-    "ProjectDetails": ProjectDetails,
 }
 
 export const pagesConfig = {

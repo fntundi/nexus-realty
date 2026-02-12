@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { 
   Users, TrendingUp, Building2, UserCheck,
-  Zap, BarChart3, MapPin, MessageSquare, Calendar, Settings,
+  Zap, BarChart3, Home, MessageSquare, Calendar, Briefcase,
   ArrowRight, DollarSign, FileText, Lock
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -154,18 +154,24 @@ function AudienceTabsHome() {
   return (
     <div className="min-h-screen bg-white">
       {/* Luxury Hero Section */}
-      <div className="relative bg-gradient-to-br from-black via-gray-900 to-black text-white overflow-hidden">
-        {/* Decorative gold accent lines */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600"></div>
-        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600"></div>
+      <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-black text-white overflow-hidden">
+        {/* Premium decorative elements */}
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-yellow-600 to-transparent"></div>
+        <div className="absolute -top-32 -right-32 w-96 h-96 bg-yellow-600 rounded-full blur-3xl opacity-5"></div>
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-yellow-600 rounded-full blur-3xl opacity-5"></div>
         
-        <div className="max-w-6xl mx-auto px-6 py-20 text-center space-y-6">
-          <div className="inline-block px-4 py-2 bg-yellow-600 bg-opacity-20 rounded-full border border-yellow-500 mb-4">
-            <span className="text-yellow-500 text-sm font-semibold">Premium Real Estate Platform</span>
+        <div className="relative max-w-6xl mx-auto px-6 py-24 text-center space-y-8">
+          <div className="inline-block px-5 py-2.5 bg-yellow-600 bg-opacity-15 rounded-full border border-yellow-700 border-opacity-50 backdrop-blur-sm">
+            <span className="text-yellow-400 text-xs font-semibold tracking-widest uppercase">Luxury Real Estate Intelligence</span>
           </div>
-          <h1 className="text-6xl md:text-7xl font-bold tracking-tight">Real Estate OS</h1>
-          <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto font-light">
-            Enterprise-grade platform trusted by premium brokerages. Sophisticated tools for modern real estate professionals.
+          <div>
+            <h1 className="text-7xl md:text-8xl font-bold tracking-tight mb-2">
+              <span className="bg-gradient-to-r from-yellow-200 via-white to-yellow-100 bg-clip-text text-transparent">Nexus</span>
+            </h1>
+            <p className="text-gray-400 text-lg md:text-xl font-light tracking-wide">REALESTATE</p>
+          </div>
+          <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+            Where agents close deals, developers build communities, and lenders streamline capital. A sophisticated ecosystem for the modern real estate industry.
           </p>
         </div>
       </div>
@@ -175,31 +181,31 @@ function AudienceTabsHome() {
         <Tabs defaultValue="agent" className="w-full">
           <TabsList className="grid w-full grid-cols-5 mb-12 bg-gray-50 border-b-2 border-gray-200 p-1 rounded-none">
             <TabsTrigger value="agent" className="flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              <span className="hidden sm:inline">Agent</span>
+              <Briefcase className="w-4 h-4" />
+              <span className="hidden sm:inline">Agents</span>
             </TabsTrigger>
             <TabsTrigger value="buyer" className="flex items-center gap-2">
-              <MapPin className="w-4 h-4" />
-              <span className="hidden sm:inline">Buyer</span>
+              <Home className="w-4 h-4" />
+              <span className="hidden sm:inline">Homeowners</span>
             </TabsTrigger>
             <TabsTrigger value="lender" className="flex items-center gap-2">
               <DollarSign className="w-4 h-4" />
-              <span className="hidden sm:inline">Lender</span>
+              <span className="hidden sm:inline">Lenders</span>
             </TabsTrigger>
             <TabsTrigger value="developer" className="flex items-center gap-2">
-              <Settings className="w-4 h-4" />
-              <span className="hidden sm:inline">Developer</span>
+              <TrendingUp className="w-4 h-4" />
+              <span className="hidden sm:inline">Developers</span>
             </TabsTrigger>
             <TabsTrigger value="builder" className="flex items-center gap-2">
               <Building2 className="w-4 h-4" />
-              <span className="hidden sm:inline">Builder</span>
+              <span className="hidden sm:inline">Builders</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Agent Tab */}
           <TabsContent value="agent" className="space-y-8 pt-8">
             <div className="space-y-4 border-b-2 border-gray-200 pb-8">
-              <h2 className="text-4xl font-bold text-black">For Agents</h2>
+              <h2 className="text-4xl font-bold text-black">For Real Estate Agents</h2>
               <p className="text-lg text-gray-700">Manage your pipeline efficiently. Close more deals with less friction.</p>
             </div>
 
@@ -241,7 +247,7 @@ function AudienceTabsHome() {
           {/* Lender Tab */}
           <TabsContent value="lender" className="space-y-8 pt-8">
             <div className="space-y-4 border-b-2 border-gray-200 pb-8">
-              <h2 className="text-4xl font-bold text-black">For Lenders</h2>
+              <h2 className="text-4xl font-bold text-black">For Mortgage Lenders</h2>
               <p className="text-lg text-gray-700">Manage loan portfolios and streamline the lending process</p>
             </div>
 
@@ -280,10 +286,10 @@ function AudienceTabsHome() {
             </div>
           </TabsContent>
 
-          {/* Buyer Tab */}
+          {/* Homeowners Tab */}
           <TabsContent value="buyer" className="space-y-8 pt-8">
             <div className="space-y-4 border-b-2 border-gray-200 pb-8">
-              <h2 className="text-4xl font-bold text-black">For Buyers</h2>
+              <h2 className="text-4xl font-bold text-black">For Homeowners</h2>
               <p className="text-lg text-gray-700">Find your dream property with personalized recommendations and expert guidance</p>
             </div>
 
@@ -311,10 +317,10 @@ function AudienceTabsHome() {
             </div>
           </TabsContent>
 
-          {/* Developer Tab */}
+          {/* Developers Tab */}
           <TabsContent value="developer" className="space-y-8 pt-8">
             <div className="space-y-4 border-b-2 border-gray-200 pb-8">
-              <h2 className="text-4xl font-bold text-black">For Real Estate Developers</h2>
+              <h2 className="text-4xl font-bold text-black">For Land Developers</h2>
               <p className="text-lg text-gray-700">Manage land portfolios, development projects, and buyer inquiries</p>
             </div>
 
@@ -342,10 +348,10 @@ function AudienceTabsHome() {
             </div>
           </TabsContent>
 
-          {/* Builder Tab */}
+          {/* Builders Tab */}
           <TabsContent value="builder" className="space-y-8 pt-8">
             <div className="space-y-4 border-b-2 border-gray-200 pb-8">
-              <h2 className="text-4xl font-bold text-black">For Builders & Teams</h2>
+              <h2 className="text-4xl font-bold text-black">For Builders & Brokerages</h2>
               <p className="text-lg text-gray-700">Manage agents, properties, and deals. Build your brokerage from one platform.</p>
             </div>
 
