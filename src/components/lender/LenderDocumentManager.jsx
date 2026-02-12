@@ -68,7 +68,57 @@ export default function LenderDocumentManager({ transaction, documents = [], len
     uploadDocMutation.mutate(file);
   };
 
-  const loanDocs = documents.filter(d => d.category === 'loan' || d.document_type === 'loan_document');
+  const verifyDocsMutation = useMutation({
+    mutationFn: async ({ docIds, newStatus }) => {
+      const updates = docIds.map(id => 
+        base44.entities.Document.update(id, { 
+          status: newStatus,
+          verification_status: newStatus === 'approved' ? 'verified' : 'rejected'
+        })
+      );
+      return Promise.all(updates);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['all-lender-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['lender-documents'] });
+      setSelectedDocs(new Set());
+      toast.success('Documents updated successfully');
+    },
+    onError: () => {
+      toast.error('Failed to update documents');
+    }
+  });
+
+  // Use all docs or filtered docs based on context
+  const displayDocs = allTransactions.length > 0 ? allDocs : documents;
+  const loanDocs = displayDocs.filter(d => d.category === 'loan' || d.document_type === 'loan_document');
+  
+  // Filter by search and status
+  const filteredDocs = loanDocs.filter(doc => {
+    const matchesSearch = !searchTerm || 
+      doc.file_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.document_type?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = filterStatus === 'all' || doc.status === filterStatus;
+    return matchesSearch && matchesStatus;
+  });
+
+  const handleSelectDoc = (docId) => {
+    const newSelected = new Set(selectedDocs);
+    if (newSelected.has(docId)) {
+      newSelected.delete(docId);
+    } else {
+      newSelected.add(docId);
+    }
+    setSelectedDocs(newSelected);
+  };
+
+  const handleSelectAll = () => {
+    if (selectedDocs.size === filteredDocs.length && filteredDocs.length > 0) {
+      setSelectedDocs(new Set());
+    } else {
+      setSelectedDocs(new Set(filteredDocs.map(d => d.id)));
+    }
+  };
 
   const getStatusIcon = (status) => {
     switch (status) {
