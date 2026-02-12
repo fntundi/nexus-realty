@@ -57,6 +57,7 @@ import LenderPortal from './pages/LenderPortal';
 import MilestoneConfig from './pages/MilestoneConfig';
 import TerritoryManager from './pages/TerritoryManager';
 import TaskTemplates from './pages/TaskTemplates';
+import PropertySearch from './pages/PropertySearch';
 
 
 export const PAGES = {
@@ -70,6 +71,7 @@ export const PAGES = {
     "MilestoneConfig": MilestoneConfig,
     "TerritoryManager": TerritoryManager,
     "TaskTemplates": TaskTemplates,
+    "PropertySearch": PropertySearch,
 }
 
 export const pagesConfig = {
