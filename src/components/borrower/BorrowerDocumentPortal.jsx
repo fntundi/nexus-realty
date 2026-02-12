@@ -47,9 +47,13 @@ export default function BorrowerDocumentPortal({ transactionId }) {
         file_url,
         file_name: file.name,
         file_size: file.size,
-        status: 'received',
+        status: 'pending_review',
         uploaded_by_email: (await base44.auth.me()).email,
-        uploaded_at: new Date().toISOString()
+        uploaded_at: new Date().toISOString(),
+        borrower_notes: documentNotes[file.name] || null,
+        verification_status: 'pending',
+        verified_at: null,
+        verification_notes: null
       });
 
       return doc;
@@ -58,6 +62,7 @@ export default function BorrowerDocumentPortal({ transactionId }) {
       queryClient.invalidateQueries({ queryKey: ['uploaded-documents', transactionId] });
       queryClient.invalidateQueries({ queryKey: ['required-documents', transactionId] });
       setSelectedFiles([]);
+      setDocumentNotes({});
       setUploadingFile(null);
     },
     onError: (error) => {
