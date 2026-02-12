@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import WorkflowCard from '../components/analytics/WorkflowCard';
-import ABTestPerformanceChart from '../components/analytics/ABTestPerformanceChart';
-import WorkflowMetricsChart from '../components/analytics/WorkflowMetricsChart';
+import WorkflowCard from '@/components/analytics/WorkflowCard';
+import ABTestPerformanceChart from '@/components/analytics/ABTestPerformanceChart';
+import WorkflowMetricsChart from '@/components/analytics/WorkflowMetricsChart';
 import { BarChart, TrendingUp, Users, Target } from 'lucide-react';
 
 export default function WorkflowAnalytics() {
