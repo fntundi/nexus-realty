@@ -9,10 +9,29 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { FileText, Upload, Download, CheckCircle2, AlertCircle, Clock, Search } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function LenderDocumentManager({ transaction, documents = [], lenderEmail }) {
+export default function LenderDocumentManager({ transaction, documents = [], lenderEmail, allTransactions = [] }) {
   const [uploading, setUploading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedDocs, setSelectedDocs] = useState(new Set());
+  const [filterStatus, setFilterStatus] = useState('all');
   const fileInputRef = useRef(null);
   const queryClient = useQueryClient();
+
+  // Fetch all documents if viewing across transactions
+  const { data: allDocs = [] } = useQuery({
+    queryKey: ['all-lender-documents'],
+    queryFn: async () => {
+      if (!allTransactions.length) return documents;
+      const txnIds = allTransactions.map(t => t.id);
+      const allDocuments = [];
+      for (const txnId of txnIds) {
+        const docs = await base44.entities.Document.filter({ transaction_id: txnId });
+        allDocuments.push(...(docs || []));
+      }
+      return allDocuments;
+    },
+    enabled: allTransactions.length > 0
+  });
 
   const uploadDocMutation = useMutation({
     mutationFn: async (file) => {
