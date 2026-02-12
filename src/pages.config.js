@@ -55,6 +55,7 @@ import LenderPortal from './pages/LenderPortal';
 import AssignmentConfig from './pages/AssignmentConfig';
 import TerritoryManager from './pages/TerritoryManager';
 import AgentAnalytics from './pages/AgentAnalytics';
+import MilestoneConfig from './pages/MilestoneConfig';
 
 
 export const PAGES = {
@@ -66,6 +67,7 @@ export const PAGES = {
     "AssignmentConfig": AssignmentConfig,
     "TerritoryManager": TerritoryManager,
     "AgentAnalytics": AgentAnalytics,
+    "MilestoneConfig": MilestoneConfig,
 }
 
 export const pagesConfig = {
