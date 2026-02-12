@@ -9,15 +9,21 @@ import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Search, Home, Bed, Bath, Maximize, MapPin, Heart, Calendar } from 'lucide-react';
 import PropertyCard from '../components/properties/PropertyCard';
+import PropertySearchFilters from '../components/search/PropertySearchFilters';
+import SaveSearchDialog from '../components/search/SaveSearchDialog';
+import SavedSearchesList from '../components/search/SavedSearchesList';
 
 export default function PropertySearch() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMarket, setSelectedMarket] = useState('all');
-  const [propertyType, setPropertyType] = useState('all');
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(2000000);
-  const [bedrooms, setBedrooms] = useState('any');
-  const [bathrooms, setBathrooms] = useState('any');
+  const [filters, setFilters] = useState({
+    price_range: [0, 2000000],
+    bedrooms: [0, 6],
+    bathrooms: [0, 6],
+    property_types: [],
+    amenities: [],
+    location_keyword: ''
+  });
 
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -46,29 +52,42 @@ export default function PropertySearch() {
     // Market filter
     const matchesMarket = selectedMarket === 'all' || property.market_id === selectedMarket;
 
-    // Property type filter
-    const matchesType = propertyType === 'all' || property.property_type === propertyType;
-
     // Price filter
-    const matchesPrice = property.price >= minPrice && property.price <= maxPrice;
+    const matchesPrice = property.price >= filters.price_range[0] && property.price <= filters.price_range[1];
 
     // Bedrooms filter
-    const matchesBedrooms = bedrooms === 'any' || property.bedrooms >= parseInt(bedrooms);
+    const matchesBedrooms = property.bedrooms >= filters.bedrooms[0] && property.bedrooms <= filters.bedrooms[1];
 
     // Bathrooms filter
-    const matchesBathrooms = bathrooms === 'any' || property.bathrooms >= parseInt(bathrooms);
+    const matchesBathrooms = property.bathrooms >= filters.bathrooms[0] && property.bathrooms <= filters.bathrooms[1];
 
-    return matchesSearch && matchesMarket && matchesType && matchesPrice && matchesBedrooms && matchesBathrooms;
+    // Property type filter
+    const matchesType = filters.property_types.length === 0 || filters.property_types.includes(property.property_type);
+
+    // Location filter
+    const matchesLocation = !filters.location_keyword || 
+      property.address?.toLowerCase().includes(filters.location_keyword.toLowerCase()) ||
+      property.city?.toLowerCase().includes(filters.location_keyword.toLowerCase());
+
+    return matchesSearch && matchesMarket && matchesType && matchesPrice && matchesBedrooms && matchesBathrooms && matchesLocation;
   });
 
   const resetFilters = () => {
     setSearchTerm('');
     setSelectedMarket('all');
-    setPropertyType('all');
-    setMinPrice(0);
-    setMaxPrice(2000000);
-    setBedrooms('any');
-    setBathrooms('any');
+    setFilters({
+      price_range: [0, 2000000],
+      bedrooms: [0, 6],
+      bathrooms: [0, 6],
+      property_types: [],
+      amenities: [],
+      location_keyword: ''
+    });
+  };
+
+  const handleLoadSearch = (savedSearch) => {
+    setSelectedMarket(savedSearch.market_id || 'all');
+    setFilters(savedSearch.filters);
   };
 
   return (
@@ -76,10 +95,17 @@ export default function PropertySearch() {
       {/* Search Header */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto p-6">
-          <h1 className="text-3xl font-bold text-slate-900 mb-4">Find Your Dream Home</h1>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-3xl font-bold text-slate-900">Find Your Dream Home</h1>
+            {user && (
+              <div className="flex gap-2">
+                <SaveSearchDialog filters={filters} marketId={selectedMarket} user={user} />
+              </div>
+            )}
+          </div>
           
           {/* Search Bar */}
-          <div className="flex gap-3 mb-4">
+          <div className="flex gap-3">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
               <Input
@@ -92,90 +118,40 @@ export default function PropertySearch() {
             <Button onClick={resetFilters} variant="outline">Clear Filters</Button>
           </div>
 
-          {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
-            <Select value={selectedMarket} onValueChange={setSelectedMarket}>
-              <SelectTrigger>
-                <SelectValue placeholder="Market" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Markets</SelectItem>
-                {markets.map(market => (
-                  <SelectItem key={market.id} value={market.id}>
-                    {market.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={propertyType} onValueChange={setPropertyType}>
-              <SelectTrigger>
-                <SelectValue placeholder="Property Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="single_family">Single Family</SelectItem>
-                <SelectItem value="condo">Condo</SelectItem>
-                <SelectItem value="townhouse">Townhouse</SelectItem>
-                <SelectItem value="multi_family">Multi Family</SelectItem>
-                <SelectItem value="land">Land</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={bedrooms} onValueChange={setBedrooms}>
-              <SelectTrigger>
-                <SelectValue placeholder="Bedrooms" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="any">Any Beds</SelectItem>
-                <SelectItem value="1">1+ Beds</SelectItem>
-                <SelectItem value="2">2+ Beds</SelectItem>
-                <SelectItem value="3">3+ Beds</SelectItem>
-                <SelectItem value="4">4+ Beds</SelectItem>
-                <SelectItem value="5">5+ Beds</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={bathrooms} onValueChange={setBathrooms}>
-              <SelectTrigger>
-                <SelectValue placeholder="Bathrooms" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="any">Any Baths</SelectItem>
-                <SelectItem value="1">1+ Baths</SelectItem>
-                <SelectItem value="2">2+ Baths</SelectItem>
-                <SelectItem value="3">3+ Baths</SelectItem>
-                <SelectItem value="4">4+ Baths</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <div className="col-span-2">
-              <div className="text-sm text-slate-600 mb-2">
-                Price Range: ${minPrice.toLocaleString()} - ${maxPrice.toLocaleString()}
-              </div>
-              <Slider
-                value={[minPrice, maxPrice]}
-                min={0}
-                max={2000000}
-                step={50000}
-                onValueChange={([min, max]) => {
-                  setMinPrice(min);
-                  setMaxPrice(max);
-                }}
-                className="w-full"
-              />
-            </div>
+          <div className="text-sm text-slate-600 mt-3">
+            Market: <span className="font-medium">{markets.find(m => m.id === selectedMarket)?.name || 'All Markets'}</span>
           </div>
         </div>
       </div>
 
-      {/* Results */}
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="text-slate-600">
-            {isLoading ? 'Loading...' : `${filteredProperties.length} properties found`}
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+        {/* Sidebar Filters */}
+        <div className="lg:col-span-1">
+          <PropertySearchFilters 
+            filters={filters} 
+            onFiltersChange={setFilters}
+            onSearch={() => {}}
+            isLoading={isLoading}
+          />
+          
+          <div className="mt-6">
+            <SavedSearchesList user={user} onLoadSearch={handleLoadSearch} />
           </div>
         </div>
+
+        {/* Results */}
+        <div className="lg:col-span-3">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-slate-900 mb-1">
+              {isLoading ? 'Loading...' : `${filteredProperties.length} properties found`}
+            </h2>
+            <p className="text-sm text-slate-600">
+              ${filters.price_range[0].toLocaleString()} - ${filters.price_range[1].toLocaleString()} • 
+              {filters.bedrooms[0]}-{filters.bedrooms[1]}+ beds • 
+              {filters.bathrooms[0]}-{filters.bathrooms[1]}+ baths
+            </p>
+          </div>
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
@@ -197,6 +173,7 @@ export default function PropertySearch() {
           </div>
         )}
       </div>
+    </div>
     </div>
   );
 }
