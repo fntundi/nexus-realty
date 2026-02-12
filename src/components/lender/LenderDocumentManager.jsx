@@ -144,79 +144,156 @@ export default function LenderDocumentManager({ transaction, documents = [], len
 
   return (
     <div className="space-y-4">
-      {/* Upload Section */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Upload Loan Documents</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <input
-            ref={fileInputRef}
-            type="file"
-            onChange={handleFileSelect}
-            disabled={uploading}
-            className="hidden"
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
-          />
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="w-full"
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            {uploading ? 'Uploading...' : 'Upload Document'}
-          </Button>
-          <p className="text-xs text-slate-500 mt-2">
-            Appraisals, loan approvals, conditions, disclosures
-          </p>
-        </CardContent>
-      </Card>
+       {/* Upload Section */}
+       <Card>
+         <CardHeader>
+           <CardTitle className="text-base">Upload Loan Documents</CardTitle>
+         </CardHeader>
+         <CardContent>
+           <input
+             ref={fileInputRef}
+             type="file"
+             onChange={handleFileSelect}
+             disabled={uploading}
+             className="hidden"
+             accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+           />
+           <Button
+             onClick={() => fileInputRef.current?.click()}
+             disabled={uploading}
+             className="w-full"
+           >
+             <Upload className="w-4 h-4 mr-2" />
+             {uploading ? 'Uploading...' : 'Upload Document'}
+           </Button>
+           <p className="text-xs text-slate-500 mt-2">
+             Appraisals, loan approvals, conditions, disclosures
+           </p>
+         </CardContent>
+       </Card>
 
-      {/* Documents List */}
-      {loanDocs.length === 0 ? (
-        <Card>
-          <CardContent className="py-8 text-center text-slate-500">
-            <FileText className="w-8 h-8 mx-auto mb-2 text-slate-300" />
-            <p>No loan documents uploaded yet</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-2">
-          {loanDocs.map(doc => (
-            <Card key={doc.id}>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <FileText className="w-5 h-5 text-slate-400 flex-shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-slate-900 truncate">{doc.file_name}</p>
-                      <div className="flex items-center gap-2 text-xs text-slate-500 mt-1">
-                        <span>{doc.document_type.replace(/_/g, ' ')}</span>
-                        <span>•</span>
-                        <span>{doc.stage?.replace(/_/g, ' ')}</span>
-                      </div>
-                    </div>
-                  </div>
+       {/* Search and Filter Section */}
+       {loanDocs.length > 0 && (
+         <Card>
+           <CardContent className="p-4 space-y-3">
+             <div className="flex gap-2">
+               <div className="flex-1 relative">
+                 <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-slate-400" />
+                 <Input
+                   placeholder="Search documents..."
+                   value={searchTerm}
+                   onChange={(e) => setSearchTerm(e.target.value)}
+                   className="pl-8"
+                 />
+               </div>
+               <select
+                 value={filterStatus}
+                 onChange={(e) => setFilterStatus(e.target.value)}
+                 className="px-3 py-2 border border-slate-200 rounded-md text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+               >
+                 <option value="all">All Status</option>
+                 <option value="pending_review">Pending</option>
+                 <option value="approved">Approved</option>
+                 <option value="rejected">Rejected</option>
+               </select>
+             </div>
 
-                  <div className="flex items-center gap-3">
-                    <Badge className={getStatusColor(doc.status)}>
-                      {getStatusIcon(doc.status)}
-                      <span className="ml-1 text-xs">{doc.status.replace(/_/g, ' ')}</span>
-                    </Badge>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => window.open(doc.file_url, '_blank')}
-                    >
-                      <Download className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+             {/* Bulk Actions */}
+             {filteredDocs.length > 0 && (
+               <div className="flex items-center justify-between pt-2 border-t border-slate-200">
+                 <label className="flex items-center gap-2 cursor-pointer">
+                   <Checkbox
+                     checked={selectedDocs.size === filteredDocs.length && filteredDocs.length > 0}
+                     onCheckedChange={handleSelectAll}
+                   />
+                   <span className="text-sm text-slate-600">
+                     {selectedDocs.size === 0 ? 'Select All' : `${selectedDocs.size} selected`}
+                   </span>
+                 </label>
+
+                 {selectedDocs.size > 0 && (
+                   <div className="flex gap-2">
+                     <Button
+                       size="sm"
+                       className="bg-green-600 hover:bg-green-700"
+                       onClick={() => verifyDocsMutation.mutate({ 
+                         docIds: Array.from(selectedDocs), 
+                         newStatus: 'approved' 
+                       })}
+                       disabled={verifyDocsMutation.isPending}
+                     >
+                       <CheckCircle2 className="w-3 h-3 mr-1" />
+                       Approve Selected
+                     </Button>
+                     <Button
+                       size="sm"
+                       variant="destructive"
+                       onClick={() => verifyDocsMutation.mutate({ 
+                         docIds: Array.from(selectedDocs), 
+                         newStatus: 'rejected' 
+                       })}
+                       disabled={verifyDocsMutation.isPending}
+                     >
+                       <AlertCircle className="w-3 h-3 mr-1" />
+                       Reject Selected
+                     </Button>
+                   </div>
+                 )}
+               </div>
+             )}
+           </CardContent>
+         </Card>
+       )}
+
+       {/* Documents List */}
+       {filteredDocs.length === 0 ? (
+         <Card>
+           <CardContent className="py-8 text-center text-slate-500">
+             <FileText className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+             <p>{loanDocs.length === 0 ? 'No loan documents uploaded yet' : 'No documents match your search'}</p>
+           </CardContent>
+         </Card>
+       ) : (
+         <div className="space-y-2">
+           {filteredDocs.map(doc => (
+             <Card key={doc.id}>
+               <CardContent className="p-4">
+                 <div className="flex items-center justify-between gap-4">
+                   <div className="flex items-center gap-3 flex-1 min-w-0">
+                     <Checkbox
+                       checked={selectedDocs.has(doc.id)}
+                       onCheckedChange={() => handleSelectDoc(doc.id)}
+                     />
+                     <FileText className="w-5 h-5 text-slate-400 flex-shrink-0" />
+                     <div className="min-w-0 flex-1">
+                       <p className="font-medium text-slate-900 truncate">{doc.file_name}</p>
+                       <div className="flex items-center gap-2 text-xs text-slate-500 mt-1">
+                         <span>{doc.document_type.replace(/_/g, ' ')}</span>
+                         <span>•</span>
+                         <span>{doc.stage?.replace(/_/g, ' ')}</span>
+                       </div>
+                     </div>
+                   </div>
+
+                   <div className="flex items-center gap-3">
+                     <Badge className={getStatusColor(doc.status)}>
+                       {getStatusIcon(doc.status)}
+                       <span className="ml-1 text-xs">{doc.status.replace(/_/g, ' ')}</span>
+                     </Badge>
+                     <Button
+                       size="sm"
+                       variant="ghost"
+                       onClick={() => window.open(doc.file_url, '_blank')}
+                     >
+                       <Download className="w-4 h-4" />
+                     </Button>
+                   </div>
+                 </div>
+               </CardContent>
+             </Card>
+           ))}
+         </div>
+       )}
     </div>
   );
-}
+  }
