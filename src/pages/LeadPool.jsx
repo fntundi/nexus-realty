@@ -200,37 +200,45 @@ export default function LeadPool() {
                       </div>
                     </div>
                     <div className="flex gap-2">
-                      {lead.status === 'unassigned' && (
-                        <Button
-                          size="sm"
-                          onClick={() => autoAssignMutation.mutate(lead.id)}
-                          disabled={autoAssignMutation.isPending}
-                        >
-                          <Zap className="w-4 h-4 mr-2" />
-                          Auto-Assign
-                        </Button>
-                      )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          setSelectedLead(lead);
-                          setAssignDialogOpen(true);
-                        }}
-                      >
-                        {lead.status === 'unassigned' ? (
-                          <>
-                            <UserPlus className="w-4 h-4 mr-2" />
-                            Manual
-                          </>
-                        ) : (
-                          <>
-                            <ArrowRight className="w-4 h-4 mr-2" />
-                            Reassign
-                          </>
-                        )}
-                      </Button>
-                    </div>
+                       {lead.status === 'unassigned' && (
+                         <Button
+                           size="sm"
+                           onClick={() => autoAssignMutation.mutate(lead.id)}
+                           disabled={autoAssignMutation.isPending}
+                         >
+                           <Zap className="w-4 h-4 mr-2" />
+                           Auto-Assign
+                         </Button>
+                       )}
+                       <Button
+                         size="sm"
+                         variant="outline"
+                         onClick={() => setTimingLeadId(lead.id)}
+                       >
+                         <Clock className="w-4 h-4 mr-2" />
+                         Timing
+                       </Button>
+                       <Button
+                         size="sm"
+                         variant="outline"
+                         onClick={() => {
+                           setSelectedLead(lead);
+                           setAssignDialogOpen(true);
+                         }}
+                       >
+                         {lead.status === 'unassigned' ? (
+                           <>
+                             <UserPlus className="w-4 h-4 mr-2" />
+                             Manual
+                           </>
+                         ) : (
+                           <>
+                             <ArrowRight className="w-4 h-4 mr-2" />
+                             Reassign
+                           </>
+                         )}
+                       </Button>
+                     </div>
                   </div>
                 ))}
               </div>
