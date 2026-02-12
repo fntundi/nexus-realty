@@ -60,6 +60,7 @@ import TaskTemplates from './pages/TaskTemplates';
 import PropertySearch from './pages/PropertySearch';
 import DocuSignSettings from './pages/DocuSignSettings';
 import CalendarSettings from './pages/CalendarSettings';
+import Reports from './pages/Reports';
 
 
 export const PAGES = {
@@ -76,6 +77,7 @@ export const PAGES = {
     "PropertySearch": PropertySearch,
     "DocuSignSettings": DocuSignSettings,
     "CalendarSettings": CalendarSettings,
+    "Reports": Reports,
 }
 
 export const pagesConfig = {
