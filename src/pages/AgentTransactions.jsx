@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Briefcase, MessageSquare, FileText, CheckCircle2, ListChecks, Calendar, RefreshCw } from 'lucide-react';
+import { Briefcase, MessageSquare, FileText, CheckCircle2, ListChecks, Calendar, RefreshCw, Users } from 'lucide-react';
 import MessageThread from '../components/messaging/MessageThread';
 import TaskManager from '../components/tasks/TaskManager';
 import ShowingScheduler from '../components/showings/ShowingScheduler';
@@ -17,6 +17,8 @@ import AIInsights from '../components/agent/AIInsights';
 import AgentMessaging from '../components/collaboration/AgentMessaging';
 import SharedDocuments from '../components/collaboration/SharedDocuments';
 import TeamTaskAssignment from '../components/collaboration/TeamTaskAssignment';
+import ClientInvite from '../components/client/ClientInvite';
+import ClientPortalAccess from '../components/client/ClientPortalAccess';
 
 export default function AgentTransactions() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -224,6 +226,10 @@ export default function AgentTransactions() {
                     <MessageSquare className="w-4 h-4 mr-2" />
                     Team
                   </TabsTrigger>
+                  <TabsTrigger value="clients">
+                    <Users className="w-4 h-4 mr-2" />
+                    Clients
+                  </TabsTrigger>
                   <TabsTrigger value="showings">
                     <Calendar className="w-4 h-4 mr-2" />
                     Showings
@@ -252,6 +258,10 @@ export default function AgentTransactions() {
                     <TeamTaskAssignment transactionId={selectedTransaction.id} userEmail={user.email} />
                     <SharedDocuments transactionId={selectedTransaction.id} userEmail={user.email} />
                   </div>
+                </TabsContent>
+                <TabsContent value="clients" className="overflow-y-auto h-full space-y-4">
+                  <ClientInvite transactionId={selectedTransaction.id} agentEmail={user.email} />
+                  <ClientPortalAccess transactionId={selectedTransaction.id} />
                 </TabsContent>
                 <TabsContent value="showings" className="overflow-y-auto h-full">
                   <ShowingScheduler
