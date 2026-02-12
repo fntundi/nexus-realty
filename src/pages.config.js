@@ -53,6 +53,7 @@ import AgentTransactions from './pages/AgentTransactions';
 import BuyerPortal from './pages/BuyerPortal';
 import LenderPortal from './pages/LenderPortal';
 import AssignmentConfig from './pages/AssignmentConfig';
+import TerritoryManager from './pages/TerritoryManager';
 
 
 export const PAGES = {
@@ -62,6 +63,7 @@ export const PAGES = {
     "BuyerPortal": BuyerPortal,
     "LenderPortal": LenderPortal,
     "AssignmentConfig": AssignmentConfig,
+    "TerritoryManager": TerritoryManager,
 }
 
 export const pagesConfig = {

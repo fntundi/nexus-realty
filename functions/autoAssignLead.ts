@@ -59,9 +59,47 @@ Deno.serve(async (req) => {
     const scoredAgents = agents.map(agent => {
       let score = 0;
 
-      // 1. Territory Match Score (0-1)
+      // 1. Territory Match Score (0-1) - Enhanced with granular matching
       let territoryScore = 0;
-      if (agent.territories && agent.territories.length > 0 && lead.preferred_areas) {
+      
+      // Check new territory_definitions first
+      if (agent.territory_definitions && agent.territory_definitions.length > 0) {
+        if (lead.preferred_areas && lead.preferred_areas.length > 0) {
+          // Try to match against detailed territories
+          const matches = agent.territory_definitions.filter(td => {
+            return lead.preferred_areas.some(pa => {
+              const paLower = pa.toLowerCase();
+              const nameLower = td.name.toLowerCase();
+              const valueLower = td.value.toLowerCase();
+              
+              // Direct match on name or value
+              if (nameLower.includes(paLower) || valueLower.includes(paLower) ||
+                  paLower.includes(nameLower) || paLower.includes(valueLower)) {
+                return true;
+              }
+              
+              // For zip codes, exact match
+              if (td.type === 'zip_code' && td.value === pa) {
+                return true;
+              }
+              
+              return false;
+            });
+          });
+          
+          if (matches.length > 0) {
+            // Perfect match - highly specific territory alignment
+            territoryScore = 1.0;
+          } else {
+            // Has territories but no match
+            territoryScore = 0.2;
+          }
+        } else {
+          // Agent has territories, lead doesn't specify - medium score
+          territoryScore = 0.5;
+        }
+      } else if (agent.territories && agent.territories.length > 0 && lead.preferred_areas) {
+        // Legacy territory matching (backwards compatibility)
         const matchingTerritories = agent.territories.filter(t => 
           lead.preferred_areas.some(pa => pa.includes(t) || t.includes(pa))
         );
