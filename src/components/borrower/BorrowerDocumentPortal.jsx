@@ -52,20 +52,21 @@ export default function BorrowerDocumentPortal({ transactionId }) {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
 
       // Create document record
-      const doc = await base44.entities.Document.create({
-        transaction_id: transactionId,
-        document_type: file.type || 'Supporting Document',
-        file_url,
-        file_name: file.name,
-        file_size: file.size,
-        status: 'pending_review',
-        uploaded_by_email: (await base44.auth.me()).email,
-        uploaded_at: new Date().toISOString(),
-        borrower_notes: documentNotes[file.name] || null,
-        verification_status: 'pending',
-        verified_at: null,
-        verification_notes: null
-      });
+       const doc = await base44.entities.Document.create({
+         transaction_id: transactionId,
+         document_type: file.type || 'Supporting Document',
+         category: documentCategories[file.name] || 'other',
+         file_url,
+         file_name: file.name,
+         file_size: file.size,
+         status: 'pending_review',
+         uploaded_by_email: (await base44.auth.me()).email,
+         uploaded_at: new Date().toISOString(),
+         borrower_notes: documentNotes[file.name] || null,
+         verification_status: 'pending',
+         verified_at: null,
+         verification_notes: null
+       });
 
       return doc;
     },
