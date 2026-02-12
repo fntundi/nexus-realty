@@ -225,6 +225,39 @@ export default function ContactDetails() {
           <TabsContent value="activity">
             <ContactActivityFeed interactions={interactions} />
           </TabsContent>
+          <TabsContent value="tasks" className="space-y-4">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="bg-blue-600 hover:bg-blue-700">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Schedule Task
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-96 overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Schedule Task for {contact.first_name}</DialogTitle>
+                </DialogHeader>
+                <ScheduleTaskDialog
+                  contactId={contact.id}
+                  contactEmail={contact.email}
+                  onSuccess={() => refetchContact()}
+                />
+              </DialogContent>
+            </Dialog>
+            {upcomingTasks.length > 0 ? (
+              <div className="space-y-4">
+                {upcomingTasks.map(task => (
+                  <TaskCard key={task.id} task={task} />
+                ))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="py-12 text-center text-slate-600">
+                  No upcoming tasks scheduled for this contact
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
           <TabsContent value="emails">
             <ContactEmailHistory contactEmail={contact.email} />
           </TabsContent>
