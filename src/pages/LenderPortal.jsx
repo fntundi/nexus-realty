@@ -6,10 +6,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { DollarSign, MessageSquare, FileText, TrendingUp, ListChecks } from 'lucide-react';
+import { DollarSign, MessageSquare, FileText, TrendingUp, ListChecks, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import MessageThread from '../components/messaging/MessageThread';
 import TaskManager from '../components/tasks/TaskManager';
+import ShowingScheduler from '../components/showings/ShowingScheduler';
 
 export default function LenderPortal() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -199,6 +200,10 @@ export default function LenderPortal() {
                     <ListChecks className="w-4 h-4 mr-2" />
                     Tasks
                   </TabsTrigger>
+                  <TabsTrigger value="showings">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Showings
+                  </TabsTrigger>
                 </TabsList>
                 <TabsContent value="messages" className="h-full">
                   <MessageThread
@@ -208,6 +213,13 @@ export default function LenderPortal() {
                 </TabsContent>
                 <TabsContent value="tasks" className="overflow-y-auto h-full">
                   <TaskManager
+                    transaction={selectedTransaction}
+                    currentUser={user}
+                    userRole="lender"
+                  />
+                </TabsContent>
+                <TabsContent value="showings" className="overflow-y-auto h-full">
+                  <ShowingScheduler
                     transaction={selectedTransaction}
                     currentUser={user}
                     userRole="lender"

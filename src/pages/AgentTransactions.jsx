@@ -164,6 +164,10 @@ export default function AgentTransactions() {
                     <ListChecks className="w-4 h-4 mr-2" />
                     Tasks
                   </TabsTrigger>
+                  <TabsTrigger value="showings">
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Showings
+                  </TabsTrigger>
                 </TabsList>
                 <TabsContent value="messages" className="h-full">
                   <MessageThread
@@ -173,6 +177,13 @@ export default function AgentTransactions() {
                 </TabsContent>
                 <TabsContent value="tasks" className="overflow-y-auto h-full">
                   <TaskManager
+                    transaction={selectedTransaction}
+                    currentUser={user}
+                    userRole="agent"
+                  />
+                </TabsContent>
+                <TabsContent value="showings" className="overflow-y-auto h-full">
+                  <ShowingScheduler
                     transaction={selectedTransaction}
                     currentUser={user}
                     userRole="agent"
