@@ -217,6 +217,7 @@ export default function ContactDetails() {
         <Tabs defaultValue="activity" className="w-full">
           <TabsList>
             <TabsTrigger value="activity">Activity Feed ({interactions.length})</TabsTrigger>
+            <TabsTrigger value="tasks">Tasks ({upcomingTasks.length})</TabsTrigger>
             <TabsTrigger value="emails">Email Campaigns</TabsTrigger>
             <TabsTrigger value="segments">Segment Membership</TabsTrigger>
             <TabsTrigger value="related">Related Records</TabsTrigger>
