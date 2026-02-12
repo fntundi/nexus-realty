@@ -52,6 +52,7 @@ import LeadPool from './pages/LeadPool';
 import AgentTransactions from './pages/AgentTransactions';
 import BuyerPortal from './pages/BuyerPortal';
 import LenderPortal from './pages/LenderPortal';
+import AssignmentConfig from './pages/AssignmentConfig';
 
 
 export const PAGES = {
@@ -60,6 +61,7 @@ export const PAGES = {
     "AgentTransactions": AgentTransactions,
     "BuyerPortal": BuyerPortal,
     "LenderPortal": LenderPortal,
+    "AssignmentConfig": AssignmentConfig,
 }
 
 export const pagesConfig = {

@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { Users, Search, Filter, UserPlus, ArrowRight } from 'lucide-react';
+import { Users, Search, Filter, UserPlus, ArrowRight, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function LeadPool() {
@@ -60,6 +60,21 @@ export default function LeadPool() {
       setSelectedLead(null);
       setSelectedAgent('');
       toast.success('Lead assigned successfully');
+    }
+  });
+
+  const autoAssignMutation = useMutation({
+    mutationFn: async (leadId) => {
+      const response = await base44.functions.invoke('autoAssignLead', { lead_id: leadId });
+      return response.data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      queryClient.invalidateQueries({ queryKey: ['agents'] });
+      toast.success(`Lead auto-assigned to ${data.assigned_agent.email}`);
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Auto-assignment failed');
     }
   });
 
@@ -182,26 +197,38 @@ export default function LeadPool() {
                         </div>
                       </div>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        setSelectedLead(lead);
-                        setAssignDialogOpen(true);
-                      }}
-                    >
-                      {lead.status === 'unassigned' ? (
-                        <>
-                          <UserPlus className="w-4 h-4 mr-2" />
-                          Assign
-                        </>
-                      ) : (
-                        <>
-                          <ArrowRight className="w-4 h-4 mr-2" />
-                          Reassign
-                        </>
+                    <div className="flex gap-2">
+                      {lead.status === 'unassigned' && (
+                        <Button
+                          size="sm"
+                          onClick={() => autoAssignMutation.mutate(lead.id)}
+                          disabled={autoAssignMutation.isPending}
+                        >
+                          <Zap className="w-4 h-4 mr-2" />
+                          Auto-Assign
+                        </Button>
                       )}
-                    </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedLead(lead);
+                          setAssignDialogOpen(true);
+                        }}
+                      >
+                        {lead.status === 'unassigned' ? (
+                          <>
+                            <UserPlus className="w-4 h-4 mr-2" />
+                            Manual
+                          </>
+                        ) : (
+                          <>
+                            <ArrowRight className="w-4 h-4 mr-2" />
+                            Reassign
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -230,11 +257,14 @@ export default function LeadPool() {
                     <SelectValue placeholder="Choose an agent..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {agents.filter(a => a.status === 'active').map(agent => (
-                      <SelectItem key={agent.id} value={agent.id}>
-                        {agent.user_email} - Workload: {agent.current_workload}/{agent.max_workload}
-                      </SelectItem>
-                    ))}
+                    {agents.filter(a => a.status === 'active').map(agent => {
+                      const workloadPct = ((agent.current_workload || 0) / (agent.max_workload || 10) * 100).toFixed(0);
+                      return (
+                        <SelectItem key={agent.id} value={agent.id}>
+                          {agent.user_email} - {agent.current_workload || 0}/{agent.max_workload || 10} ({workloadPct}%) - Success: {(agent.success_rate || 0).toFixed(0)}%
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               </div>
