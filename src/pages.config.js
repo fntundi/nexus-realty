@@ -66,6 +66,8 @@ import Reminders from './pages/Reminders';
 import ReminderSettings from './pages/ReminderSettings';
 import TeamDeals from './pages/TeamDeals';
 import AgentPerformanceReport from './pages/AgentPerformanceReport';
+import Contacts from './pages/Contacts';
+import ContactDetails from './pages/ContactDetails';
 
 
 export const PAGES = {
@@ -88,6 +90,8 @@ export const PAGES = {
     "ReminderSettings": ReminderSettings,
     "TeamDeals": TeamDeals,
     "AgentPerformanceReport": AgentPerformanceReport,
+    "Contacts": Contacts,
+    "ContactDetails": ContactDetails,
 }
 
 export const pagesConfig = {
