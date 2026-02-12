@@ -6,14 +6,31 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FileText, Upload, Download, CheckCircle2, AlertCircle, Clock, Search } from 'lucide-react';
+import { FileText, Upload, Download, CheckCircle2, AlertCircle, Clock, Search, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function LenderDocumentManager({ transaction, documents = [], lenderEmail, allTransactions = [] }) {
+const DOCUMENT_CATEGORIES = [
+  { value: 'identification', label: 'Identification' },
+  { value: 'income_proof', label: 'Income Proof' },
+  { value: 'bank_statement', label: 'Bank Statement' },
+  { value: 'property_appraisal', label: 'Property Appraisal' },
+  { value: 'title_report', label: 'Title Report' },
+  { value: 'contract', label: 'Contract' },
+  { value: 'disclosure', label: 'Disclosure' },
+  { value: 'inspection', label: 'Inspection' },
+  { value: 'other', label: 'Other' }
+];
+
+export default function LenderDocumentManager({ transaction, documents = [], lenderEmail, allTransactions = [], borrowerData = {} }) {
   const [uploading, setUploading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDocs, setSelectedDocs] = useState(new Set());
   const [filterStatus, setFilterStatus] = useState('all');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [filterBorrower, setFilterBorrower] = useState('all');
+  const [filterTransactionId, setFilterTransactionId] = useState('all');
+  const [filterDateFrom, setFilterDateFrom] = useState('');
+  const [filterDateTo, setFilterDateTo] = useState('');
   const fileInputRef = useRef(null);
   const queryClient = useQueryClient();
 
@@ -26,7 +43,11 @@ export default function LenderDocumentManager({ transaction, documents = [], len
       const allDocuments = [];
       for (const txnId of txnIds) {
         const docs = await base44.entities.Document.filter({ transaction_id: txnId });
-        allDocuments.push(...(docs || []));
+        const enrichedDocs = await Promise.all((docs || []).map(async d => {
+          const txn = allTransactions.find(t => t.id === d.transaction_id);
+          return { ...d, borrower_name: txn?.buyer_name || 'Unknown', transaction_id: txn?.id };
+        }));
+        allDocuments.push(...enrichedDocs);
       }
       return allDocuments;
     },
@@ -89,17 +110,54 @@ export default function LenderDocumentManager({ transaction, documents = [], len
     }
   });
 
+  const aiVerifyMutation = useMutation({
+    mutationFn: async (docId) => {
+      const doc = (allTransactions.length > 0 ? allDocs : documents).find(d => d.id === docId);
+      if (!doc) throw new Error('Document not found');
+      
+      const { data } = await base44.functions.invoke('verifyDocumentAI', {
+        documentId: docId,
+        fileUrl: doc.file_url,
+        documentType: doc.category || 'other',
+        category: doc.category
+      });
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['all-lender-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['lender-documents'] });
+      toast.success(data.auto_verified ? 'Document auto-verified!' : 'Document analysis complete - manual review needed');
+    },
+    onError: (err) => {
+      toast.error('AI verification failed: ' + err.message);
+    }
+  });
+
   // Use all docs or filtered docs based on context
   const displayDocs = allTransactions.length > 0 ? allDocs : documents;
   const loanDocs = displayDocs.filter(d => d.category === 'loan' || d.document_type === 'loan_document');
   
-  // Filter by search and status
+  // Get unique borrowers and transactions for filter dropdowns
+  const uniqueBorrowers = [...new Set(loanDocs.map(d => d.borrower_name || 'Unknown'))].sort();
+  const uniqueTransactions = [...new Set(loanDocs.map(d => d.transaction_id))].sort();
+  
+  // Filter by search, status, category, borrower, transaction, and date range
   const filteredDocs = loanDocs.filter(doc => {
+    const docDate = new Date(doc.upload_date || doc.created_date);
+    const fromDate = filterDateFrom ? new Date(filterDateFrom) : null;
+    const toDate = filterDateTo ? new Date(filterDateTo) : null;
+    
     const matchesSearch = !searchTerm || 
       doc.file_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      doc.document_type?.toLowerCase().includes(searchTerm.toLowerCase());
+      doc.document_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (doc.borrower_name && doc.borrower_name.toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesStatus = filterStatus === 'all' || doc.status === filterStatus;
-    return matchesSearch && matchesStatus;
+    const matchesCategory = filterCategory === 'all' || doc.category === filterCategory;
+    const matchesBorrower = filterBorrower === 'all' || doc.borrower_name === filterBorrower;
+    const matchesTransaction = filterTransactionId === 'all' || doc.transaction_id === filterTransactionId;
+    const matchesDate = (!fromDate || docDate >= fromDate) && (!toDate || docDate <= toDate);
+    
+    return matchesSearch && matchesStatus && matchesCategory && matchesBorrower && matchesTransaction && matchesDate;
   });
 
   const handleSelectDoc = (docId) => {
@@ -176,11 +234,11 @@ export default function LenderDocumentManager({ transaction, documents = [], len
        {loanDocs.length > 0 && (
          <Card>
            <CardContent className="p-4 space-y-3">
-             <div className="flex gap-2">
-               <div className="flex-1 relative">
+             <div className="flex gap-2 flex-wrap">
+               <div className="flex-1 min-w-48 relative">
                  <Search className="absolute left-2.5 top-2.5 w-4 h-4 text-slate-400" />
                  <Input
-                   placeholder="Search documents..."
+                   placeholder="Search documents or borrower..."
                    value={searchTerm}
                    onChange={(e) => setSearchTerm(e.target.value)}
                    className="pl-8"
@@ -196,6 +254,59 @@ export default function LenderDocumentManager({ transaction, documents = [], len
                  <option value="approved">Approved</option>
                  <option value="rejected">Rejected</option>
                </select>
+               <select
+                 value={filterCategory}
+                 onChange={(e) => setFilterCategory(e.target.value)}
+                 className="px-3 py-2 border border-slate-200 rounded-md text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+               >
+                 <option value="all">All Categories</option>
+                 {DOCUMENT_CATEGORIES.map(cat => (
+                   <option key={cat.value} value={cat.value}>{cat.label}</option>
+                 ))}
+               </select>
+             </div>
+
+             <div className="flex gap-2 flex-wrap">
+               {uniqueBorrowers.length > 1 && (
+                 <select
+                   value={filterBorrower}
+                   onChange={(e) => setFilterBorrower(e.target.value)}
+                   className="px-3 py-2 border border-slate-200 rounded-md text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-40"
+                 >
+                   <option value="all">All Borrowers</option>
+                   {uniqueBorrowers.map(name => (
+                     <option key={name} value={name}>{name}</option>
+                   ))}
+                 </select>
+               )}
+               
+               {uniqueTransactions.length > 1 && (
+                 <select
+                   value={filterTransactionId}
+                   onChange={(e) => setFilterTransactionId(e.target.value)}
+                   className="px-3 py-2 border border-slate-200 rounded-md text-sm bg-white focus:outline-none focus:ring-1 focus:ring-blue-500 min-w-40"
+                 >
+                   <option value="all">All Transactions</option>
+                   {uniqueTransactions.map(txnId => (
+                     <option key={txnId} value={txnId}>{txnId.slice(0, 8)}...</option>
+                   ))}
+                 </select>
+               )}
+
+               <Input
+                 type="date"
+                 value={filterDateFrom}
+                 onChange={(e) => setFilterDateFrom(e.target.value)}
+                 className="px-3 py-2 text-sm w-40"
+                 placeholder="From date"
+               />
+               <Input
+                 type="date"
+                 value={filterDateTo}
+                 onChange={(e) => setFilterDateTo(e.target.value)}
+                 className="px-3 py-2 text-sm w-40"
+                 placeholder="To date"
+               />
              </div>
 
              {/* Bulk Actions */}
@@ -280,6 +391,18 @@ export default function LenderDocumentManager({ transaction, documents = [], len
                        {getStatusIcon(doc.status)}
                        <span className="ml-1 text-xs">{doc.status.replace(/_/g, ' ')}</span>
                      </Badge>
+                     {doc.status === 'pending_review' && ['identification', 'income_proof', 'property_appraisal'].includes(doc.category) && (
+                       <Button
+                         size="sm"
+                         variant="outline"
+                         onClick={() => aiVerifyMutation.mutate(doc.id)}
+                         disabled={aiVerifyMutation.isPending}
+                         title="AI-powered verification"
+                       >
+                         <Zap className="w-3 h-3 mr-1" />
+                         <span className="text-xs">AI Verify</span>
+                       </Button>
+                     )}
                      <Button
                        size="sm"
                        variant="ghost"
