@@ -5,241 +5,154 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
 
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
-    const { lead_id } = await req.json();
+    const payload = await req.json();
+    const { lead_id } = payload;
 
     if (!lead_id) {
-      return Response.json({ error: 'lead_id is required' }, { status: 400 });
+      return Response.json({ error: 'lead_id required' }, { status: 400 });
     }
 
-    // Get the lead
+    // Fetch the lead
     const leads = await base44.asServiceRole.entities.Lead.filter({ id: lead_id });
-    const lead = leads[0];
-
+    const lead = leads?.[0];
     if (!lead) {
       return Response.json({ error: 'Lead not found' }, { status: 404 });
     }
 
-    // Get market configuration
-    const markets = await base44.asServiceRole.entities.Market.filter({ id: lead.market_id });
-    const market = markets[0];
+    // Fetch agents in the same market
+    const agents = await base44.asServiceRole.entities.Agent.filter({ market_id: lead.market_id });
+    const assignmentRules = await base44.asServiceRole.entities.AssignmentRule.filter({ market_id: lead.market_id });
 
-    if (!market) {
-      return Response.json({ error: 'Market not found' }, { status: 404 });
+    if (!agents || agents.length === 0) {
+      return Response.json({ error: 'No agents available in this market' }, { status: 400 });
     }
 
-    // Get all active agents in the market
-    const agents = await base44.asServiceRole.entities.Agent.filter({
-      market_id: lead.market_id,
-      status: 'active'
-    });
+    // Scoring system for agent assignment
+    let bestAgent = null;
+    let bestScore = -1;
 
-    if (agents.length === 0) {
-      return Response.json({ error: 'No active agents available in this market' }, { status: 400 });
+    for (const agent of agents) {
+      if (agent.status !== 'active' || agent.current_workload >= agent.max_workload) continue;
+
+      let score = 100; // Base score
+
+      // 1. Territory matching (0-25 points)
+      const territoryScore = evaluateTerritoryMatch(agent, lead, assignmentRules);
+      score += territoryScore;
+
+      // 2. Workload balance (0-20 points)
+      const workloadScore = (agent.max_workload - agent.current_workload) / agent.max_workload * 20;
+      score += workloadScore;
+
+      // 3. Complexity score (0-15 points)
+      const complexityScore = (agent.max_complexity_score - agent.complexity_score) / agent.max_complexity_score * 15;
+      score += complexityScore;
+
+      // 4. Success rate for property type (0-20 points)
+      const successScore = getPropertyTypeSuccessScore(agent, lead, assignmentRules);
+      score += successScore;
+
+      // 5. Rotation balance (0-10 points)
+      const rotationScore = (1 / (agent.total_assignments + 1)) * 10;
+      score += rotationScore;
+
+      // 6. Lead source performance (0-10 points)
+      const sourceScore = getLeadSourceScore(agent, lead);
+      score += sourceScore;
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestAgent = agent;
+      }
     }
 
-    // Get property if available for better matching
-    let property = null;
-    if (lead.property_id) {
-      const properties = await base44.asServiceRole.entities.Property.filter({ id: lead.property_id });
-      property = properties[0];
+    if (!bestAgent) {
+      return Response.json({ error: 'No suitable agent found for assignment' }, { status: 400 });
     }
 
-    // Score each agent
-    const assignmentRules = market.assignment_rules || {
-      territory_weight: 0.25,
-      workload_weight: 0.2,
-      rotation_weight: 0.15,
-      success_rate_weight: 0.2,
-      property_performance_weight: 0.1,
-      lead_source_weight: 0.1
-    };
-
-    const scoredAgents = agents.map(agent => {
-      let score = 0;
-
-      // 1. Territory Match Score (0-1) - Enhanced with granular matching
-      let territoryScore = 0;
-      
-      // Check new territory_definitions first
-      if (agent.territory_definitions && agent.territory_definitions.length > 0) {
-        if (lead.preferred_areas && lead.preferred_areas.length > 0) {
-          // Try to match against detailed territories
-          const matches = agent.territory_definitions.filter(td => {
-            return lead.preferred_areas.some(pa => {
-              const paLower = pa.toLowerCase();
-              const nameLower = td.name.toLowerCase();
-              const valueLower = td.value.toLowerCase();
-              
-              // Direct match on name or value
-              if (nameLower.includes(paLower) || valueLower.includes(paLower) ||
-                  paLower.includes(nameLower) || paLower.includes(valueLower)) {
-                return true;
-              }
-              
-              // For zip codes, exact match
-              if (td.type === 'zip_code' && td.value === pa) {
-                return true;
-              }
-              
-              return false;
-            });
-          });
-          
-          if (matches.length > 0) {
-            // Perfect match - highly specific territory alignment
-            territoryScore = 1.0;
-          } else {
-            // Has territories but no match
-            territoryScore = 0.2;
-          }
-        } else {
-          // Agent has territories, lead doesn't specify - medium score
-          territoryScore = 0.5;
-        }
-      } else if (agent.territories && agent.territories.length > 0 && lead.preferred_areas) {
-        // Legacy territory matching (backwards compatibility)
-        const matchingTerritories = agent.territories.filter(t => 
-          lead.preferred_areas.some(pa => pa.includes(t) || t.includes(pa))
-        );
-        territoryScore = matchingTerritories.length > 0 ? 1 : 0.3;
-      } else if (agent.territories && agent.territories.length > 0) {
-        territoryScore = 0.5; // Agent has territories but lead doesn't specify
-      } else {
-        territoryScore = 0.8; // Agent covers all territories
-      }
-
-      // 2. Workload Score (0-1) - Higher score = more capacity
-      const workloadRatio = (agent.current_workload || 0) / (agent.max_workload || 10);
-      const complexityRatio = (agent.complexity_score || 0) / (agent.max_complexity_score || 100);
-      const workloadScore = 1 - Math.max(workloadRatio, complexityRatio);
-
-      // 3. Rotation Score (0-1) - Favor agents with fewer total assignments
-      const maxAssignments = Math.max(...agents.map(a => a.total_assignments || 0), 1);
-      const rotationScore = 1 - ((agent.total_assignments || 0) / maxAssignments);
-
-      // 4. Success Rate Score (0-1) - Overall performance
-      let successScore = (agent.success_rate || 0) / 100;
-
-      // 5. Property Performance Score (0-1) - Match lead to agent's strong property types/prices
-      let propertyPerformanceScore = 0.5; // Default neutral score
-      
-      if (property) {
-        let propertyTypeScore = 0.5;
-        let priceRangeScore = 0.5;
-
-        // Property type matching
-        const propertyTypeStats = agent.property_type_stats?.[property.property_type];
-        if (propertyTypeStats && propertyTypeStats.total > 0) {
-          const typeSuccessRate = propertyTypeStats.success_rate || 0;
-          const typeExperience = Math.min(propertyTypeStats.total / 10, 1); // More experience = higher score
-          propertyTypeScore = (typeSuccessRate / 100) * 0.7 + typeExperience * 0.3;
-        }
-
-        // Price range matching
-        let priceRangeKey = 'under_300k';
-        if (property.price >= 1000000) priceRangeKey = 'over_1m';
-        else if (property.price >= 500000) priceRangeKey = '500k_1m';
-        else if (property.price >= 300000) priceRangeKey = '300k_500k';
-
-        const priceRangeStats = agent.price_range_stats?.[priceRangeKey];
-        if (priceRangeStats && priceRangeStats.total > 0) {
-          const priceSuccessRate = priceRangeStats.success_rate || 0;
-          const priceExperience = Math.min(priceRangeStats.total / 10, 1);
-          priceRangeScore = (priceSuccessRate / 100) * 0.7 + priceExperience * 0.3;
-        }
-
-        propertyPerformanceScore = (propertyTypeScore + priceRangeScore) / 2;
-      } else if (lead.budget_max) {
-        // Use budget if no property specified
-        let priceRangeKey = 'under_300k';
-        if (lead.budget_max >= 1000000) priceRangeKey = 'over_1m';
-        else if (lead.budget_max >= 500000) priceRangeKey = '500k_1m';
-        else if (lead.budget_max >= 300000) priceRangeKey = '300k_500k';
-
-        const priceRangeStats = agent.price_range_stats?.[priceRangeKey];
-        if (priceRangeStats && priceRangeStats.total > 0) {
-          const priceSuccessRate = priceRangeStats.success_rate || 0;
-          const priceExperience = Math.min(priceRangeStats.total / 10, 1);
-          propertyPerformanceScore = (priceSuccessRate / 100) * 0.7 + priceExperience * 0.3;
-        }
-      }
-
-      // 6. Lead Source Effectiveness Score (0-1) - Match lead source to agent's strong sources
-      let leadSourceScore = 0.5; // Default neutral score
-      
-      if (lead.source && agent.lead_source_stats?.[lead.source]) {
-        const sourceStats = agent.lead_source_stats[lead.source];
-        if (sourceStats.total > 0) {
-          const sourceSuccessRate = sourceStats.success_rate || 0;
-          const sourceExperience = Math.min(sourceStats.total / 15, 1); // Experience factor
-          leadSourceScore = (sourceSuccessRate / 100) * 0.75 + sourceExperience * 0.25;
-        }
-      }
-
-      // Calculate weighted score
-      score = (
-        territoryScore * assignmentRules.territory_weight +
-        workloadScore * assignmentRules.workload_weight +
-        rotationScore * assignmentRules.rotation_weight +
-        successScore * assignmentRules.success_rate_weight +
-        propertyPerformanceScore * (assignmentRules.property_performance_weight || 0.1) +
-        leadSourceScore * (assignmentRules.lead_source_weight || 0.1)
-      );
-
-      return {
-        agent,
-        score,
-        breakdown: {
-          territoryScore,
-          workloadScore,
-          rotationScore,
-          successScore,
-          propertyPerformanceScore,
-          leadSourceScore,
-          finalScore: score
-        }
-      };
-    });
-
-    // Sort by score (highest first)
-    scoredAgents.sort((a, b) => b.score - a.score);
-
-    // Select the best agent
-    const bestMatch = scoredAgents[0];
-
-    // Update lead
-    await base44.asServiceRole.entities.Lead.update(lead_id, {
-      assigned_agent_id: bestMatch.agent.id,
+    // Assign lead to agent
+    const updatedLead = await base44.asServiceRole.entities.Lead.update(lead.id, {
       status: 'assigned',
+      assigned_agent_id: bestAgent.id,
       assigned_date: new Date().toISOString(),
       assignment_method: 'auto'
     });
 
-    // Update agent workload
-    await base44.asServiceRole.entities.Agent.update(bestMatch.agent.id, {
-      current_workload: (bestMatch.agent.current_workload || 0) + 1,
-      total_assignments: (bestMatch.agent.total_assignments || 0) + 1
+    // Create notification for agent
+    await base44.asServiceRole.entities.Notification.create({
+      recipient_email: bestAgent.user_email,
+      notification_type: 'lead_assigned',
+      title: 'New Lead Assigned',
+      message: `${lead.buyer_name} (${lead.source}) - Budget: $${lead.budget_max?.toLocaleString() || 'TBD'}`,
+      related_entity_type: 'lead',
+      related_entity_id: lead.id,
+      action_url: `/lead-pool?lead_id=${lead.id}`,
+      priority: 'high',
+      metadata: {
+        buyer_name: lead.buyer_name,
+        source: lead.source,
+        budget: lead.budget_max,
+        market: lead.market_id
+      }
     });
 
     return Response.json({
       success: true,
-      assigned_agent: {
-        id: bestMatch.agent.id,
-        email: bestMatch.agent.user_email
-      },
-      assignment_breakdown: bestMatch.breakdown,
-      all_scores: scoredAgents.map(sa => ({
-        agent_email: sa.agent.user_email,
-        score: sa.score,
-        breakdown: sa.breakdown
-      }))
+      assigned_agent: bestAgent.user_email,
+      assignment_score: bestScore,
+      lead_id: lead.id
     });
-
   } catch (error) {
+    console.error('Error in autoAssignLead:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
+
+function evaluateTerritoryMatch(agent, lead, rules) {
+  if (!agent.territory_definitions || agent.territory_definitions.length === 0) {
+    return 0;
+  }
+
+  const rule = rules?.find(r => r.agent_id === agent.id);
+  if (!rule || !rule.territory_match_weight) return 10;
+
+  // Check if lead's preferred areas match agent's territories
+  if (lead.preferred_areas && lead.preferred_areas.length > 0) {
+    const agentTerritories = agent.territory_definitions.map(t => t.value.toLowerCase());
+    const matchCount = lead.preferred_areas.filter(area =>
+      agentTerritories.some(territory => territory.includes(area.toLowerCase()))
+    ).length;
+
+    return (matchCount / lead.preferred_areas.length) * 25;
+  }
+
+  return 15;
+}
+
+function getPropertyTypeSuccessScore(agent, lead, rules) {
+  const rule = rules?.find(r => r.agent_id === agent.id);
+  if (!rule) return 10;
+
+  // If lead has preferred property types, check agent's performance
+  if (rule.preferred_property_types && rule.preferred_property_types.length > 0) {
+    return 15;
+  }
+
+  return 10;
+}
+
+function getLeadSourceScore(agent, lead) {
+  const sourceStats = agent?.lead_source_stats || {};
+  const sourceKey = lead.source.replace(/[_-]/g, '_');
+  const stats = sourceStats[sourceKey];
+
+  if (stats && stats.success_rate > 0) {
+    return Math.min((stats.success_rate / 100) * 10, 10);
+  }
+
+  return 5;
+}
