@@ -1,10 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Upload, Download, CheckCircle2, AlertCircle, Clock } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import { FileText, Upload, Download, CheckCircle2, AlertCircle, Clock, Search } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function LenderDocumentManager({ transaction, documents = [], lenderEmail }) {
