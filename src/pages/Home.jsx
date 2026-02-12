@@ -196,30 +196,41 @@ function AudienceTabsHome() {
           <TabsContent value="agent" className="space-y-8 pt-8">
             <div className="space-y-4 border-b-2 border-gray-200 pb-8">
               <h2 className="text-4xl font-bold text-black">For Agents</h2>
-              <p className="text-lg text-gray-700">Close more deals faster with AI-powered insights and seamless workflows</p>
+              <p className="text-lg text-gray-700">Manage your pipeline efficiently. Close more deals with less friction.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FeatureCard
                 icon={<Zap className="w-6 h-6" style={{ color: '#D4AF37' }} />}
-                title="Lead Scoring & Routing"
-                description="Automatically prioritize high-value leads with AI-powered scoring. Know exactly which prospects are most likely to convert."
+                title="Lead Score Dashboard"
+                description="See your hot leads at a glance. Focus on prospects most likely to convert—all sorted and prioritized for you."
               />
               <FeatureCard
                 icon={<MessageSquare className="w-6 h-6" style={{ color: '#D4AF37' }} />}
-                title="Smart Nurture Workflows"
-                description="Create personalized follow-up sequences that adapt based on buyer behavior. Stay top-of-mind effortlessly."
+                title="Client Communication"
+                description="One thread with each buyer. Chat, share documents, and schedule showings without jumping between tools."
               />
               <FeatureCard
                 icon={<Calendar className="w-6 h-6" style={{ color: '#D4AF37' }} />}
-                title="Showing Management"
-                description="Schedule and manage property showings with integrated calendar sync. Never miss an opportunity."
+                title="Deal Tracking"
+                description="From offer to closing—track every milestone, document, and task in real time. Nothing falls through the cracks."
               />
               <FeatureCard
                 icon={<BarChart3 className="w-6 h-6" style={{ color: '#D4AF37' }} />}
-                title="Performance Analytics"
-                description="Track your KPIs in real-time. See what's working and optimize your strategy for maximum results."
+                title="Task Management"
+                description="Stay on top of follow-ups, showings, and next steps. See what's due today. Keep the pipeline moving."
               />
+            </div>
+
+            <div className="mt-12 p-8 bg-gradient-to-br from-gray-900 to-black border border-gray-300 rounded-lg text-center">
+              <h3 className="text-2xl font-bold text-white mb-4">Ready to manage your pipeline?</h3>
+              <p className="text-gray-300 mb-6">Get your dashboard with all your leads, deals, and tasks in one place</p>
+              <Link to={createPageUrl('AgentDashboard')}>
+                <Button className="bg-yellow-600 hover:bg-yellow-700 text-black text-lg px-8 font-semibold">
+                  Go to Agent Dashboard
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
             </div>
           </TabsContent>
 
@@ -257,30 +268,30 @@ function AudienceTabsHome() {
           {/* Developer Tab */}
           <TabsContent value="developer" className="space-y-8 pt-8">
             <div className="space-y-4 border-b-2 border-gray-200 pb-8">
-              <h2 className="text-4xl font-bold text-black">For Developers</h2>
-              <p className="text-lg text-gray-700">Build powerful integrations and extend functionality with our flexible API</p>
+              <h2 className="text-4xl font-bold text-black">For Real Estate Developers</h2>
+              <p className="text-lg text-gray-700">Manage land portfolios, development projects, and buyer inquiries</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FeatureCard
-                icon={<Zap className="w-6 h-6" style={{ color: '#D4AF37' }} />}
-                title="RESTful API"
-                description="Well-documented APIs for entities, workflows, and integrations. Build custom solutions tailored to your needs."
+                icon={<MapPin className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                title="Land Portfolio"
+                description="Organize and manage multiple land parcels. Track zoning, approvals, infrastructure, and buyer interest."
+              />
+              <FeatureCard
+                icon={<TrendingUp className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                title="Buyer Pipeline"
+                description="Capture and qualify developer buyers. Track which projects interest them and move deals forward."
               />
               <FeatureCard
                 icon={<MessageSquare className="w-6 h-6" style={{ color: '#D4AF37' }} />}
-                title="Webhook Support"
-                description="Real-time event notifications. React instantly to lead assignments, status changes, and deal milestones."
-              />
-              <FeatureCard
-                icon={<Settings className="w-6 h-6" style={{ color: '#D4AF37' }} />}
-                title="Backend Functions"
-                description="Deploy custom logic without managing infrastructure. Our serverless platform handles scaling for you."
+                title="Project Updates"
+                description="Keep stakeholders, brokers, and prospective buyers updated on project milestones and status."
               />
               <FeatureCard
                 icon={<BarChart3 className="w-6 h-6" style={{ color: '#D4AF37' }} />}
-                title="CRM Integrations"
-                description="Seamless bidirectional sync with Salesforce, HubSpot, and custom systems. Keep data in sync automatically."
+                title="Deal Analytics"
+                description="Track deal velocity, buyer conversion, and project profitability across your portfolio."
               />
             </div>
           </TabsContent>
@@ -289,39 +300,39 @@ function AudienceTabsHome() {
           <TabsContent value="builder" className="space-y-8 pt-8">
             <div className="space-y-4 border-b-2 border-gray-200 pb-8">
               <h2 className="text-4xl font-bold text-black">For Builders & Teams</h2>
-              <p className="text-lg text-gray-700">Manage your entire real estate operation from a single, powerful platform</p>
+              <p className="text-lg text-gray-700">Manage agents, properties, and deals. Build your brokerage from one platform.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FeatureCard
                 icon={<Users className="w-6 h-6" style={{ color: '#D4AF37' }} />}
-                title="Team Management"
-                description="Hire and manage agents. Track performance, commissions, and team metrics in real-time."
+                title="Agent Management"
+                description="Hire, monitor, and support your sales team. See everyone's pipeline, commissions, and performance."
               />
               <FeatureCard
                 icon={<TrendingUp className="w-6 h-6" style={{ color: '#D4AF37' }} />}
-                title="Pipeline Intelligence"
-                description="Visualize your entire deal pipeline. Forecast revenue and identify bottlenecks before they become problems."
+                title="Deal Pipeline"
+                description="View all deals in progress across your team. See bottlenecks, manage closings, forecast revenue."
               />
               <FeatureCard
                 icon={<Settings className="w-6 h-6" style={{ color: '#D4AF37' }} />}
-                title="Workflow Automation"
-                description="Automate repetitive tasks with smart triggers and actions. Custom scoring models, nurture workflows, and more."
+                title="Lead Distribution"
+                description="Auto-assign and manually route leads to the right agents. Keep your team fed with qualified prospects."
               />
               <FeatureCard
                 icon={<BarChart3 className="w-6 h-6" style={{ color: '#D4AF37' }} />}
-                title="Advanced Analytics"
-                description="Get actionable insights on team performance, market trends, and deal metrics. Make data-driven decisions."
+                title="Team Analytics"
+                description="Track KPIs, conversion rates, and profitability by agent. Identify top performers and coaching opportunities."
               />
             </div>
 
             {/* Premium CTA */}
             <div className="mt-12 p-8 bg-gradient-to-br from-gray-900 to-black border border-gray-300 rounded-lg text-center">
-              <h3 className="text-2xl font-bold text-white mb-4">Ready to lead your operation?</h3>
-              <p className="text-gray-300 mb-6">Access your premium dashboard with advanced team management and analytics</p>
+              <h3 className="text-2xl font-bold text-white mb-4">Ready to manage your brokerage?</h3>
+              <p className="text-gray-300 mb-6">Access your premium dashboard with team management and advanced analytics</p>
               <Link to={createPageUrl('LeadPool')}>
                 <Button className="bg-yellow-600 hover:bg-yellow-700 text-black text-lg px-8 font-semibold">
-                  Go to Dashboard
+                  Go to Brokerage Dashboard
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>

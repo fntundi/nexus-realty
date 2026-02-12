@@ -78,6 +78,7 @@ import TerritoryManager from './pages/TerritoryManager';
 import WorkflowAnalytics from './pages/WorkflowAnalytics';
 import PersonalizationAndSync from './pages/PersonalizationAndSync';
 import BuilderDashboard from './pages/BuilderDashboard';
+import AgentDashboard from './pages/AgentDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -113,6 +114,7 @@ export const PAGES = {
     "WorkflowAnalytics": WorkflowAnalytics,
     "PersonalizationAndSync": PersonalizationAndSync,
     "BuilderDashboard": BuilderDashboard,
+    "AgentDashboard": AgentDashboard,
 }
 
 export const pagesConfig = {
