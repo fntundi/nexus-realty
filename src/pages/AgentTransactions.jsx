@@ -14,6 +14,9 @@ import DocumentManager from '../components/documents/DocumentManager';
 import KeyMetrics from '../components/agent/KeyMetrics';
 import ProactiveAlerts from '../components/agent/ProactiveAlerts';
 import AIInsights from '../components/agent/AIInsights';
+import AgentMessaging from '../components/collaboration/AgentMessaging';
+import SharedDocuments from '../components/collaboration/SharedDocuments';
+import TeamTaskAssignment from '../components/collaboration/TeamTaskAssignment';
 
 export default function AgentTransactions() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -217,6 +220,10 @@ export default function AgentTransactions() {
                     <ListChecks className="w-4 h-4 mr-2" />
                     Tasks
                   </TabsTrigger>
+                  <TabsTrigger value="team">
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    Team
+                  </TabsTrigger>
                   <TabsTrigger value="showings">
                     <Calendar className="w-4 h-4 mr-2" />
                     Showings
@@ -238,6 +245,13 @@ export default function AgentTransactions() {
                     currentUser={user}
                     userRole="agent"
                   />
+                </TabsContent>
+                <TabsContent value="team" className="overflow-y-auto h-full space-y-4">
+                  <AgentMessaging transactionId={selectedTransaction.id} />
+                  <div className="grid grid-cols-2 gap-4">
+                    <TeamTaskAssignment transactionId={selectedTransaction.id} userEmail={user.email} />
+                    <SharedDocuments transactionId={selectedTransaction.id} userEmail={user.email} />
+                  </div>
                 </TabsContent>
                 <TabsContent value="showings" className="overflow-y-auto h-full">
                   <ShowingScheduler
