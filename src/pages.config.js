@@ -49,11 +49,17 @@
  */
 import Home from './pages/Home';
 import LeadPool from './pages/LeadPool';
+import AgentTransactions from './pages/AgentTransactions';
+import BuyerPortal from './pages/BuyerPortal';
+import LenderPortal from './pages/LenderPortal';
 
 
 export const PAGES = {
     "Home": Home,
     "LeadPool": LeadPool,
+    "AgentTransactions": AgentTransactions,
+    "BuyerPortal": BuyerPortal,
+    "LenderPortal": LenderPortal,
 }
 
 export const pagesConfig = {
