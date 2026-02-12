@@ -143,7 +143,7 @@ export default function ContactDetails() {
                   </div>
                   </CardHeader>
                   <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
                 {contact.email && (
                   <div className="flex items-center gap-3">
@@ -196,14 +196,14 @@ export default function ContactDetails() {
                 <p className="text-slate-700 mt-1">{contact.notes}</p>
               </div>
             )}
-                </CardContent>
-              </Card>
+            </CardContent>
+            </Card>
             </div>
             </div>
             </div>
 
             {/* Tabs for Activity and Related Records */}
-        <Tabs defaultValue="activity" className="w-full">
+            <Tabs defaultValue="activity" className="w-full">
           <TabsList>
             <TabsTrigger value="activity">Activity Feed ({interactions.length})</TabsTrigger>
             <TabsTrigger value="related">Related Records</TabsTrigger>
