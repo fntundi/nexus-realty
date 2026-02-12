@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { 
   Users, TrendingUp, Building2, UserCheck,
   Zap, BarChart3, MapPin, MessageSquare, Calendar, Settings,
-  ArrowRight
+  ArrowRight, DollarSign, FileText, Lock
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -173,7 +173,7 @@ function AudienceTabsHome() {
       {/* Premium Tabs Section */}
       <div className="max-w-6xl mx-auto px-6 py-16">
         <Tabs defaultValue="agent" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-12 bg-gray-50 border-b-2 border-gray-200 p-1 rounded-none">
+          <TabsList className="grid w-full grid-cols-5 mb-12 bg-gray-50 border-b-2 border-gray-200 p-1 rounded-none">
             <TabsTrigger value="agent" className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               <span className="hidden sm:inline">Agent</span>
@@ -181,6 +181,10 @@ function AudienceTabsHome() {
             <TabsTrigger value="buyer" className="flex items-center gap-2">
               <MapPin className="w-4 h-4" />
               <span className="hidden sm:inline">Buyer</span>
+            </TabsTrigger>
+            <TabsTrigger value="lender" className="flex items-center gap-2">
+              <DollarSign className="w-4 h-4" />
+              <span className="hidden sm:inline">Lender</span>
             </TabsTrigger>
             <TabsTrigger value="developer" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
@@ -228,6 +232,48 @@ function AudienceTabsHome() {
               <Link to={createPageUrl('AgentDashboard')}>
                 <Button className="bg-yellow-600 hover:bg-yellow-700 text-black text-lg px-8 font-semibold">
                   Go to Agent Dashboard
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </TabsContent>
+
+          {/* Lender Tab */}
+          <TabsContent value="lender" className="space-y-8 pt-8">
+            <div className="space-y-4 border-b-2 border-gray-200 pb-8">
+              <h2 className="text-4xl font-bold text-black">For Lenders</h2>
+              <p className="text-lg text-gray-700">Manage loan portfolios and streamline the lending process</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <FeatureCard
+                icon={<DollarSign className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                title="Loan Portfolio Dashboard"
+                description="View all active loans at a glance. Track loan amounts, borrowers, closing dates, and current stage for each transaction."
+              />
+              <FeatureCard
+                icon={<FileText className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                title="Document Management"
+                description="Upload and organize loan documents securely. Appraisals, approvals, conditions, and disclosures all in one place."
+              />
+              <FeatureCard
+                icon={<MessageSquare className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                title="Direct Communication"
+                description="Chat with buyers and agents directly. No email chains—everything organized by transaction."
+              />
+              <FeatureCard
+                icon={<TrendingUp className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                title="Loan Status Tracking"
+                description="Follow each loan from pre-qualification through closing. See what stage each deal is in and what's needed next."
+              />
+            </div>
+
+            <div className="mt-12 p-8 bg-gradient-to-br from-gray-900 to-black border border-gray-300 rounded-lg text-center">
+              <h3 className="text-2xl font-bold text-white mb-4">Ready to manage your loan portfolio?</h3>
+              <p className="text-gray-300 mb-6">Access your dashboard with all your active loans and documents</p>
+              <Link to={createPageUrl('LenderPortal')}>
+                <Button className="bg-yellow-600 hover:bg-yellow-700 text-black text-lg px-8 font-semibold">
+                  Go to Lender Portal
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </Link>
