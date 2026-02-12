@@ -140,70 +140,69 @@ export default function ContactDetails() {
                       />
                     </DialogContent>
                   </Dialog>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    {contact.email && (
+                      <div className="flex items-center gap-3">
+                        <Mail className="w-5 h-5 text-slate-400" />
+                        <a href={`mailto:${contact.email}`} className="text-blue-600 hover:underline">
+                          {contact.email}
+                        </a>
+                      </div>
+                    )}
+                    {contact.phone && (
+                      <div className="flex items-center gap-3">
+                        <Phone className="w-5 h-5 text-slate-400" />
+                        <a href={`tel:${contact.phone}`} className="text-blue-600 hover:underline">
+                          {contact.phone}
+                        </a>
+                      </div>
+                    )}
+                    {contact.company && (
+                      <div className="text-slate-700">
+                        <span className="text-slate-500">Company: </span>
+                        {contact.company}
+                      </div>
+                    )}
                   </div>
-                  </CardHeader>
-                  <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                {contact.email && (
-                  <div className="flex items-center gap-3">
-                    <Mail className="w-5 h-5 text-slate-400" />
-                    <a href={`mailto:${contact.email}`} className="text-blue-600 hover:underline">
-                      {contact.email}
-                    </a>
+                  <div className="space-y-3">
+                    {contact.address && (
+                      <div className="flex items-start gap-3">
+                        <MapPin className="w-5 h-5 text-slate-400 mt-0.5" />
+                        <div>
+                          <p className="text-slate-700">{contact.address}</p>
+                          {(contact.city || contact.state || contact.zip_code) && (
+                            <p className="text-slate-600 text-sm">
+                              {[contact.city, contact.state, contact.zip_code].filter(Boolean).join(', ')}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    {contact.assigned_agent_email && (
+                      <div className="text-slate-700">
+                        <span className="text-slate-500">Assigned Agent: </span>
+                        {contact.assigned_agent_email}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {contact.notes && (
+                  <div className="mt-6 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <p className="text-sm text-slate-600"><strong>Notes:</strong></p>
+                    <p className="text-slate-700 mt-1">{contact.notes}</p>
                   </div>
                 )}
-                {contact.phone && (
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-5 h-5 text-slate-400" />
-                    <a href={`tel:${contact.phone}`} className="text-blue-600 hover:underline">
-                      {contact.phone}
-                    </a>
-                  </div>
-                )}
-                {contact.company && (
-                  <div className="text-slate-700">
-                    <span className="text-slate-500">Company: </span>
-                    {contact.company}
-                  </div>
-                )}
-              </div>
-              <div className="space-y-3">
-                {contact.address && (
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-slate-400 mt-0.5" />
-                    <div>
-                      <p className="text-slate-700">{contact.address}</p>
-                      {(contact.city || contact.state || contact.zip_code) && (
-                        <p className="text-slate-600 text-sm">
-                          {[contact.city, contact.state, contact.zip_code].filter(Boolean).join(', ')}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                )}
-                {contact.assigned_agent_email && (
-                  <div className="text-slate-700">
-                    <span className="text-slate-500">Assigned Agent: </span>
-                    {contact.assigned_agent_email}
-                  </div>
-                )}
-              </div>
-            </div>
-            {contact.notes && (
-              <div className="mt-6 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <p className="text-sm text-slate-600"><strong>Notes:</strong></p>
-                <p className="text-slate-700 mt-1">{contact.notes}</p>
-              </div>
-            )}
-                </CardContent>
-              </Card>
-            </div>
-            </div>
-            </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
 
-            {/* Tabs for Activity and Related Records */}
-            <Tabs defaultValue="activity" className="w-full">
+        {/* Tabs for Activity and Related Records */}
+        <Tabs defaultValue="activity" className="w-full">
           <TabsList>
             <TabsTrigger value="activity">Activity Feed ({interactions.length})</TabsTrigger>
             <TabsTrigger value="related">Related Records</TabsTrigger>
