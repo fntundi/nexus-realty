@@ -142,7 +142,7 @@ export default function ContactDetails() {
                   </Dialog>
                   </div>
                   </CardHeader>
-          <CardContent>
+                  <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
                 {contact.email && (
@@ -196,8 +196,9 @@ export default function ContactDetails() {
                 <p className="text-slate-700 mt-1">{contact.notes}</p>
               </div>
             )}
-            </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
             </div>
             </div>
 
