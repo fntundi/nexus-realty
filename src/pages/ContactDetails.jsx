@@ -43,6 +43,14 @@ export default function ContactDetails() {
     enabled: !!contactId
   });
 
+  const { data: tasks = [] } = useQuery({
+    queryKey: ['contactTasks', contactId],
+    queryFn: () => base44.entities.Task.filter({ contact_id: contactId }, '-due_date'),
+    enabled: !!contactId
+  });
+
+  const upcomingTasks = tasks.filter(t => t.status !== 'completed' && new Date(t.due_date) >= new Date());
+
   const handleInteractionSuccess = () => {
     setShowInteractionForm(false);
     refetchInteractions();
