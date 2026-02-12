@@ -246,8 +246,28 @@ export default function LeadPool() {
           </CardContent>
         </Card>
 
+        {/* Timing Suggestion */}
+        {timingLeadId && (
+          <Dialog open={!!timingLeadId} onOpenChange={(open) => !open && setTimingLeadId(null)}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Outreach Timing Analysis</DialogTitle>
+              </DialogHeader>
+              {(() => {
+                const lead = leads.find(l => l.id === timingLeadId);
+                return lead ? (
+                  <OutreachTimingSuggestion
+                    leadId={timingLeadId}
+                    contactEmail={lead.buyer_email}
+                  />
+                ) : null;
+              })()}
+            </DialogContent>
+          </Dialog>
+        )}
+
         {/* Assignment Dialog */}
-        <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
+         <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Assign Lead to Agent</DialogTitle>
