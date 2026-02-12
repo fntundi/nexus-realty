@@ -70,6 +70,7 @@ import Contacts from './pages/Contacts';
 import ContactDetails from './pages/ContactDetails';
 import LeadScoringRules from './pages/LeadScoringRules';
 import CRMReportingDashboard from './pages/CRMReportingDashboard';
+import EmailAutomation from './pages/EmailAutomation';
 
 
 export const PAGES = {
@@ -96,6 +97,7 @@ export const PAGES = {
     "ContactDetails": ContactDetails,
     "LeadScoringRules": LeadScoringRules,
     "CRMReportingDashboard": CRMReportingDashboard,
+    "EmailAutomation": EmailAutomation,
 }
 
 export const pagesConfig = {
