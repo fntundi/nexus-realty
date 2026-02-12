@@ -72,6 +72,7 @@ import Reports from './pages/Reports';
 import TaskTemplates from './pages/TaskTemplates';
 import TeamDeals from './pages/TeamDeals';
 import TerritoryManager from './pages/TerritoryManager';
+import Calendar from './pages/Calendar';
 
 
 export const PAGES = {
@@ -100,6 +101,7 @@ export const PAGES = {
     "TaskTemplates": TaskTemplates,
     "TeamDeals": TeamDeals,
     "TerritoryManager": TerritoryManager,
+    "Calendar": Calendar,
 }
 
 export const pagesConfig = {
