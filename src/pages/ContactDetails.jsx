@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ContactActivityFeed from '../components/crm/ContactActivityFeed';
 import InteractionLogger from '../components/crm/InteractionLogger';
+import LeadScoreDisplay from '../components/crm/LeadScoreDisplay';
 import {
   Dialog,
   DialogContent,
@@ -101,19 +102,27 @@ export default function ContactDetails() {
           Back to Contacts
         </Button>
 
-        {/* Contact Info Card */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div>
-                <h1 className="text-3xl font-bold text-slate-900">
-                  {contact.first_name} {contact.last_name}
-                </h1>
-                <div className="flex gap-2 mt-3">
-                  {getStatusBadge(contact.status)}
-                  {getTypeBadge(contact.contact_type)}
-                </div>
-              </div>
+        {/* Lead Score and Contact Info */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {contact.lead_score > 0 && (
+            <LeadScoreDisplay 
+              leadScore={contact.lead_score} 
+              scoreBreakdown={contact.score_breakdown}
+            />
+          )}
+          <div className="lg:col-span-2">
+            <Card>
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h1 className="text-3xl font-bold text-slate-900">
+                      {contact.first_name} {contact.last_name}
+                    </h1>
+                    <div className="flex gap-2 mt-3">
+                      {getStatusBadge(contact.status)}
+                      {getTypeBadge(contact.contact_type)}
+                    </div>
+                  </div>
               <Dialog open={showInteractionForm} onOpenChange={setShowInteractionForm}>
                 <DialogTrigger asChild>
                   <Button className="bg-blue-600 hover:bg-blue-700">

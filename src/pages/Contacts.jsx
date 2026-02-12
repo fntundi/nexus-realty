@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Plus, Search, Phone, Mail, Calendar } from 'lucide-react';
+import { Plus, Search, Phone, Mail, Calendar, TrendingUp } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { format } from 'date-fns';
@@ -198,10 +198,21 @@ export default function Contacts() {
                           )}
                         </div>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right space-y-2">
+                        {contact.lead_score > 0 && (
+                          <div className="flex items-center justify-end gap-2">
+                            <div className="text-right">
+                              <p className="text-xs text-slate-500">Score</p>
+                              <p className="text-lg font-bold text-slate-900">{contact.lead_score}</p>
+                            </div>
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-100">
+                              <TrendingUp className="w-4 h-4 text-blue-600" />
+                            </div>
+                          </div>
+                        )}
                         <div className="text-sm text-slate-500">
                           {contact.related_transaction_ids?.length > 0 && (
-                            <p>{contact.related_transaction_ids.length} transaction(s)</p>
+                            <p>{contact.related_transaction_ids.length} txn(s)</p>
                           )}
                           {contact.related_lead_ids?.length > 0 && (
                             <p>{contact.related_lead_ids.length} lead(s)</p>
