@@ -4,7 +4,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { jsPDF } from 'jspdf';
-import { format } from 'date-fns';
 
 export default function AgentPerformanceReport({ data, isLoading }) {
   useEffect(() => {
@@ -19,49 +18,17 @@ export default function AgentPerformanceReport({ data, isLoading }) {
 
   const exportToPDF = (reportData) => {
     const doc = new jsPDF();
-    let yPos = 20;
     
     doc.setFontSize(18);
-    doc.text('Agent Performance Report', 14, yPos);
-    yPos += 10;
+    doc.text('Agent Performance Report', 14, 20);
     
-    doc.setFontSize(10);
-    doc.text(`Generated: ${format(new Date(), 'PPpp')}`, 14, yPos);
-    yPos += 12;
-
-    const colWidths = [50, 15, 15, 40, 25, 20];
-    const startX = 14;
-    
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(9);
-    let x = startX;
-    ['Agent', 'Active', 'Closed', 'Value', 'Success', 'Avg Days'].forEach((header, i) => {
-      doc.text(header, x, yPos);
-      x += colWidths[i];
-    });
-    yPos += 8;
-    
-    doc.setFont(undefined, 'normal');
+    let y = 30;
     doc.setFontSize(8);
-    
+    doc.text('Agent | Active | Closed | Value | Rate | Days', 14, y);
+    y += 5;
     reportData.data.slice(0, 20).forEach(a => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 20;
-      }
-      x = startX;
-      doc.text(a.agent_email.substring(0, 20), x, yPos);
-      x += colWidths[0];
-      doc.text(String(a.active_deals), x, yPos);
-      x += colWidths[1];
-      doc.text(String(a.closed_deals), x, yPos);
-      x += colWidths[2];
-      doc.text(`$${(a.total_value / 1000).toFixed(0)}K`, x, yPos);
-      x += colWidths[3];
-      doc.text(`${a.success_rate}%`, x, yPos);
-      x += colWidths[4];
-      doc.text(String(a.avg_days_to_close), x, yPos);
-      yPos += 6;
+      doc.text(`${a.agent_email.substring(0, 15)} | ${a.active_deals} | ${a.closed_deals} | $${a.total_value} | ${a.success_rate}% | ${a.avg_days_to_close}`, 14, y);
+      y += 4;
     });
 
     doc.save('agent_performance_report.pdf');
