@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { 
   Users, TrendingUp, Building2, UserCheck,
-  Zap, BarChart3, Home, MessageSquare, Calendar, Briefcase,
+  Zap, BarChart3, Home as HomeIcon, MessageSquare, Calendar, Briefcase,
   ArrowRight, DollarSign, FileText, Lock
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -185,7 +185,7 @@ function AudienceTabsHome() {
               <span className="hidden sm:inline">Agents</span>
             </TabsTrigger>
             <TabsTrigger value="buyer" className="flex items-center gap-2">
-              <Home className="w-4 h-4" />
+              <HomeIcon className="w-4 h-4" />
               <span className="hidden sm:inline">Homeowners</span>
             </TabsTrigger>
             <TabsTrigger value="lender" className="flex items-center gap-2">
