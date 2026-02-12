@@ -7,13 +7,19 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Trash2, Zap } from 'lucide-react';
+import { Plus, Trash2, Zap, Lightbulb, Loader } from 'lucide-react';
 import { toast } from 'sonner';
+import FactorContributionChart from './FactorContributionChart';
+import ConversionPredictionAnalytics from './ConversionPredictionAnalytics';
 
 export default function LeadScoringModelBuilder() {
   const queryClient = useQueryClient();
   const [isCreating, setIsCreating] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [showAISuggestions, setShowAISuggestions] = useState(false);
+  const [industry, setIndustry] = useState('Real Estate');
+  const [businessGoals, setBusinessGoals] = useState('');
+  const [analyticsData, setAnalyticsData] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -24,6 +30,34 @@ export default function LeadScoringModelBuilder() {
   const { data: models = [] } = useQuery({
     queryKey: ['lead-scoring-models'],
     queryFn: () => base44.entities.LeadScoringModel.list()
+  });
+
+  const suggestFactorsMutation = useMutation({
+    mutationFn: () =>
+      base44.functions.invoke('suggestScoringFactors', {
+        industry,
+        business_goals: businessGoals,
+        existing_factors: formData.scoring_factors
+      }),
+    onSuccess: (response) => {
+      if (response.data?.suggested_factors) {
+        toast.success(`${response.data.suggested_factors.length} factors suggested`);
+      }
+    }
+  });
+
+  const analyzeConversionMutation = useMutation({
+    mutationFn: () =>
+      base44.functions.invoke('analyzeConversionLikelihood', {
+        model_id: editingId,
+        lead_score: calculateTotalScore(),
+        contact_data: {}
+      }),
+    onSuccess: (response) => {
+      if (response.data?.success) {
+        setAnalyticsData(response.data);
+      }
+    }
   });
 
   const createMutation = useMutation({
@@ -105,6 +139,32 @@ export default function LeadScoringModelBuilder() {
   };
 
   const totalWeight = formData.scoring_factors.reduce((sum, f) => sum + (f.weight || 0), 0);
+
+  const calculateTotalScore = () => {
+    return formData.scoring_factors.reduce((sum, f) => sum + ((f.points || 0) * (f.weight || 1)), 0);
+  };
+
+  const addSuggestedFactors = (suggestedFactors) => {
+    suggestedFactors.forEach(suggestion => {
+      const newFactor = {
+        factor_id: `factor-${Date.now()}-${Math.random()}`,
+        factor_name: suggestion.factor_name,
+        factor_type: suggestion.factor_type,
+        field_name: suggestion.field_name,
+        weight: suggestion.weight || 5,
+        condition: {
+          operator: 'equals',
+          value: suggestion.condition_example?.split(': ')[1] || ''
+        },
+        points: suggestion.points || 10
+      };
+      setFormData(prev => ({
+        ...prev,
+        scoring_factors: [...prev.scoring_factors, newFactor]
+      }));
+    });
+    setShowAISuggestions(false);
+  };
 
   return (
     <div className="space-y-6">
@@ -200,6 +260,11 @@ export default function LeadScoringModelBuilder() {
                   <SelectItem value="monthly">Monthly</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Visualizations */}
+            <div className="space-y-4">
+              <FactorContributionChart factors={formData.scoring_factors} />
             </div>
 
             {/* Scoring Factors */}
@@ -345,6 +410,25 @@ export default function LeadScoringModelBuilder() {
               </div>
             </div>
 
+            {/* Conversion Analytics */}
+            {editingId && (
+              <div className="space-y-4 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => analyzeConversionMutation.mutate()}
+                  disabled={analyzeConversionMutation.isPending}
+                  className="w-full"
+                >
+                  {analyzeConversionMutation.isPending && <Loader className="w-4 h-4 mr-2 animate-spin" />}
+                  Analyze Conversion Likelihood
+                </Button>
+                <ConversionPredictionAnalytics
+                  analytics={analyticsData}
+                  isLoading={analyzeConversionMutation.isPending}
+                />
+              </div>
+            )}
+
             {/* Actions */}
             <div className="flex gap-2 justify-end pt-4 border-t">
               <Button variant="outline" onClick={resetForm}>
@@ -361,11 +445,99 @@ export default function LeadScoringModelBuilder() {
         </Card>
       )}
 
+      {/* AI Suggestions Panel */}
+      {showAISuggestions && !isCreating && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Lightbulb className="w-5 h-5 text-yellow-500" />
+              AI Factor Assistant
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-slate-600">
+              Tell me about your business to get personalized factor suggestions
+            </p>
+
+            <div className="space-y-3">
+              <div className="space-y-2">
+                <Label>Industry</Label>
+                <Select value={industry} onValueChange={setIndustry}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Real Estate">Real Estate</SelectItem>
+                    <SelectItem value="Residential">Residential</SelectItem>
+                    <SelectItem value="Commercial">Commercial</SelectItem>
+                    <SelectItem value="Luxury">Luxury</SelectItem>
+                    <SelectItem value="Investments">Investments</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Business Goals</Label>
+                <Input
+                  value={businessGoals}
+                  onChange={(e) => setBusinessGoals(e.target.value)}
+                  placeholder="e.g., Increase close rate, Focus on high-value buyers"
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => suggestFactorsMutation.mutate()}
+                  disabled={suggestFactorsMutation.isPending}
+                  className="flex-1"
+                >
+                  {suggestFactorsMutation.isPending && <Loader className="w-4 h-4 mr-2 animate-spin" />}
+                  Generate Suggestions
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowAISuggestions(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+
+              {suggestFactorsMutation.data?.data?.suggested_factors && (
+                <div className="space-y-3 pt-4 border-t">
+                  {suggestFactorsMutation.data.data.suggested_factors.map((factor, idx) => (
+                    <div key={idx} className="p-3 bg-yellow-50 rounded-lg border border-yellow-200 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium text-slate-900">{factor.factor_name}</h4>
+                          <p className="text-xs text-slate-600 mt-1">{factor.rationale}</p>
+                        </div>
+                        <Button
+                          size="sm"
+                          onClick={() => addSuggestedFactors([factor])}
+                        >
+                          Add
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {!isCreating && (
-        <Button onClick={() => setIsCreating(true)} className="w-full">
-          <Plus className="w-4 h-4 mr-2" />
-          Create New Model
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setIsCreating(true)} className="flex-1">
+            <Plus className="w-4 h-4 mr-2" />
+            Create New Model
+          </Button>
+          <Button variant="outline" onClick={() => setShowAISuggestions(!showAISuggestions)}>
+            <Lightbulb className="w-4 h-4 mr-2" />
+            AI Suggestions
+          </Button>
+        </div>
       )}
     </div>
   );
