@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Briefcase, MessageSquare, FileText, CheckCircle2, ListChecks } from 'lucide-react';
 import MessageThread from '../components/messaging/MessageThread';
-import MilestoneTracker from '../components/milestones/MilestoneTracker';
+import TaskManager from '../components/tasks/TaskManager';
 
 export default function AgentTransactions() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -160,9 +160,9 @@ export default function AgentTransactions() {
                     <MessageSquare className="w-4 h-4 mr-2" />
                     Messages
                   </TabsTrigger>
-                  <TabsTrigger value="milestones">
+                  <TabsTrigger value="tasks">
                     <ListChecks className="w-4 h-4 mr-2" />
-                    Milestones
+                    Tasks
                   </TabsTrigger>
                 </TabsList>
                 <TabsContent value="messages" className="h-full">
@@ -171,11 +171,11 @@ export default function AgentTransactions() {
                     currentUserEmail={user.email}
                   />
                 </TabsContent>
-                <TabsContent value="milestones" className="overflow-y-auto h-full">
-                  <MilestoneTracker
+                <TabsContent value="tasks" className="overflow-y-auto h-full">
+                  <TaskManager
                     transaction={selectedTransaction}
+                    currentUser={user}
                     userRole="agent"
-                    userEmail={user.email}
                   />
                 </TabsContent>
               </Tabs>
