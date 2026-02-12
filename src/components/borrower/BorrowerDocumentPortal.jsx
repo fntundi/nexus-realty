@@ -3,7 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Upload, CheckCircle, Clock, AlertCircle, Trash2 } from 'lucide-react';
+import { FileText, Upload, CheckCircle, Clock, AlertCircle, Trash2, MessageSquare, PenTool, Eye } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
 export default function BorrowerDocumentPortal({ transactionId }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
