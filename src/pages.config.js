@@ -56,6 +56,7 @@ import LeadPool from './pages/LeadPool';
 import LenderPortal from './pages/LenderPortal';
 import MilestoneConfig from './pages/MilestoneConfig';
 import TerritoryManager from './pages/TerritoryManager';
+import TaskTemplates from './pages/TaskTemplates';
 
 
 export const PAGES = {
@@ -68,6 +69,7 @@ export const PAGES = {
     "LenderPortal": LenderPortal,
     "MilestoneConfig": MilestoneConfig,
     "TerritoryManager": TerritoryManager,
+    "TaskTemplates": TaskTemplates,
 }
 
 export const pagesConfig = {
