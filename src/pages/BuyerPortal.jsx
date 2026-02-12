@@ -6,12 +6,15 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Home, MessageSquare, FileText, Upload, ListChecks, Calendar } from 'lucide-react';
+import { Home, MessageSquare, FileText, Upload, ListChecks, Calendar, Star, Milestone } from 'lucide-react';
 import { format } from 'date-fns';
 import MessageThread from '../components/messaging/MessageThread';
 import TaskManager from '../components/tasks/TaskManager';
 import ShowingScheduler from '../components/showings/ShowingScheduler';
 import DocumentManager from '../components/documents/DocumentManager';
+import MilestonesSection from '../components/client/MilestonesSection';
+import ClientDocumentUpload from '../components/client/ClientDocumentUpload';
+import AgentFeedbackForm from '../components/client/AgentFeedbackForm';
 
 export default function BuyerPortal() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -38,8 +41,36 @@ export default function BuyerPortal() {
     queryFn: () => base44.entities.Document.list('-upload_date')
   });
 
+  const { data: milestones = [] } = useQuery({
+    queryKey: ['milestones'],
+    queryFn: async () => {
+      if (!transactions.length) return [];
+      const allMarkets = new Set(transactions.map(t => t.market_id));
+      const allMilestones = [];
+      for (const marketId of allMarkets) {
+        const mils = await base44.entities.Milestone.filter({ market_id: marketId });
+        allMilestones.push(...(mils || []));
+      }
+      return allMilestones;
+    },
+    enabled: !!transactions.length
+  });
+
+  const { data: agents = [] } = useQuery({
+    queryKey: ['agents'],
+    queryFn: () => base44.entities.Agent.list()
+  });
+
   const getProperty = (propertyId) => {
     return properties.find(p => p.id === propertyId);
+  };
+
+  const getAgent = (agentId) => {
+    return agents.find(a => a.id === agentId);
+  };
+
+  const getTransactionMilestones = (transactionId, marketId) => {
+    return milestones.filter(m => m.market_id === marketId);
   };
 
   const getTransactionDocuments = (transactionId) => {
@@ -160,11 +191,7 @@ export default function BuyerPortal() {
                         }}
                       >
                         <MessageSquare className="w-4 h-4 mr-2" />
-                        Message Agent
-                      </Button>
-                      <Button className="flex-1" variant="outline">
-                        <FileText className="w-4 h-4 mr-2" />
-                        Documents ({transactionDocs.length})
+                        View Details
                       </Button>
                     </div>
                   </CardContent>
@@ -180,8 +207,12 @@ export default function BuyerPortal() {
               <DialogTitle>Transaction Details</DialogTitle>
             </DialogHeader>
             {selectedTransaction && (
-              <Tabs defaultValue="messages" className="h-[500px]">
-                <TabsList>
+              <Tabs defaultValue="milestones" className="h-[600px]">
+                <TabsList className="w-full justify-start border-b rounded-none">
+                  <TabsTrigger value="milestones">
+                    <Milestone className="w-4 h-4 mr-2" />
+                    Milestones
+                  </TabsTrigger>
                   <TabsTrigger value="messages">
                     <MessageSquare className="w-4 h-4 mr-2" />
                     Messages
@@ -198,7 +229,19 @@ export default function BuyerPortal() {
                     <FileText className="w-4 h-4 mr-2" />
                     Documents
                   </TabsTrigger>
+                  {selectedTransaction.status === 'closed_won' && (
+                    <TabsTrigger value="feedback">
+                      <Star className="w-4 h-4 mr-2" />
+                      Feedback
+                    </TabsTrigger>
+                  )}
                 </TabsList>
+                <TabsContent value="milestones" className="overflow-y-auto h-full space-y-4">
+                  <MilestonesSection 
+                    transaction={selectedTransaction}
+                    milestones={getTransactionMilestones(selectedTransaction.id, selectedTransaction.market_id)}
+                  />
+                </TabsContent>
                 <TabsContent value="messages" className="h-full">
                   <MessageThread
                     transactionId={selectedTransaction.id}
@@ -219,13 +262,27 @@ export default function BuyerPortal() {
                     userRole="buyer"
                   />
                 </TabsContent>
-                <TabsContent value="documents" className="overflow-y-auto h-full">
+                <TabsContent value="documents" className="overflow-y-auto h-full space-y-4">
                   <DocumentManager
                     transaction={selectedTransaction}
                     currentUser={user}
                     userRole="buyer"
                   />
+                  <ClientDocumentUpload
+                    transactionId={selectedTransaction.id}
+                    userEmail={user.email}
+                    documents={getTransactionDocuments(selectedTransaction.id)}
+                  />
                 </TabsContent>
+                {selectedTransaction.status === 'closed_won' && (
+                  <TabsContent value="feedback" className="overflow-y-auto h-full space-y-4">
+                    <AgentFeedbackForm
+                      transaction={selectedTransaction}
+                      agent={getAgent(selectedTransaction.agent_id)}
+                      onSuccess={() => setMessageDialogOpen(false)}
+                    />
+                  </TabsContent>
+                )}
               </Tabs>
             )}
           </DialogContent>
