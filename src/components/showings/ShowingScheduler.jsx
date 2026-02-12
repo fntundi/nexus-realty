@@ -23,8 +23,29 @@ export default function ShowingScheduler({ transaction, currentUser, userRole })
   });
   const [counterDate, setCounterDate] = useState('');
   const [counterNotes, setCounterNotes] = useState('');
+  const [syncToCalendar, setSyncToCalendar] = useState(true);
+  const [checkingAvailability, setCheckingAvailability] = useState(false);
+  const [availabilityWarning, setAvailabilityWarning] = useState(null);
 
   const queryClient = useQueryClient();
+
+  const { data: calendarConfig } = useQuery({
+    queryKey: ['calendar-config'],
+    queryFn: async () => {
+      const configs = await base44.entities.AppConfig.filter({ config_key: 'calendar_settings' });
+      return configs[0]?.config_value || { enabled: false };
+    }
+  });
+
+  const { data: userCalendar } = useQuery({
+    queryKey: ['user-calendar', currentUser.email],
+    queryFn: async () => {
+      const configs = await base44.entities.AppConfig.filter({ 
+        config_key: `calendar_connection_${currentUser.email}` 
+      });
+      return configs[0]?.config_value || null;
+    }
+  });
 
   const { data: showings = [] } = useQuery({
     queryKey: ['showings', transaction.id],
@@ -39,11 +60,28 @@ export default function ShowingScheduler({ transaction, currentUser, userRole })
   });
 
   const createShowingMutation = useMutation({
-    mutationFn: (data) => base44.entities.Showing.create(data),
+    mutationFn: async (data) => {
+      const showing = await base44.entities.Showing.create(data);
+      
+      // Sync to calendar if enabled and connected
+      if (syncToCalendar && calendarConfig?.enabled && userCalendar?.connected) {
+        try {
+          await base44.functions.invoke('calendarCreateEvent', {
+            showing_id: showing.id,
+            provider: userCalendar.provider
+          });
+        } catch (error) {
+          console.error('Failed to sync to calendar:', error);
+        }
+      }
+      
+      return showing;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['showings'] });
       setDialogOpen(false);
       setFormData({ proposed_date: '', duration_minutes: 60, notes: '', location: '' });
+      setAvailabilityWarning(null);
       toast.success('Showing scheduled!');
       
       // Send notification to buyer
@@ -83,6 +121,30 @@ export default function ShowingScheduler({ transaction, currentUser, userRole })
       }
     }
   });
+
+  const checkAvailability = async (date) => {
+    if (!date || !calendarConfig?.enabled || !userCalendar?.connected) return;
+
+    setCheckingAvailability(true);
+    try {
+      const endTime = new Date(new Date(date).getTime() + (formData.duration_minutes || 60) * 60000).toISOString();
+      const response = await base44.functions.invoke('calendarCheckAvailability', {
+        start_time: date,
+        end_time: endTime,
+        user_email: currentUser.email
+      });
+
+      if (!response.data.available) {
+        setAvailabilityWarning('You have a calendar conflict at this time');
+      } else {
+        setAvailabilityWarning(null);
+      }
+    } catch (error) {
+      console.error('Failed to check availability:', error);
+    } finally {
+      setCheckingAvailability(false);
+    }
+  };
 
   const handleCreateShowing = () => {
     if (!formData.proposed_date) {
@@ -225,6 +287,21 @@ export default function ShowingScheduler({ transaction, currentUser, userRole })
                           <span>{showing.location}</span>
                         </div>
                       )}
+
+                      {showing.calendar_link && (
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-blue-500" />
+                          <a 
+                            href={showing.calendar_link} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline flex items-center gap-1 text-sm"
+                          >
+                            View in Calendar
+                            <ExternalLink className="w-3 h-3" />
+                          </a>
+                        </div>
+                      )}
                       
                       {showing.notes && (
                         <div className="text-slate-600 mt-2 p-2 bg-slate-50 rounded">
@@ -328,8 +405,20 @@ export default function ShowingScheduler({ transaction, currentUser, userRole })
               <Input
                 type="datetime-local"
                 value={formData.proposed_date}
-                onChange={(e) => setFormData({ ...formData, proposed_date: e.target.value })}
+                onChange={(e) => {
+                  setFormData({ ...formData, proposed_date: e.target.value });
+                  checkAvailability(e.target.value);
+                }}
               />
+              {checkingAvailability && (
+                <p className="text-xs text-slate-500 mt-1">Checking availability...</p>
+              )}
+              {availabilityWarning && (
+                <Alert className="mt-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription className="text-sm">{availabilityWarning}</AlertDescription>
+                </Alert>
+              )}
             </div>
 
             <div>
@@ -359,6 +448,19 @@ export default function ShowingScheduler({ transaction, currentUser, userRole })
                 rows={3}
               />
             </div>
+
+            {calendarConfig?.enabled && userCalendar?.connected && (
+              <div className="flex items-center space-x-2 p-3 bg-blue-50 rounded-lg">
+                <Checkbox
+                  id="sync-calendar"
+                  checked={syncToCalendar}
+                  onCheckedChange={setSyncToCalendar}
+                />
+                <Label htmlFor="sync-calendar" className="text-sm cursor-pointer">
+                  Add to my {userCalendar.provider === 'google' ? 'Google' : ''} Calendar
+                </Label>
+              </div>
+            )}
           </div>
 
           <DialogFooter>

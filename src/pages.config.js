@@ -59,6 +59,7 @@ import TerritoryManager from './pages/TerritoryManager';
 import TaskTemplates from './pages/TaskTemplates';
 import PropertySearch from './pages/PropertySearch';
 import DocuSignSettings from './pages/DocuSignSettings';
+import CalendarSettings from './pages/CalendarSettings';
 
 
 export const PAGES = {
@@ -74,6 +75,7 @@ export const PAGES = {
     "TaskTemplates": TaskTemplates,
     "PropertySearch": PropertySearch,
     "DocuSignSettings": DocuSignSettings,
+    "CalendarSettings": CalendarSettings,
 }
 
 export const pagesConfig = {
