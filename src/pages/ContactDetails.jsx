@@ -196,8 +196,8 @@ export default function ContactDetails() {
                 <p className="text-slate-700 mt-1">{contact.notes}</p>
               </div>
             )}
-            </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
             </div>
             </div>
             </div>
