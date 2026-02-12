@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Home, MessageSquare, FileText, Upload, ListChecks, Calendar, Star, Milestone } from 'lucide-react';
+import { Home, MessageSquare, FileText, Upload, ListChecks, Calendar, Star, Milestone, Sparkles, Image as ImageIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import MessageThread from '../components/messaging/MessageThread';
 import TaskManager from '../components/tasks/TaskManager';
@@ -15,6 +15,9 @@ import DocumentManager from '../components/documents/DocumentManager';
 import MilestonesSection from '../components/client/MilestonesSection';
 import ClientDocumentUpload from '../components/client/ClientDocumentUpload';
 import AgentFeedbackForm from '../components/client/AgentFeedbackForm';
+import PropertyRecommendations from '../components/buyer/PropertyRecommendations';
+import VirtualStagingViewer from '../components/buyer/VirtualStagingViewer';
+import BuyerDocumentManagement from '../components/buyer/BuyerDocumentManagement';
 
 export default function BuyerPortal() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
@@ -59,6 +62,14 @@ export default function BuyerPortal() {
   const { data: agents = [] } = useQuery({
     queryKey: ['agents'],
     queryFn: () => base44.entities.Agent.list()
+  });
+
+  const { data: stagingImages = [] } = useQuery({
+    queryKey: ['virtual-staging', selectedTransaction?.property_id],
+    queryFn: () => selectedTransaction?.property_id
+      ? base44.entities.VirtualStaging.filter({ property_id: selectedTransaction.property_id })
+      : [],
+    enabled: !!selectedTransaction?.property_id
   });
 
   const getProperty = (propertyId) => {
@@ -106,9 +117,20 @@ export default function BuyerPortal() {
   return (
     <div className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900">My Home Journey</h1>
-          <p className="text-slate-600 mt-1">Track your transactions and communicate with your agent</p>
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900">My Home Journey</h1>
+            <p className="text-slate-600 mt-1">Track your transactions and discover properties tailored to you</p>
+          </div>
+
+          {/* Personalized Recommendations Section */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 text-yellow-500" />
+              <h2 className="text-xl font-bold text-slate-900">Recommendations For You</h2>
+            </div>
+            <PropertyRecommendations buyerEmail={user?.email} />
+          </div>
         </div>
 
         <div className="grid gap-6">
@@ -227,8 +249,14 @@ export default function BuyerPortal() {
                   </TabsTrigger>
                   <TabsTrigger value="documents">
                     <FileText className="w-4 h-4 mr-2" />
-                    Documents
+                    Offer Documents
                   </TabsTrigger>
+                  {stagingImages.length > 0 && (
+                    <TabsTrigger value="staging">
+                      <ImageIcon className="w-4 h-4 mr-2" />
+                      Virtual Staging
+                    </TabsTrigger>
+                  )}
                   {selectedTransaction.status === 'closed_won' && (
                     <TabsTrigger value="feedback">
                       <Star className="w-4 h-4 mr-2" />
@@ -263,10 +291,9 @@ export default function BuyerPortal() {
                   />
                 </TabsContent>
                 <TabsContent value="documents" className="overflow-y-auto h-full space-y-4">
-                  <DocumentManager
+                  <BuyerDocumentManagement
                     transaction={selectedTransaction}
-                    currentUser={user}
-                    userRole="buyer"
+                    documents={getTransactionDocuments(selectedTransaction.id)}
                   />
                   <ClientDocumentUpload
                     transactionId={selectedTransaction.id}
@@ -274,6 +301,14 @@ export default function BuyerPortal() {
                     documents={getTransactionDocuments(selectedTransaction.id)}
                   />
                 </TabsContent>
+                {stagingImages.length > 0 && (
+                  <TabsContent value="staging" className="overflow-y-auto h-full">
+                    <VirtualStagingViewer
+                      property={getProperty(selectedTransaction.property_id)}
+                      stagingImages={stagingImages}
+                    />
+                  </TabsContent>
+                )}
                 {selectedTransaction.status === 'closed_won' && (
                   <TabsContent value="feedback" className="overflow-y-auto h-full space-y-4">
                     <AgentFeedbackForm
