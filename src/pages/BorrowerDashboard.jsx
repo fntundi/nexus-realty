@@ -4,9 +4,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText, MessageSquare, CheckCircle, Clock, AlertCircle } from 'lucide-react';
-import LoanProgressTracker from '../components/borrower/LoanProgressTracker';
-import BorrowerDocumentPortal from '../components/borrower/BorrowerDocumentPortal';
-import LoanAssistantChatbot from '../components/borrower/LoanAssistantChatbot';
+import LoanProgressTracker from '@/components/borrower/LoanProgressTracker';
+import BorrowerDocumentPortal from '@/components/borrower/BorrowerDocumentPortal';
+import LoanAssistantChatbot from '@/components/borrower/LoanAssistantChatbot';
 
 export default function BorrowerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
