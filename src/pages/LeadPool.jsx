@@ -18,6 +18,7 @@ export default function LeadPool() {
   const [selectedLead, setSelectedLead] = useState(null);
   const [assignDialogOpen, setAssignDialogOpen] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState('');
+  const [timingLeadId, setTimingLeadId] = useState(null);
 
   const queryClient = useQueryClient();
 
