@@ -123,25 +123,25 @@ export default function ContactDetails() {
                       {getTypeBadge(contact.contact_type)}
                     </div>
                   </div>
-              <Dialog open={showInteractionForm} onOpenChange={setShowInteractionForm}>
-                <DialogTrigger asChild>
-                  <Button className="bg-blue-600 hover:bg-blue-700">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Log Interaction
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle>Log Interaction with {contact.first_name}</DialogTitle>
-                  </DialogHeader>
-                  <InteractionLogger 
-                    contactId={contact.id}
-                    onSuccess={handleInteractionSuccess}
-                  />
-                </DialogContent>
-              </Dialog>
-            </div>
-          </CardHeader>
+                  <Dialog open={showInteractionForm} onOpenChange={setShowInteractionForm}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-blue-600 hover:bg-blue-700">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Log Interaction
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Log Interaction with {contact.first_name}</DialogTitle>
+                      </DialogHeader>
+                      <InteractionLogger 
+                        contactId={contact.id}
+                        onSuccess={handleInteractionSuccess}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                  </div>
+                  </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
@@ -196,10 +196,12 @@ export default function ContactDetails() {
                 <p className="text-slate-700 mt-1">{contact.notes}</p>
               </div>
             )}
-          </CardContent>
-        </Card>
+            </CardContent>
+            </Card>
+            </div>
+            </div>
 
-        {/* Tabs for Activity and Related Records */}
+            {/* Tabs for Activity and Related Records */}
         <Tabs defaultValue="activity" className="w-full">
           <TabsList>
             <TabsTrigger value="activity">Activity Feed ({interactions.length})</TabsTrigger>
