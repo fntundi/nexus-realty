@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { BookmarkPlus } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -13,6 +14,7 @@ export default function SaveSearchDialog({ filters, marketId, user }) {
   const [open, setOpen] = useState(false);
   const [searchName, setSearchName] = useState('');
   const [sendAlerts, setSendAlerts] = useState(false);
+  const [alertFrequency, setAlertFrequency] = useState('daily');
   const queryClient = useQueryClient();
 
   const saveSearchMutation = useMutation({
@@ -22,13 +24,15 @@ export default function SaveSearchDialog({ filters, marketId, user }) {
         search_name: data.searchName,
         market_id: marketId,
         filters: data.filters,
-        send_alerts: data.sendAlerts
+        send_alerts: data.sendAlerts,
+        alert_frequency: data.alertFrequency
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['savedSearches'] });
       setOpen(false);
       setSearchName('');
       setSendAlerts(false);
+      setAlertFrequency('daily');
       toast.success('Search saved successfully!');
     },
     onError: () => {
@@ -44,7 +48,8 @@ export default function SaveSearchDialog({ filters, marketId, user }) {
     saveSearchMutation.mutate({
       searchName,
       filters,
-      sendAlerts
+      sendAlerts,
+      alertFrequency
     });
   };
 
@@ -78,9 +83,24 @@ export default function SaveSearchDialog({ filters, marketId, user }) {
               onCheckedChange={setSendAlerts}
             />
             <Label htmlFor="alerts" className="font-normal text-sm cursor-pointer">
-              Email me when new properties match this search
+              Send property alerts
             </Label>
           </div>
+          {sendAlerts && (
+            <div>
+              <Label htmlFor="frequency" className="text-sm mb-2 block">Alert Frequency</Label>
+              <Select value={alertFrequency} onValueChange={setAlertFrequency}>
+                <SelectTrigger id="frequency">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="immediately">Immediately</SelectItem>
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="flex gap-2">
             <Button
               variant="outline"
