@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import LenderDocumentManager from '../components/lender/LenderDocumentManager';
+import LenderDashboardSummary from '../components/lender/LenderDashboardSummary';
 import MessageThread from '../components/messaging/MessageThread';
 
 export default function LenderPortal() {
@@ -22,6 +23,8 @@ export default function LenderPortal() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [eligibilityResults, setEligibilityResults] = useState(null);
   const [checkingEligibility, setCheckingEligibility] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [selectedDocument, setSelectedDocument] = useState(null);
 
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -115,49 +118,28 @@ export default function LenderPortal() {
           <p className="text-slate-600 mt-1">{user.full_name} • Track your active loans and loan documents</p>
         </div>
 
-        {/* Quick Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Active Loans</CardTitle>
-              <DollarSign className="h-4 w-4 text-blue-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{activeLoans.length}</div>
-              <p className="text-xs text-slate-500 mt-1">{closingLoans.length} in closing stage</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Total Value</CardTitle>
-              <TrendingUp className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">${(totalValue / 1000000).toFixed(1)}M</div>
-              <p className="text-xs text-slate-500 mt-1">across all transactions</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Documents</CardTitle>
-              <FileText className="h-4 w-4 text-orange-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{documents.length}</div>
-              <p className="text-xs text-slate-500 mt-1">appraisals, approvals, conditions</p>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Main Content Tabs */}
-        <Tabs defaultValue="active" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="active">Active Loans</TabsTrigger>
-            <TabsTrigger value="eligibility">Eligibility Check</TabsTrigger>
-            <TabsTrigger value="documents">Documents</TabsTrigger>
-          </TabsList>
+         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+           <TabsList className="grid w-full grid-cols-4">
+             <TabsTrigger value="overview">Dashboard</TabsTrigger>
+             <TabsTrigger value="active">Active Loans</TabsTrigger>
+             <TabsTrigger value="eligibility">Eligibility Check</TabsTrigger>
+             <TabsTrigger value="documents">Documents</TabsTrigger>
+           </TabsList>
+
+           {/* Dashboard Overview Tab */}
+           <TabsContent value="overview" className="space-y-4 mt-6">
+             <LenderDashboardSummary
+               transactions={transactions}
+               documents={documents}
+               onViewDocument={(doc) => {
+                 setSelectedDocument(doc);
+                 // Open document preview or details
+                 window.open(doc.file_url, '_blank');
+               }}
+               onViewFlagged={() => setActiveTab('documents')}
+             />
+           </TabsContent>
 
           {/* Eligibility Check Tab */}
           <TabsContent value="eligibility" className="space-y-4 mt-6">
