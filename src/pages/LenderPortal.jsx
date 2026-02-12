@@ -159,6 +159,102 @@ export default function LenderPortal() {
             <TabsTrigger value="documents">Documents</TabsTrigger>
           </TabsList>
 
+          {/* Eligibility Check Tab */}
+          <TabsContent value="eligibility" className="space-y-4 mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-blue-600" />
+                  Automated Loan Eligibility Checker
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {activeLoans.length === 0 ? (
+                  <p className="text-slate-500 text-center py-8">No active loans to check</p>
+                ) : (
+                  <div className="space-y-3">
+                    <p className="text-sm text-slate-600 mb-4">
+                      Select a loan to run the automated eligibility analysis. This will analyze the borrower's financial profile and provide detailed recommendations.
+                    </p>
+                    {activeLoans.map(txn => {
+                      const property = getProperty(txn.property_id);
+                      return (
+                        <div key={txn.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-200">
+                          <div className="flex-1">
+                            <p className="font-semibold text-slate-900">{property?.address || 'Property TBD'}</p>
+                            <p className="text-sm text-slate-600">Borrower: {txn.buyer_name}</p>
+                            <p className="text-xs text-slate-500 mt-1">Loan: ${txn.loan_amount?.toLocaleString()}</p>
+                          </div>
+                          <Button
+                            onClick={() => handleCheckEligibility(txn.id)}
+                            disabled={checkingEligibility === txn.id}
+                            className="bg-blue-600 hover:bg-blue-700"
+                          >
+                            {checkingEligibility === txn.id ? (
+                              <>
+                                <Loader className="w-4 h-4 mr-2 animate-spin" />
+                                Checking...
+                              </>
+                            ) : (
+                              <>
+                                <Zap className="w-4 h-4 mr-2" />
+                                Check Eligibility
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {eligibilityResults && (
+                  <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h4 className="font-semibold text-slate-900 mb-3">Eligibility Assessment</h4>
+                    <div className="space-y-2 text-sm">
+                      {eligibilityResults.error ? (
+                        <p className="text-red-600">{eligibilityResults.error}</p>
+                      ) : (
+                        <>
+                          <div className="flex items-start gap-2">
+                            <CheckCircle2 className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                            <div>
+                              <p className="font-medium text-slate-900">Assessment</p>
+                              <p className="text-slate-600">{eligibilityResults.assessment}</p>
+                            </div>
+                          </div>
+                          {eligibilityResults.recommendations && (
+                            <div className="mt-3 p-3 bg-white rounded border border-blue-100">
+                              <p className="font-medium text-slate-900 mb-2">Recommendations:</p>
+                              <ul className="list-disc list-inside space-y-1 text-slate-600">
+                                {eligibilityResults.recommendations.map((rec, idx) => (
+                                  <li key={idx}>{rec}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {eligibilityResults.risk_factors && (
+                            <div className="mt-3 p-3 bg-amber-50 rounded border border-amber-100">
+                              <p className="font-medium text-amber-900 mb-2">Risk Factors:</p>
+                              <ul className="space-y-1 text-amber-700">
+                                {eligibilityResults.risk_factors.map((factor, idx) => (
+                                  <li key={idx} className="flex items-start gap-2">
+                                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                                    <span>{factor}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Active Loans Tab */}
           <TabsContent value="active" className="space-y-4 mt-6">
             {activeLoans.length === 0 ? (
