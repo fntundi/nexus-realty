@@ -47,27 +47,27 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import AgentAnalytics from './pages/AgentAnalytics';
+import AgentTransactions from './pages/AgentTransactions';
+import AssignmentConfig from './pages/AssignmentConfig';
+import BuyerPortal from './pages/BuyerPortal';
 import Home from './pages/Home';
 import LeadPool from './pages/LeadPool';
-import AgentTransactions from './pages/AgentTransactions';
-import BuyerPortal from './pages/BuyerPortal';
 import LenderPortal from './pages/LenderPortal';
-import AssignmentConfig from './pages/AssignmentConfig';
-import TerritoryManager from './pages/TerritoryManager';
-import AgentAnalytics from './pages/AgentAnalytics';
 import MilestoneConfig from './pages/MilestoneConfig';
+import TerritoryManager from './pages/TerritoryManager';
 
 
 export const PAGES = {
+    "AgentAnalytics": AgentAnalytics,
+    "AgentTransactions": AgentTransactions,
+    "AssignmentConfig": AssignmentConfig,
+    "BuyerPortal": BuyerPortal,
     "Home": Home,
     "LeadPool": LeadPool,
-    "AgentTransactions": AgentTransactions,
-    "BuyerPortal": BuyerPortal,
     "LenderPortal": LenderPortal,
-    "AssignmentConfig": AssignmentConfig,
-    "TerritoryManager": TerritoryManager,
-    "AgentAnalytics": AgentAnalytics,
     "MilestoneConfig": MilestoneConfig,
+    "TerritoryManager": TerritoryManager,
 }
 
 export const pagesConfig = {

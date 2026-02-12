@@ -20,10 +20,12 @@ export default function AssignmentConfig() {
 
   const [selectedMarketId, setSelectedMarketId] = useState('');
   const [weights, setWeights] = useState({
-    territory_weight: 0.4,
-    workload_weight: 0.3,
-    rotation_weight: 0.2,
-    success_rate_weight: 0.1
+    territory_weight: 0.25,
+    workload_weight: 0.2,
+    rotation_weight: 0.15,
+    success_rate_weight: 0.2,
+    property_performance_weight: 0.1,
+    lead_source_weight: 0.1
   });
 
   const selectedMarket = markets.find(m => m.id === selectedMarketId);

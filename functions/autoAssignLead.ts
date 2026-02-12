@@ -50,10 +50,12 @@ Deno.serve(async (req) => {
 
     // Score each agent
     const assignmentRules = market.assignment_rules || {
-      territory_weight: 0.4,
-      workload_weight: 0.3,
-      rotation_weight: 0.2,
-      success_rate_weight: 0.1
+      territory_weight: 0.25,
+      workload_weight: 0.2,
+      rotation_weight: 0.15,
+      success_rate_weight: 0.2,
+      property_performance_weight: 0.1,
+      lead_source_weight: 0.1
     };
 
     const scoredAgents = agents.map(agent => {
@@ -119,26 +121,62 @@ Deno.serve(async (req) => {
       const maxAssignments = Math.max(...agents.map(a => a.total_assignments || 0), 1);
       const rotationScore = 1 - ((agent.total_assignments || 0) / maxAssignments);
 
-      // 4. Success Rate Score (0-1) - Based on property type and price
+      // 4. Success Rate Score (0-1) - Overall performance
       let successScore = (agent.success_rate || 0) / 100;
+
+      // 5. Property Performance Score (0-1) - Match lead to agent's strong property types/prices
+      let propertyPerformanceScore = 0.5; // Default neutral score
       
       if (property) {
-        // Check property type specific success rate
+        let propertyTypeScore = 0.5;
+        let priceRangeScore = 0.5;
+
+        // Property type matching
         const propertyTypeStats = agent.property_type_stats?.[property.property_type];
-        if (propertyTypeStats && propertyTypeStats.total > 2) {
-          successScore = (propertyTypeStats.success_rate || 0) / 100;
+        if (propertyTypeStats && propertyTypeStats.total > 0) {
+          const typeSuccessRate = propertyTypeStats.success_rate || 0;
+          const typeExperience = Math.min(propertyTypeStats.total / 10, 1); // More experience = higher score
+          propertyTypeScore = (typeSuccessRate / 100) * 0.7 + typeExperience * 0.3;
         }
 
-        // Check price range specific success rate
+        // Price range matching
         let priceRangeKey = 'under_300k';
         if (property.price >= 1000000) priceRangeKey = 'over_1m';
         else if (property.price >= 500000) priceRangeKey = '500k_1m';
         else if (property.price >= 300000) priceRangeKey = '300k_500k';
 
         const priceRangeStats = agent.price_range_stats?.[priceRangeKey];
-        if (priceRangeStats && priceRangeStats.total > 2) {
-          // Average property type and price range success rates
-          successScore = (successScore + (priceRangeStats.success_rate || 0) / 100) / 2;
+        if (priceRangeStats && priceRangeStats.total > 0) {
+          const priceSuccessRate = priceRangeStats.success_rate || 0;
+          const priceExperience = Math.min(priceRangeStats.total / 10, 1);
+          priceRangeScore = (priceSuccessRate / 100) * 0.7 + priceExperience * 0.3;
+        }
+
+        propertyPerformanceScore = (propertyTypeScore + priceRangeScore) / 2;
+      } else if (lead.budget_max) {
+        // Use budget if no property specified
+        let priceRangeKey = 'under_300k';
+        if (lead.budget_max >= 1000000) priceRangeKey = 'over_1m';
+        else if (lead.budget_max >= 500000) priceRangeKey = '500k_1m';
+        else if (lead.budget_max >= 300000) priceRangeKey = '300k_500k';
+
+        const priceRangeStats = agent.price_range_stats?.[priceRangeKey];
+        if (priceRangeStats && priceRangeStats.total > 0) {
+          const priceSuccessRate = priceRangeStats.success_rate || 0;
+          const priceExperience = Math.min(priceRangeStats.total / 10, 1);
+          propertyPerformanceScore = (priceSuccessRate / 100) * 0.7 + priceExperience * 0.3;
+        }
+      }
+
+      // 6. Lead Source Effectiveness Score (0-1) - Match lead source to agent's strong sources
+      let leadSourceScore = 0.5; // Default neutral score
+      
+      if (lead.source && agent.lead_source_stats?.[lead.source]) {
+        const sourceStats = agent.lead_source_stats[lead.source];
+        if (sourceStats.total > 0) {
+          const sourceSuccessRate = sourceStats.success_rate || 0;
+          const sourceExperience = Math.min(sourceStats.total / 15, 1); // Experience factor
+          leadSourceScore = (sourceSuccessRate / 100) * 0.75 + sourceExperience * 0.25;
         }
       }
 
@@ -147,7 +185,9 @@ Deno.serve(async (req) => {
         territoryScore * assignmentRules.territory_weight +
         workloadScore * assignmentRules.workload_weight +
         rotationScore * assignmentRules.rotation_weight +
-        successScore * assignmentRules.success_rate_weight
+        successScore * assignmentRules.success_rate_weight +
+        propertyPerformanceScore * (assignmentRules.property_performance_weight || 0.1) +
+        leadSourceScore * (assignmentRules.lead_source_weight || 0.1)
       );
 
       return {
@@ -158,6 +198,8 @@ Deno.serve(async (req) => {
           workloadScore,
           rotationScore,
           successScore,
+          propertyPerformanceScore,
+          leadSourceScore,
           finalScore: score
         }
       };
