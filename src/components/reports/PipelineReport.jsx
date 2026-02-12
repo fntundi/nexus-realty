@@ -5,7 +5,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { jsPDF } from 'jspdf';
-import { format } from 'date-fns';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
 
@@ -22,49 +21,17 @@ export default function PipelineReport({ data, isLoading }) {
 
   const exportToPDF = (reportData) => {
     const doc = new jsPDF();
-    let yPos = 20;
     
     doc.setFontSize(18);
-    doc.text('Pipeline Value Report', 14, yPos);
-    yPos += 10;
+    doc.text('Pipeline Value Report', 14, 20);
     
-    doc.setFontSize(10);
-    doc.text(`Generated: ${format(new Date(), 'PPpp')}`, 14, yPos);
-    yPos += 12;
-
-    const colWidths = [50, 35, 20, 30, 30, 20];
-    const startX = 14;
-    
-    doc.setFont(undefined, 'bold');
-    doc.setFontSize(9);
-    let x = startX;
-    ['Property', 'Agent', 'Stage', 'Value', 'Weighted', 'Prob'].forEach((header, i) => {
-      doc.text(header, x, yPos);
-      x += colWidths[i];
-    });
-    yPos += 8;
-    
-    doc.setFont(undefined, 'normal');
+    let y = 30;
     doc.setFontSize(8);
-    
+    doc.text('Property | Agent | Stage | Value | Weighted | Prob', 14, y);
+    y += 5;
     reportData.data.slice(0, 20).forEach(t => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 20;
-      }
-      x = startX;
-      doc.text(t.property.substring(0, 20), x, yPos);
-      x += colWidths[0];
-      doc.text(t.agent.substring(0, 15), x, yPos);
-      x += colWidths[1];
-      doc.text(t.stage.substring(0, 10), x, yPos);
-      x += colWidths[2];
-      doc.text(`$${(t.value / 1000).toFixed(0)}K`, x, yPos);
-      x += colWidths[3];
-      doc.text(`$${(t.weighted_value / 1000).toFixed(0)}K`, x, yPos);
-      x += colWidths[4];
-      doc.text(`${(t.probability * 100).toFixed(0)}%`, x, yPos);
-      yPos += 6;
+      doc.text(`${t.property.substring(0, 12)} | ${t.agent.substring(0, 10)} | ${t.stage} | $${t.value} | $${Math.round(t.weighted_value)} | ${(t.probability * 100).toFixed(0)}%`, 14, y);
+      y += 4;
     });
 
     doc.save('pipeline_report.pdf');

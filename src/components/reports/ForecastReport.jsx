@@ -25,17 +25,13 @@ export default function ForecastReport({ data, isLoading }) {
     doc.setFontSize(18);
     doc.text('Closing Forecast Report', 14, 20);
     
-    doc.autoTable({
-      startY: 30,
-      head: [['Property', 'Agent', 'Stage', 'Value', 'Closing Date', 'Probability']],
-      body: reportData.data.map(t => [
-        t.property,
-        t.agent,
-        t.stage,
-        `$${t.value.toLocaleString()}`,
-        format(new Date(t.closing_date), 'MMM d, yyyy'),
-        `${(t.probability * 100).toFixed(0)}%`
-      ])
+    let y = 30;
+    doc.setFontSize(8);
+    doc.text('Property | Agent | Stage | Value | Closing | Prob', 14, y);
+    y += 5;
+    reportData.data.slice(0, 20).forEach(t => {
+      doc.text(`${t.property.substring(0, 12)} | ${t.agent.substring(0, 10)} | ${t.stage} | $${t.value} | ${format(new Date(t.closing_date), 'MMM d')} | ${(t.probability * 100).toFixed(0)}%`, 14, y);
+      y += 4;
     });
 
     doc.save('forecast_report.pdf');
