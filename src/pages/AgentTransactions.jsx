@@ -19,6 +19,7 @@ import SharedDocuments from '../components/collaboration/SharedDocuments';
 import TeamTaskAssignment from '../components/collaboration/TeamTaskAssignment';
 import ClientInvite from '../components/client/ClientInvite';
 import ClientPortalAccess from '../components/client/ClientPortalAccess';
+import DealAIInsights from '../components/deals/DealAIInsights';
 
 export default function AgentTransactions() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
