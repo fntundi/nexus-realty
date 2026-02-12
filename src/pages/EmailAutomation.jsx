@@ -168,9 +168,17 @@ export default function EmailAutomation() {
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">
-            <CampaignAnalytics />
+            <AdvancedCampaignAnalytics />
           </TabsContent>
         </Tabs>
+
+        <div className="mt-8 flex gap-4">
+          <Button asChild className="bg-green-600 hover:bg-green-700">
+            <a href={createPageUrl('ContactSegments')}>
+              Manage Contact Segments
+            </a>
+          </Button>
+        </div>
       </div>
     </div>
   );
