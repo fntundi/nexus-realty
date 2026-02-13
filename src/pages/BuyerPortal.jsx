@@ -6,8 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Home, MessageSquare, FileText, Upload, ListChecks, Calendar, Star, Milestone, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { Home, MessageSquare, FileText, Upload, ListChecks, Calendar, Star, Milestone, Sparkles, Image as ImageIcon, Heart, Calculator, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '../utils';
 import MessageThread from '../components/messaging/MessageThread';
 import TaskManager from '../components/tasks/TaskManager';
 import ShowingScheduler from '../components/showings/ShowingScheduler';
@@ -18,10 +20,14 @@ import AgentFeedbackForm from '../components/client/AgentFeedbackForm';
 import PropertyRecommendations from '../components/buyer/PropertyRecommendations';
 import VirtualStagingViewer from '../components/buyer/VirtualStagingViewer';
 import BuyerDocumentManagement from '../components/buyer/BuyerDocumentManagement';
+import SavedProperties from '../components/buyer/SavedProperties';
+import MortgageCalculator from '../components/buyer/MortgageCalculator';
+import PreApprovalTracker from '../components/buyer/PreApprovalTracker';
 
 export default function BuyerPortal() {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [messageDialogOpen, setMessageDialogOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('journey');
 
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -122,6 +128,29 @@ export default function BuyerPortal() {
             <h1 className="text-3xl font-bold text-slate-900">My Home Journey</h1>
             <p className="text-slate-600 mt-1">Track your transactions and discover properties tailored to you</p>
           </div>
+
+          {/* Navigation Tabs */}
+          <Tabs value={activeSection} onValueChange={setActiveSection}>
+            <TabsList>
+              <TabsTrigger value="journey">
+                <Home className="w-4 h-4 mr-2" />
+                My Journey
+              </TabsTrigger>
+              <TabsTrigger value="favorites">
+                <Heart className="w-4 h-4 mr-2" />
+                Saved Properties
+              </TabsTrigger>
+              <TabsTrigger value="financing">
+                <Calculator className="w-4 h-4 mr-2" />
+                Financing
+              </TabsTrigger>
+              <TabsTrigger value="preapproval">
+                <CheckCircle2 className="w-4 h-4 mr-2" />
+                Pre-Approval
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="journey" className="space-y-6 mt-6">
 
           {/* Personalized Recommendations Section */}
           <div>
@@ -228,6 +257,47 @@ export default function BuyerPortal() {
               );
             })
           )}
+            </TabsContent>
+
+            <TabsContent value="favorites" className="mt-6">
+              <SavedProperties userEmail={user?.email} />
+            </TabsContent>
+
+            <TabsContent value="financing" className="mt-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <MortgageCalculator />
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Financing Tips</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="p-4 bg-blue-50 rounded-lg">
+                      <h4 className="font-semibold text-blue-900 mb-2">Get Pre-Approved First</h4>
+                      <p className="text-sm text-blue-800">
+                        Pre-approval strengthens your offers and helps you understand your budget before house hunting.
+                      </p>
+                    </div>
+                    <div className="p-4 bg-green-50 rounded-lg">
+                      <h4 className="font-semibold text-green-900 mb-2">Consider All Costs</h4>
+                      <p className="text-sm text-green-800">
+                        Beyond the mortgage payment, factor in property taxes, insurance, HOA fees, and maintenance.
+                      </p>
+                    </div>
+                    <div className="p-4 bg-amber-50 rounded-lg">
+                      <h4 className="font-semibold text-amber-900 mb-2">Shop Around for Rates</h4>
+                      <p className="text-sm text-amber-800">
+                        Even a 0.25% difference in interest rate can save thousands over the life of your loan.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="preapproval" className="mt-6">
+              <PreApprovalTracker buyerEmail={user?.email} />
+            </TabsContent>
+          </Tabs>
         </div>
 
         <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
