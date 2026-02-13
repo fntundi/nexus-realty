@@ -83,6 +83,8 @@ import TaskTemplates from './pages/TaskTemplates';
 import TeamDeals from './pages/TeamDeals';
 import TerritoryManager from './pages/TerritoryManager';
 import WorkflowAnalytics from './pages/WorkflowAnalytics';
+import ClientPortal from './pages/ClientPortal';
+import OnboardingManagement from './pages/OnboardingManagement';
 import __Layout from './Layout.jsx';
 
 
@@ -123,6 +125,8 @@ export const PAGES = {
     "TeamDeals": TeamDeals,
     "TerritoryManager": TerritoryManager,
     "WorkflowAnalytics": WorkflowAnalytics,
+    "ClientPortal": ClientPortal,
+    "OnboardingManagement": OnboardingManagement,
 }
 
 export const pagesConfig = {
