@@ -10,6 +10,9 @@ import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import MarketDataWidget from '../components/market/MarketDataWidget';
+import ClientDocumentSection from '../components/client/ClientDocumentSection';
+import PropertyInquiryForm from '../components/client/PropertyInquiryForm';
+import PersonalizedMarketInsights from '../components/client/PersonalizedMarketInsights';
 
 export default function ClientPortal() {
   const navigate = useNavigate();
@@ -253,54 +256,20 @@ export default function ClientPortal() {
               </CardContent>
             </Card>
 
-            {/* Recent Documents */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="w-5 h-5" />
-                    Recent Documents
-                  </CardTitle>
-                  {documents.length > 0 && (
-                    <Button size="sm" variant="ghost" onClick={() => navigate(createPageUrl('BuyerPortal'))}>
-                      View All
-                      <ArrowRight className="w-4 h-4 ml-1" />
-                    </Button>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent>
-                {recentDocs.length === 0 ? (
-                  <div className="text-center py-8 text-slate-500">
-                    <FileText className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                    <p>No documents yet</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    {recentDocs.map(doc => (
-                      <div key={doc.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
-                        <div className="flex items-center gap-3">
-                          <FileText className="w-4 h-4 text-slate-600" />
-                          <div>
-                            <div className="font-medium text-slate-900 text-sm">{doc.file_name || doc.document_type}</div>
-                            <div className="text-xs text-slate-500">
-                              {format(new Date(doc.upload_date || doc.created_date), 'MMM d, yyyy')}
-                            </div>
-                          </div>
-                        </div>
-                        <Badge className={
-                          doc.status === 'approved' ? 'bg-green-100 text-green-800' :
-                          doc.status === 'pending_review' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-slate-100 text-slate-800'
-                        }>
-                          {doc.status?.replace(/_/g, ' ')}
-                        </Badge>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            {/* Documents & Signatures */}
+            <ClientDocumentSection 
+              transactionId={activeTransaction?.id}
+              userEmail={user?.email}
+            />
+
+            {/* Property Inquiry / Feedback Form */}
+            {contact && (
+              <PropertyInquiryForm
+                contactId={contact.id}
+                agentEmail={contact.assigned_agent_email}
+                propertyId={activeTransaction?.property_id}
+              />
+            )}
           </div>
 
           {/* Right Column - Contacts & Properties */}
@@ -417,12 +386,11 @@ export default function ClientPortal() {
               </Card>
             )}
 
-            {/* Market Insights */}
-            {activeTransaction?.property_id && (
-              <MarketDataWidget 
-                propertyId={activeTransaction.property_id}
-              />
-            )}
+            {/* Personalized Market Insights */}
+            <PersonalizedMarketInsights
+              transaction={activeTransaction}
+              favoriteProperties={properties}
+            />
 
             {/* Saved Properties */}
             {properties.length > 0 && (

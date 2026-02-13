@@ -60,6 +60,7 @@ import CRMIntegrations from './pages/CRMIntegrations';
 import CRMReportingDashboard from './pages/CRMReportingDashboard';
 import Calendar from './pages/Calendar';
 import CalendarSettings from './pages/CalendarSettings';
+import ClientPortal from './pages/ClientPortal';
 import ContactDetails from './pages/ContactDetails';
 import ContactSegments from './pages/ContactSegments';
 import Contacts from './pages/Contacts';
@@ -71,8 +72,10 @@ import IDXSettings from './pages/IDXSettings';
 import LeadPool from './pages/LeadPool';
 import LeadScoringRules from './pages/LeadScoringRules';
 import LenderPortal from './pages/LenderPortal';
+import MarketDataSettings from './pages/MarketDataSettings';
 import MilestoneConfig from './pages/MilestoneConfig';
 import NurtureWorkflows from './pages/NurtureWorkflows';
+import OnboardingManagement from './pages/OnboardingManagement';
 import PersonalizationAndSync from './pages/PersonalizationAndSync';
 import ProjectDetails from './pages/ProjectDetails';
 import PropertySearch from './pages/PropertySearch';
@@ -83,9 +86,6 @@ import TaskTemplates from './pages/TaskTemplates';
 import TeamDeals from './pages/TeamDeals';
 import TerritoryManager from './pages/TerritoryManager';
 import WorkflowAnalytics from './pages/WorkflowAnalytics';
-import ClientPortal from './pages/ClientPortal';
-import OnboardingManagement from './pages/OnboardingManagement';
-import MarketDataSettings from './pages/MarketDataSettings';
 import __Layout from './Layout.jsx';
 
 
@@ -103,6 +103,7 @@ export const PAGES = {
     "CRMReportingDashboard": CRMReportingDashboard,
     "Calendar": Calendar,
     "CalendarSettings": CalendarSettings,
+    "ClientPortal": ClientPortal,
     "ContactDetails": ContactDetails,
     "ContactSegments": ContactSegments,
     "Contacts": Contacts,
@@ -114,8 +115,10 @@ export const PAGES = {
     "LeadPool": LeadPool,
     "LeadScoringRules": LeadScoringRules,
     "LenderPortal": LenderPortal,
+    "MarketDataSettings": MarketDataSettings,
     "MilestoneConfig": MilestoneConfig,
     "NurtureWorkflows": NurtureWorkflows,
+    "OnboardingManagement": OnboardingManagement,
     "PersonalizationAndSync": PersonalizationAndSync,
     "ProjectDetails": ProjectDetails,
     "PropertySearch": PropertySearch,
@@ -126,9 +129,6 @@ export const PAGES = {
     "TeamDeals": TeamDeals,
     "TerritoryManager": TerritoryManager,
     "WorkflowAnalytics": WorkflowAnalytics,
-    "ClientPortal": ClientPortal,
-    "OnboardingManagement": OnboardingManagement,
-    "MarketDataSettings": MarketDataSettings,
 }
 
 export const pagesConfig = {
