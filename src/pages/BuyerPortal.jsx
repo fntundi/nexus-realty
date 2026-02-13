@@ -151,112 +151,111 @@ export default function BuyerPortal() {
             </TabsList>
 
             <TabsContent value="journey" className="space-y-6 mt-6">
+              {/* Personalized Recommendations Section */}
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <Sparkles className="w-5 h-5 text-yellow-500" />
+                  <h2 className="text-xl font-bold text-slate-900">Recommendations For You</h2>
+                </div>
+                <PropertyRecommendations buyerEmail={user?.email} />
+              </div>
 
-          {/* Personalized Recommendations Section */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="w-5 h-5 text-yellow-500" />
-              <h2 className="text-xl font-bold text-slate-900">Recommendations For You</h2>
-            </div>
-            <PropertyRecommendations buyerEmail={user?.email} />
-          </div>
-        </div>
+              <div className="grid gap-6">
+                {transactions.length === 0 ? (
+                  <Card>
+                    <CardContent className="py-12 text-center text-slate-500">
+                      <Home className="w-12 h-12 mx-auto mb-3 text-slate-300" />
+                      <p>No active transactions</p>
+                      <p className="text-sm mt-2">Start by browsing properties and contacting an agent</p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  transactions.map((transaction) => {
+                    const property = getProperty(transaction.property_id);
+                    const transactionDocs = getTransactionDocuments(transaction.id);
+                    const progress = stageProgress[transaction.current_stage] || 0;
 
-        <div className="grid gap-6">
-          {transactions.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center text-slate-500">
-                <Home className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                <p>No active transactions</p>
-                <p className="text-sm mt-2">Start by browsing properties and contacting an agent</p>
-              </CardContent>
-            </Card>
-          ) : (
-            transactions.map((transaction) => {
-              const property = getProperty(transaction.property_id);
-              const transactionDocs = getTransactionDocuments(transaction.id);
-              const progress = stageProgress[transaction.current_stage] || 0;
+                    return (
+                      <Card key={transaction.id} className="overflow-hidden">
+                        <div className="h-2 bg-slate-100">
+                          <div
+                            className="h-full bg-blue-600 transition-all duration-300"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                        
+                        <CardHeader>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <CardTitle className="text-xl">
+                                {property ? property.address : 'Property Selection In Progress'}
+                              </CardTitle>
+                              {property && (
+                                <p className="text-sm text-slate-600 mt-1">
+                                  {property.city}, {property.state} • {property.bedrooms} bed, {property.bathrooms} bath
+                                </p>
+                              )}
+                            </div>
+                            <Badge className={stageBadgeColors[transaction.current_stage]}>
+                              {transaction.current_stage.replace(/_/g, ' ')}
+                            </Badge>
+                          </div>
+                        </CardHeader>
 
-              return (
-                <Card key={transaction.id} className="overflow-hidden">
-                  <div className="h-2 bg-slate-100">
-                    <div
-                      className="h-full bg-blue-600 transition-all duration-300"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                  
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <CardTitle className="text-xl">
-                          {property ? property.address : 'Property Selection In Progress'}
-                        </CardTitle>
-                        {property && (
-                          <p className="text-sm text-slate-600 mt-1">
-                            {property.city}, {property.state} • {property.bedrooms} bed, {property.bathrooms} bath
-                          </p>
-                        )}
-                      </div>
-                      <Badge className={stageBadgeColors[transaction.current_stage]}>
-                        {transaction.current_stage.replace(/_/g, ' ')}
-                      </Badge>
-                    </div>
-                  </CardHeader>
+                        <CardContent className="space-y-4">
+                          {property?.price && (
+                            <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                              <span className="text-slate-600">List Price:</span>
+                              <span className="text-lg font-semibold text-slate-900">
+                                ${property.price.toLocaleString()}
+                              </span>
+                            </div>
+                          )}
 
-                  <CardContent className="space-y-4">
-                    {property?.price && (
-                      <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                        <span className="text-slate-600">List Price:</span>
-                        <span className="text-lg font-semibold text-slate-900">
-                          ${property.price.toLocaleString()}
-                        </span>
-                      </div>
-                    )}
+                          {transaction.contract_price && (
+                            <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                              <span className="text-slate-600">Contract Price:</span>
+                              <span className="text-lg font-semibold text-blue-900">
+                                ${transaction.contract_price.toLocaleString()}
+                              </span>
+                            </div>
+                          )}
 
-                    {transaction.contract_price && (
-                      <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                        <span className="text-slate-600">Contract Price:</span>
-                        <span className="text-lg font-semibold text-blue-900">
-                          ${transaction.contract_price.toLocaleString()}
-                        </span>
-                      </div>
-                    )}
+                          {transaction.closing_date && (
+                            <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
+                              <span className="text-slate-600">Expected Closing:</span>
+                              <span className="font-medium text-slate-900">
+                                {format(new Date(transaction.closing_date), 'MMM d, yyyy')}
+                              </span>
+                            </div>
+                          )}
 
-                    {transaction.closing_date && (
-                      <div className="flex justify-between items-center p-3 bg-slate-50 rounded-lg">
-                        <span className="text-slate-600">Expected Closing:</span>
-                        <span className="font-medium text-slate-900">
-                          {format(new Date(transaction.closing_date), 'MMM d, yyyy')}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-3 pt-2">
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          setSelectedTransaction(transaction);
-                          setMessageDialogOpen(true);
-                        }}
-                      >
-                        <MessageSquare className="w-4 h-4 mr-2" />
-                        View Details
-                      </Button>
-                      {property && (
-                        <Link to={createPageUrl(`PropertySearch?id=${property.id}`)}>
-                          <Button variant="outline" className="w-full">
-                            <Home className="w-4 h-4 mr-2" />
-                            View Property
-                          </Button>
-                        </Link>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })
-          )}
+                          <div className="grid grid-cols-2 gap-3 pt-2">
+                            <Button
+                              variant="outline"
+                              onClick={() => {
+                                setSelectedTransaction(transaction);
+                                setMessageDialogOpen(true);
+                              }}
+                            >
+                              <MessageSquare className="w-4 h-4 mr-2" />
+                              View Details
+                            </Button>
+                            {property && (
+                              <Link to={createPageUrl(`PropertySearch?id=${property.id}`)}>
+                                <Button variant="outline" className="w-full">
+                                  <Home className="w-4 h-4 mr-2" />
+                                  View Property
+                                </Button>
+                              </Link>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })
+                )}
+              </div>
             </TabsContent>
 
             <TabsContent value="favorites" className="mt-6">
