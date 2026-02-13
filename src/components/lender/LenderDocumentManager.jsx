@@ -6,8 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FileText, Upload, Download, CheckCircle2, AlertCircle, Clock, Search, Zap } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { FileText, Upload, Download, CheckCircle2, AlertCircle, Clock, Search, Zap, History, Tag, Archive, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
+import { format } from 'date-fns';
 
 const DOCUMENT_CATEGORIES = [
   { value: 'identification', label: 'Identification' },
@@ -31,7 +33,11 @@ export default function LenderDocumentManager({ transaction, documents = [], len
   const [filterTransactionId, setFilterTransactionId] = useState('all');
   const [filterDateFrom, setFilterDateFrom] = useState('');
   const [filterDateTo, setFilterDateTo] = useState('');
+  const [versionDialogDoc, setVersionDialogDoc] = useState(null);
+  const [bulkTagInput, setBulkTagInput] = useState('');
+  const [showBulkTagDialog, setShowBulkTagDialog] = useState(false);
   const fileInputRef = useRef(null);
+  const versionUploadRef = useRef(null);
   const queryClient = useQueryClient();
 
   // Fetch all documents if viewing across transactions
@@ -132,6 +138,147 @@ export default function LenderDocumentManager({ transaction, documents = [], len
       toast.error('AI verification failed: ' + err.message);
     }
   });
+
+  // Auto-categorize document
+  const categorizeMutation = useMutation({
+    mutationFn: async (docId) => {
+      const doc = (allTransactions.length > 0 ? allDocs : documents).find(d => d.id === docId);
+      if (!doc) throw new Error('Document not found');
+      
+      const { data } = await base44.functions.invoke('categorizeDocument', {
+        documentId: docId,
+        fileUrl: doc.file_url,
+        fileName: doc.file_name
+      });
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['all-lender-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['lender-documents'] });
+      toast.success(`Categorized as: ${data.category} (${data.confidence}% confidence)`);
+    },
+    onError: (err) => {
+      toast.error('Auto-categorization failed: ' + err.message);
+    }
+  });
+
+  // Upload new version
+  const uploadVersionMutation = useMutation({
+    mutationFn: async ({ parentDoc, file, notes }) => {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      
+      // Archive old version
+      const versionHistory = parentDoc.version_history || [];
+      versionHistory.push({
+        version: parentDoc.version,
+        file_url: parentDoc.file_url,
+        file_name: parentDoc.file_name,
+        uploaded_by: parentDoc.uploaded_by,
+        upload_date: parentDoc.uploaded_at || parentDoc.created_date,
+        notes: parentDoc.notes,
+        status: parentDoc.status
+      });
+
+      // Update parent document with new version
+      return base44.entities.Document.update(parentDoc.id, {
+        file_url,
+        file_name: file.name,
+        file_size: file.size,
+        version: parentDoc.version + 1,
+        version_history: versionHistory,
+        uploaded_by: lenderEmail,
+        uploaded_at: new Date().toISOString(),
+        status: 'pending_review',
+        notes: notes || `Version ${parentDoc.version + 1} uploaded`
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['all-lender-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['lender-documents'] });
+      setVersionDialogDoc(null);
+      toast.success('New version uploaded successfully');
+    },
+    onError: (err) => {
+      toast.error('Failed to upload version: ' + err.message);
+    }
+  });
+
+  // Revert to previous version
+  const revertVersionMutation = useMutation({
+    mutationFn: async ({ doc, versionIndex }) => {
+      const targetVersion = doc.version_history[versionIndex];
+      if (!targetVersion) throw new Error('Version not found');
+
+      // Archive current version
+      const versionHistory = [...doc.version_history];
+      versionHistory.push({
+        version: doc.version,
+        file_url: doc.file_url,
+        file_name: doc.file_name,
+        uploaded_by: doc.uploaded_by,
+        upload_date: doc.uploaded_at || doc.created_date,
+        notes: doc.notes,
+        status: doc.status
+      });
+
+      // Remove the target version from history
+      versionHistory.splice(versionIndex, 1);
+
+      return base44.entities.Document.update(doc.id, {
+        file_url: targetVersion.file_url,
+        file_name: targetVersion.file_name,
+        version: doc.version + 1,
+        version_history: versionHistory,
+        uploaded_by: lenderEmail,
+        uploaded_at: new Date().toISOString(),
+        status: 'pending_review',
+        notes: `Reverted to version ${targetVersion.version}`
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['all-lender-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['lender-documents'] });
+      setVersionDialogDoc(null);
+      toast.success('Reverted to previous version');
+    },
+    onError: (err) => {
+      toast.error('Failed to revert: ' + err.message);
+    }
+  });
+
+  // Bulk tagging
+  const bulkTagMutation = useMutation({
+    mutationFn: async ({ docIds, tags }) => {
+      const updates = docIds.map(id => {
+        const doc = (allTransactions.length > 0 ? allDocs : documents).find(d => d.id === id);
+        const existingTags = doc?.tags || [];
+        const newTags = [...new Set([...existingTags, ...tags])];
+        return base44.entities.Document.update(id, { tags: newTags });
+      });
+      return Promise.all(updates);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['all-lender-documents'] });
+      queryClient.invalidateQueries({ queryKey: ['lender-documents'] });
+      setSelectedDocs(new Set());
+      setShowBulkTagDialog(false);
+      setBulkTagInput('');
+      toast.success('Tags added successfully');
+    },
+    onError: () => {
+      toast.error('Failed to add tags');
+    }
+  });
+
+  // Bulk download
+  const handleBulkDownload = async () => {
+    const docs = (allTransactions.length > 0 ? allDocs : documents).filter(d => selectedDocs.has(d.id));
+    for (const doc of docs) {
+      window.open(doc.file_url, '_blank');
+      await new Promise(resolve => setTimeout(resolve, 500)); // Stagger downloads
+    }
+    toast.success(`Opening ${docs.length} documents...`);
+  };
 
   // Use all docs or filtered docs based on context
   const displayDocs = allTransactions.length > 0 ? allDocs : documents;
@@ -323,7 +470,7 @@ export default function LenderDocumentManager({ transaction, documents = [], len
                  </label>
 
                  {selectedDocs.size > 0 && (
-                   <div className="flex gap-2">
+                   <div className="flex gap-2 flex-wrap">
                      <Button
                        size="sm"
                        className="bg-green-600 hover:bg-green-700"
@@ -334,7 +481,7 @@ export default function LenderDocumentManager({ transaction, documents = [], len
                        disabled={verifyDocsMutation.isPending}
                      >
                        <CheckCircle2 className="w-3 h-3 mr-1" />
-                       Approve Selected
+                       Approve
                      </Button>
                      <Button
                        size="sm"
@@ -346,7 +493,23 @@ export default function LenderDocumentManager({ transaction, documents = [], len
                        disabled={verifyDocsMutation.isPending}
                      >
                        <AlertCircle className="w-3 h-3 mr-1" />
-                       Reject Selected
+                       Reject
+                     </Button>
+                     <Button
+                       size="sm"
+                       variant="outline"
+                       onClick={handleBulkDownload}
+                     >
+                       <Download className="w-3 h-3 mr-1" />
+                       Download
+                     </Button>
+                     <Button
+                       size="sm"
+                       variant="outline"
+                       onClick={() => setShowBulkTagDialog(true)}
+                     >
+                       <Tag className="w-3 h-3 mr-1" />
+                       Tag
                      </Button>
                    </div>
                  )}
@@ -386,11 +549,22 @@ export default function LenderDocumentManager({ transaction, documents = [], len
                      </div>
                    </div>
 
-                   <div className="flex items-center gap-3">
+                   <div className="flex items-center gap-2 flex-wrap">
                      <Badge className={getStatusColor(doc.status)}>
                        {getStatusIcon(doc.status)}
                        <span className="ml-1 text-xs">{doc.status.replace(/_/g, ' ')}</span>
                      </Badge>
+                     {doc.version > 1 && (
+                       <Badge variant="outline" className="text-xs">
+                         v{doc.version}
+                       </Badge>
+                     )}
+                     {doc.auto_categorized && (
+                       <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
+                         <Zap className="w-3 h-3 mr-1" />
+                         Auto
+                       </Badge>
+                     )}
                      {doc.status === 'pending_review' && ['identification', 'income_proof', 'property_appraisal'].includes(doc.category) && (
                        <Button
                          size="sm"
@@ -399,10 +573,114 @@ export default function LenderDocumentManager({ transaction, documents = [], len
                          disabled={aiVerifyMutation.isPending}
                          title="AI-powered verification"
                        >
-                         <Zap className="w-3 h-3 mr-1" />
-                         <span className="text-xs">AI Verify</span>
+                         <Zap className="w-3 h-3" />
                        </Button>
                      )}
+                     {!doc.auto_categorized && (
+                       <Button
+                         size="sm"
+                         variant="outline"
+                         onClick={() => categorizeMutation.mutate(doc.id)}
+                         disabled={categorizeMutation.isPending}
+                         title="Auto-categorize with AI"
+                       >
+                         <Tag className="w-3 h-3" />
+                       </Button>
+                     )}
+                     <Dialog>
+                       <DialogTrigger asChild>
+                         <Button
+                           size="sm"
+                           variant="outline"
+                           onClick={() => setVersionDialogDoc(doc)}
+                           title="Version history"
+                         >
+                           <History className="w-3 h-3" />
+                         </Button>
+                       </DialogTrigger>
+                       <DialogContent className="max-w-2xl">
+                         <DialogHeader>
+                           <DialogTitle>Version History - {doc.file_name}</DialogTitle>
+                         </DialogHeader>
+                         <div className="space-y-3 max-h-96 overflow-y-auto">
+                           {/* Current Version */}
+                           <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                             <div className="flex items-center justify-between mb-2">
+                               <Badge className="bg-blue-600 text-white">Current - v{doc.version}</Badge>
+                               <span className="text-xs text-slate-600">
+                                 {format(new Date(doc.uploaded_at || doc.created_date), 'MMM d, yyyy HH:mm')}
+                               </span>
+                             </div>
+                             <p className="text-sm text-slate-700 mb-2">{doc.file_name}</p>
+                             <p className="text-xs text-slate-600">Uploaded by: {doc.uploaded_by}</p>
+                             {doc.notes && <p className="text-xs text-slate-600 mt-1">Notes: {doc.notes}</p>}
+                           </div>
+
+                           {/* Previous Versions */}
+                           {doc.version_history?.map((version, idx) => (
+                             <div key={idx} className="p-4 bg-slate-50 border border-slate-200 rounded-lg">
+                               <div className="flex items-center justify-between mb-2">
+                                 <Badge variant="outline">v{version.version}</Badge>
+                                 <span className="text-xs text-slate-600">
+                                   {format(new Date(version.upload_date), 'MMM d, yyyy HH:mm')}
+                                 </span>
+                               </div>
+                               <p className="text-sm text-slate-700 mb-2">{version.file_name}</p>
+                               <p className="text-xs text-slate-600">Uploaded by: {version.uploaded_by}</p>
+                               {version.notes && <p className="text-xs text-slate-600 mt-1">Notes: {version.notes}</p>}
+                               <div className="flex gap-2 mt-3">
+                                 <Button
+                                   size="sm"
+                                   variant="outline"
+                                   onClick={() => window.open(version.file_url, '_blank')}
+                                 >
+                                   <Download className="w-3 h-3 mr-1" />
+                                   Download
+                                 </Button>
+                                 <Button
+                                   size="sm"
+                                   variant="outline"
+                                   onClick={() => revertVersionMutation.mutate({ doc, versionIndex: idx })}
+                                   disabled={revertVersionMutation.isPending}
+                                 >
+                                   <RotateCcw className="w-3 h-3 mr-1" />
+                                   Revert to This
+                                 </Button>
+                               </div>
+                             </div>
+                           ))}
+
+                           {(!doc.version_history || doc.version_history.length === 0) && doc.version === 1 && (
+                             <p className="text-sm text-slate-500 text-center py-4">No previous versions</p>
+                           )}
+
+                           {/* Upload New Version */}
+                           <div className="p-4 bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg">
+                             <p className="text-sm font-medium text-slate-900 mb-3">Upload New Version</p>
+                             <input
+                               ref={versionUploadRef}
+                               type="file"
+                               onChange={(e) => {
+                                 const file = e.target.files?.[0];
+                                 if (file) {
+                                   uploadVersionMutation.mutate({ parentDoc: doc, file });
+                                 }
+                               }}
+                               className="hidden"
+                             />
+                             <Button
+                               size="sm"
+                               onClick={() => versionUploadRef.current?.click()}
+                               disabled={uploadVersionMutation.isPending}
+                               className="w-full"
+                             >
+                               <Upload className="w-3 h-3 mr-1" />
+                               {uploadVersionMutation.isPending ? 'Uploading...' : 'Upload New Version'}
+                             </Button>
+                           </div>
+                         </div>
+                       </DialogContent>
+                     </Dialog>
                      <Button
                        size="sm"
                        variant="ghost"
@@ -415,8 +693,41 @@ export default function LenderDocumentManager({ transaction, documents = [], len
                </CardContent>
              </Card>
            ))}
-         </div>
-       )}
-    </div>
-  );
-  }
+           </div>
+           )}
+
+           {/* Bulk Tag Dialog */}
+           <Dialog open={showBulkTagDialog} onOpenChange={setShowBulkTagDialog}>
+           <DialogContent>
+           <DialogHeader>
+             <DialogTitle>Add Tags to {selectedDocs.size} Documents</DialogTitle>
+           </DialogHeader>
+           <div className="space-y-4">
+             <Input
+               placeholder="Enter tags separated by commas (e.g., urgent, reviewed, q1-2024)"
+               value={bulkTagInput}
+               onChange={(e) => setBulkTagInput(e.target.value)}
+             />
+             <div className="flex gap-2 justify-end">
+               <Button variant="outline" onClick={() => setShowBulkTagDialog(false)}>
+                 Cancel
+               </Button>
+               <Button
+                 onClick={() => {
+                   const tags = bulkTagInput.split(',').map(t => t.trim()).filter(t => t);
+                   if (tags.length > 0) {
+                     bulkTagMutation.mutate({ docIds: Array.from(selectedDocs), tags });
+                   }
+                 }}
+                 disabled={!bulkTagInput.trim() || bulkTagMutation.isPending}
+               >
+                 <Tag className="w-4 h-4 mr-2" />
+                 Add Tags
+               </Button>
+             </div>
+           </div>
+           </DialogContent>
+           </Dialog>
+           </div>
+           );
+           }
