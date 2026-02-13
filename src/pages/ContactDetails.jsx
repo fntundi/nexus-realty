@@ -16,6 +16,7 @@ import ContactEmailHistory from '../components/crm/ContactEmailHistory';
 import ContactSegmentMembership from '../components/crm/ContactSegmentMembership';
 import ScheduleTaskDialog from '../components/tasks/ScheduleTaskDialog';
 import TaskCard from '../components/tasks/TaskCard';
+import UnifiedCommunicationHub from '../components/communication/UnifiedCommunicationHub';
 import {
   Dialog,
   DialogContent,
@@ -47,6 +48,12 @@ export default function ContactDetails() {
     queryKey: ['contactTasks', contactId],
     queryFn: () => base44.entities.Task.filter({ contact_id: contactId }, '-due_date'),
     enabled: !!contactId
+  });
+
+  const { data: transactions = [] } = useQuery({
+    queryKey: ['contactTransactions', contact?.email],
+    queryFn: () => base44.entities.Transaction.filter({ buyer_email: contact.email }),
+    enabled: !!contact?.email
   });
 
   const upcomingTasks = tasks.filter(t => t.status !== 'completed' && new Date(t.due_date) >= new Date());
@@ -212,6 +219,12 @@ export default function ContactDetails() {
             </Card>
           </div>
         </div>
+
+        {/* Communication Hub */}
+        <UnifiedCommunicationHub 
+          contact={contact} 
+          transaction={transactions[0]}
+        />
 
         {/* Tabs for Activity and Related Records */}
         <Tabs defaultValue="activity" className="w-full">
