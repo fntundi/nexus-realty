@@ -68,10 +68,13 @@ export default function BorrowerDashboard() {
           <p className="text-slate-600">Track your progress, upload documents, and get instant support</p>
         </div>
 
-        {/* Quick Stats */}
+        {/* Quick Stats - Clickable */}
         {activeTransaction && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Card>
+            <Card 
+              className="cursor-pointer hover:shadow-md transition-all"
+              onClick={() => setActiveTab('overview')}
+            >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-slate-600">Loan Amount</CardTitle>
               </CardHeader>
@@ -82,7 +85,10 @@ export default function BorrowerDashboard() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card 
+              className="cursor-pointer hover:shadow-md transition-all"
+              onClick={() => setActiveTab('overview')}
+            >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-slate-600">Application Status</CardTitle>
               </CardHeader>
@@ -100,7 +106,10 @@ export default function BorrowerDashboard() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card 
+              className="cursor-pointer hover:shadow-md transition-all"
+              onClick={() => setActiveTab('documents')}
+            >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-slate-600">Documents</CardTitle>
               </CardHeader>
@@ -111,7 +120,10 @@ export default function BorrowerDashboard() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card 
+              className="cursor-pointer hover:shadow-md transition-all"
+              onClick={() => setActiveTab('messages')}
+            >
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-slate-600">New Messages</CardTitle>
               </CardHeader>

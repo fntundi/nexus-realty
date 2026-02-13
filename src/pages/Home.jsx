@@ -59,45 +59,53 @@ function BuilderDashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Total Leads</CardTitle>
-              <Users className="h-4 w-4 text-slate-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.totalLeads}</div>
-            </CardContent>
-          </Card>
+          <Link to={createPageUrl('LeadPool')}>
+            <Card className="cursor-pointer hover:shadow-md transition-all">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-slate-600">Total Leads</CardTitle>
+                <Users className="h-4 w-4 text-slate-400" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalLeads}</div>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Unassigned</CardTitle>
-              <UserCheck className="h-4 w-4 text-orange-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-600">{stats.unassignedLeads}</div>
-            </CardContent>
-          </Card>
+          <Link to={createPageUrl('LeadPool')}>
+            <Card className="cursor-pointer hover:shadow-md transition-all">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-slate-600">Unassigned</CardTitle>
+                <UserCheck className="h-4 w-4 text-orange-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-orange-600">{stats.unassignedLeads}</div>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Active Agents</CardTitle>
-              <Building2 className="h-4 w-4 text-slate-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats.activeAgents}</div>
-            </CardContent>
-          </Card>
+          <Link to={createPageUrl('TerritoryManager')}>
+            <Card className="cursor-pointer hover:shadow-md transition-all">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-slate-600">Active Agents</CardTitle>
+                <Building2 className="h-4 w-4 text-slate-400" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.activeAgents}</div>
+              </CardContent>
+            </Card>
+          </Link>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-slate-600">Active Deals</CardTitle>
-              <TrendingUp className="h-4 w-4 text-green-500" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">{stats.activeTransactions}</div>
-            </CardContent>
-          </Card>
+          <Link to={createPageUrl('TeamDeals')}>
+            <Card className="cursor-pointer hover:shadow-md transition-all">
+              <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-slate-600">Active Deals</CardTitle>
+                <TrendingUp className="h-4 w-4 text-green-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-green-600">{stats.activeTransactions}</div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
         <Card>
@@ -112,14 +120,16 @@ function BuilderDashboard() {
             ) : (
               <div className="space-y-3">
                 {leads.slice(0, 5).map(lead => (
-                  <div key={lead.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
-                    <div className="flex-1">
-                      <div className="font-medium text-slate-900">{lead.buyer_name}</div>
-                      <div className="text-sm text-slate-600">
-                        {lead.buyer_email} • {lead.source?.replace(/_/g, ' ')}
+                  <Link key={lead.id} to={createPageUrl('LeadPool')}>
+                    <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 cursor-pointer transition-all">
+                      <div className="flex-1">
+                        <div className="font-medium text-slate-900">{lead.buyer_name}</div>
+                        <div className="text-sm text-slate-600">
+                          {lead.buyer_email} • {lead.source?.replace(/_/g, ' ')}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}
@@ -134,12 +144,14 @@ function BuilderDashboard() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {markets.map(market => (
-                  <div key={market.id} className="p-4 border border-slate-200 rounded-lg">
-                    <div className="font-medium text-slate-900">{market.name}</div>
-                    <div className="text-sm text-slate-600 mt-1">
-                      {market.state}, {market.country}
+                  <Link key={market.id} to={createPageUrl('IDXSettings')}>
+                    <div className="p-4 border border-slate-200 rounded-lg hover:shadow-md hover:border-blue-400 cursor-pointer transition-all">
+                      <div className="font-medium text-slate-900">{market.name}</div>
+                      <div className="text-sm text-slate-600 mt-1">
+                        {market.state}, {market.country}
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </CardContent>
