@@ -12,6 +12,7 @@ import PropertyCard from '../components/properties/PropertyCard';
 import PropertySearchFilters from '../components/search/PropertySearchFilters';
 import SaveSearchDialog from '../components/search/SaveSearchDialog';
 import SavedSearchesList from '../components/search/SavedSearchesList';
+import MarketDataWidget from '../components/market/MarketDataWidget';
 
 export default function PropertySearch() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -138,6 +139,16 @@ export default function PropertySearch() {
           <div className="mt-6">
             <SavedSearchesList user={user} onLoadSearch={handleLoadSearch} />
           </div>
+
+          {/* Market Insights for Selected Area */}
+          {filteredProperties.length > 0 && (
+            <div className="mt-6">
+              <MarketDataWidget 
+                address={filteredProperties[0]?.address}
+                zipCode={filteredProperties[0]?.zip_code}
+              />
+            </div>
+          )}
         </div>
 
         {/* Results */}
