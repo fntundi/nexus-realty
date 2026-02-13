@@ -17,6 +17,7 @@ import ContactSegmentMembership from '../components/crm/ContactSegmentMembership
 import ScheduleTaskDialog from '../components/tasks/ScheduleTaskDialog';
 import TaskCard from '../components/tasks/TaskCard';
 import UnifiedCommunicationHub from '../components/communication/UnifiedCommunicationHub';
+import ClientOnboardingProgress from '../components/onboarding/ClientOnboardingProgress';
 import {
   Dialog,
   DialogContent,
@@ -225,6 +226,9 @@ export default function ContactDetails() {
           contact={contact} 
           transaction={transactions[0]}
         />
+
+        {/* Onboarding Progress */}
+        <ClientOnboardingProgress contactId={contactId} />
 
         {/* Tabs for Activity and Related Records */}
         <Tabs defaultValue="activity" className="w-full">
