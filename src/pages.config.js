@@ -67,6 +67,7 @@ import DeveloperProjectShowcase from './pages/DeveloperProjectShowcase';
 import DocuSignSettings from './pages/DocuSignSettings';
 import EmailAutomation from './pages/EmailAutomation';
 import Home from './pages/Home';
+import IDXSettings from './pages/IDXSettings';
 import LeadPool from './pages/LeadPool';
 import LeadScoringRules from './pages/LeadScoringRules';
 import LenderPortal from './pages/LenderPortal';
@@ -82,7 +83,6 @@ import TaskTemplates from './pages/TaskTemplates';
 import TeamDeals from './pages/TeamDeals';
 import TerritoryManager from './pages/TerritoryManager';
 import WorkflowAnalytics from './pages/WorkflowAnalytics';
-import IDXSettings from './pages/IDXSettings';
 import __Layout from './Layout.jsx';
 
 
@@ -107,6 +107,7 @@ export const PAGES = {
     "DocuSignSettings": DocuSignSettings,
     "EmailAutomation": EmailAutomation,
     "Home": Home,
+    "IDXSettings": IDXSettings,
     "LeadPool": LeadPool,
     "LeadScoringRules": LeadScoringRules,
     "LenderPortal": LenderPortal,
@@ -122,7 +123,6 @@ export const PAGES = {
     "TeamDeals": TeamDeals,
     "TerritoryManager": TerritoryManager,
     "WorkflowAnalytics": WorkflowAnalytics,
-    "IDXSettings": IDXSettings,
 }
 
 export const pagesConfig = {

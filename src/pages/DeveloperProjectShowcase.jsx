@@ -128,37 +128,39 @@ export default function DeveloperProjectShowcase() {
 
                     <p className="text-slate-700 text-sm">{project.description}</p>
 
-                    {/* Quick Stats */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                      {project.total_units && (
-                        <div className="text-sm">
-                          <span className="text-slate-600">Units</span>
-                          <p className="font-semibold text-slate-900">{project.total_units}</p>
-                        </div>
-                      )}
-                      {project.summary_stats?.min_price && (
-                        <div className="text-sm">
-                          <span className="text-slate-600">Starting at</span>
-                          <p className="font-semibold text-slate-900">
-                            ${(project.summary_stats.min_price / 1000000).toFixed(1)}M
-                          </p>
-                        </div>
-                      )}
-                      {project.estimated_completion && (
-                        <div className="text-sm">
-                          <span className="text-slate-600">Completion</span>
-                          <p className="font-semibold text-slate-900">
-                            {format(new Date(project.estimated_completion), 'MMM yyyy')}
-                          </p>
-                        </div>
-                      )}
-                      {project.amenities?.length > 0 && (
-                        <div className="text-sm">
-                          <span className="text-slate-600">Amenities</span>
-                          <p className="font-semibold text-slate-900">{project.amenities.length}</p>
-                        </div>
-                      )}
-                    </div>
+                    {/* Quick Stats - Clickable */}
+                    <Link to={createPageUrl(`ProjectDetails?id=${project.id}`)}>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 rounded-lg hover:bg-slate-50 cursor-pointer transition-all">
+                        {project.total_units && (
+                          <div className="text-sm">
+                            <span className="text-slate-600">Units</span>
+                            <p className="font-semibold text-slate-900">{project.total_units}</p>
+                          </div>
+                        )}
+                        {project.summary_stats?.min_price && (
+                          <div className="text-sm">
+                            <span className="text-slate-600">Starting at</span>
+                            <p className="font-semibold text-slate-900">
+                              ${(project.summary_stats.min_price / 1000000).toFixed(1)}M
+                            </p>
+                          </div>
+                        )}
+                        {project.estimated_completion && (
+                          <div className="text-sm">
+                            <span className="text-slate-600">Completion</span>
+                            <p className="font-semibold text-slate-900">
+                              {format(new Date(project.estimated_completion), 'MMM yyyy')}
+                            </p>
+                          </div>
+                        )}
+                        {project.amenities?.length > 0 && (
+                          <div className="text-sm">
+                            <span className="text-slate-600">Amenities</span>
+                            <p className="font-semibold text-slate-900">{project.amenities.length}</p>
+                          </div>
+                        )}
+                      </div>
+                    </Link>
 
                     {/* Action Buttons */}
                     <div className="flex gap-2 pt-2">

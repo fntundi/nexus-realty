@@ -203,9 +203,8 @@ export default function BuyerPortal() {
                       </div>
                     )}
 
-                    <div className="flex gap-3 pt-2">
+                    <div className="grid grid-cols-2 gap-3 pt-2">
                       <Button
-                        className="flex-1"
                         variant="outline"
                         onClick={() => {
                           setSelectedTransaction(transaction);
@@ -215,6 +214,14 @@ export default function BuyerPortal() {
                         <MessageSquare className="w-4 h-4 mr-2" />
                         View Details
                       </Button>
+                      {property && (
+                        <Link to={createPageUrl(`PropertySearch?id=${property.id}`)}>
+                          <Button variant="outline" className="w-full">
+                            <Home className="w-4 h-4 mr-2" />
+                            View Property
+                          </Button>
+                        </Link>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
