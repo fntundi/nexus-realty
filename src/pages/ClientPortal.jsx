@@ -9,6 +9,7 @@ import { Calendar, User, FileText, MessageSquare, Home, CheckCircle2, Clock, Arr
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import MarketDataWidget from '../components/market/MarketDataWidget';
 
 export default function ClientPortal() {
   const navigate = useNavigate();
@@ -414,6 +415,13 @@ export default function ClientPortal() {
                   </div>
                 </CardContent>
               </Card>
+            )}
+
+            {/* Market Insights */}
+            {activeTransaction?.property_id && (
+              <MarketDataWidget 
+                propertyId={activeTransaction.property_id}
+              />
             )}
 
             {/* Saved Properties */}

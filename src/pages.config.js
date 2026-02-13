@@ -85,6 +85,7 @@ import TerritoryManager from './pages/TerritoryManager';
 import WorkflowAnalytics from './pages/WorkflowAnalytics';
 import ClientPortal from './pages/ClientPortal';
 import OnboardingManagement from './pages/OnboardingManagement';
+import MarketDataSettings from './pages/MarketDataSettings';
 import __Layout from './Layout.jsx';
 
 
@@ -127,6 +128,7 @@ export const PAGES = {
     "WorkflowAnalytics": WorkflowAnalytics,
     "ClientPortal": ClientPortal,
     "OnboardingManagement": OnboardingManagement,
+    "MarketDataSettings": MarketDataSettings,
 }
 
 export const pagesConfig = {
