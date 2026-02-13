@@ -53,6 +53,7 @@ import AgentPerformanceReport from './pages/AgentPerformanceReport';
 import AgentTransactions from './pages/AgentTransactions';
 import AlertSettings from './pages/AlertSettings';
 import AssignmentConfig from './pages/AssignmentConfig';
+import BorrowerDashboard from './pages/BorrowerDashboard';
 import BuilderDashboard from './pages/BuilderDashboard';
 import BuyerPortal from './pages/BuyerPortal';
 import CRMIntegrations from './pages/CRMIntegrations';
@@ -81,7 +82,7 @@ import TaskTemplates from './pages/TaskTemplates';
 import TeamDeals from './pages/TeamDeals';
 import TerritoryManager from './pages/TerritoryManager';
 import WorkflowAnalytics from './pages/WorkflowAnalytics';
-import BorrowerDashboard from './pages/BorrowerDashboard';
+import IDXSettings from './pages/IDXSettings';
 import __Layout from './Layout.jsx';
 
 
@@ -92,6 +93,7 @@ export const PAGES = {
     "AgentTransactions": AgentTransactions,
     "AlertSettings": AlertSettings,
     "AssignmentConfig": AssignmentConfig,
+    "BorrowerDashboard": BorrowerDashboard,
     "BuilderDashboard": BuilderDashboard,
     "BuyerPortal": BuyerPortal,
     "CRMIntegrations": CRMIntegrations,
@@ -120,7 +122,7 @@ export const PAGES = {
     "TeamDeals": TeamDeals,
     "TerritoryManager": TerritoryManager,
     "WorkflowAnalytics": WorkflowAnalytics,
-    "BorrowerDashboard": BorrowerDashboard,
+    "IDXSettings": IDXSettings,
 }
 
 export const pagesConfig = {
