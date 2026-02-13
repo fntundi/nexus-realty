@@ -7,11 +7,13 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Flame, Clock, CheckCircle2, AlertCircle, TrendingUp, 
-  Phone, Mail, MapPin, DollarSign, Calendar, ArrowRight 
+  Phone, Mail, MapPin, DollarSign, Calendar, ArrowRight, Bell, BarChart3 
 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
+import FollowUpReminders from '../components/agent/FollowUpReminders';
+import PerformanceAnalytics from '../components/agent/PerformanceAnalytics';
 
 export default function AgentDashboard() {
   const [selectedView, setSelectedView] = useState('hot-leads');
@@ -151,11 +153,19 @@ export default function AgentDashboard() {
 
         {/* Main Content Tabs */}
         <Tabs value={selectedView} onValueChange={setSelectedView} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="hot-leads">Hot Leads</TabsTrigger>
             <TabsTrigger value="warm-leads">Warm Leads</TabsTrigger>
             <TabsTrigger value="transactions">Active Deals</TabsTrigger>
             <TabsTrigger value="tasks">Tasks</TabsTrigger>
+            <TabsTrigger value="reminders">
+              <Bell className="w-4 h-4 mr-2" />
+              Follow-Ups
+            </TabsTrigger>
+            <TabsTrigger value="analytics">
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Analytics
+            </TabsTrigger>
           </TabsList>
 
           {/* Hot Leads */}
@@ -252,6 +262,16 @@ export default function AgentDashboard() {
                 ))}
               </div>
             )}
+          </TabsContent>
+
+          {/* Follow-Up Reminders */}
+          <TabsContent value="reminders" className="mt-6">
+            <FollowUpReminders agentEmail={user?.email} />
+          </TabsContent>
+
+          {/* Performance Analytics */}
+          <TabsContent value="analytics" className="mt-6">
+            <PerformanceAnalytics agentEmail={user?.email} />
           </TabsContent>
         </Tabs>
 
