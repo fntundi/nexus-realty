@@ -18,6 +18,9 @@ import ScheduleTaskDialog from '../components/tasks/ScheduleTaskDialog';
 import TaskCard from '../components/tasks/TaskCard';
 import UnifiedCommunicationHub from '../components/communication/UnifiedCommunicationHub';
 import ClientOnboardingProgress from '../components/onboarding/ClientOnboardingProgress';
+import CommunicationHistoryTimeline from '../components/communication/CommunicationHistoryTimeline';
+import AIFollowUpSuggestions from '../components/ai/AIFollowUpSuggestions';
+import AIInteractionSummary from '../components/ai/AIInteractionSummary';
 import {
   Dialog,
   DialogContent,
@@ -54,6 +57,12 @@ export default function ContactDetails() {
   const { data: transactions = [] } = useQuery({
     queryKey: ['contactTransactions', contact?.email],
     queryFn: () => base44.entities.Transaction.filter({ buyer_email: contact.email }),
+    enabled: !!contact?.email
+  });
+
+  const { data: leads = [] } = useQuery({
+    queryKey: ['contactLeads', contact?.email],
+    queryFn: () => base44.entities.Lead.filter({ buyer_email: contact.email }),
     enabled: !!contact?.email
   });
 
@@ -221,6 +230,23 @@ export default function ContactDetails() {
           </div>
         </div>
 
+        {/* AI Assistant Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <AIInteractionSummary 
+            contact={contact}
+            interactions={interactions}
+            transactions={transactions}
+          />
+          <AIFollowUpSuggestions
+            contact={contact}
+            interactions={interactions}
+            lead={leads[0]}
+          />
+        </div>
+
+        {/* Communication History Timeline */}
+        <CommunicationHistoryTimeline interactions={interactions} />
+
         {/* Communication Hub */}
         <UnifiedCommunicationHub 
           contact={contact} 
@@ -231,17 +257,13 @@ export default function ContactDetails() {
         <ClientOnboardingProgress contactId={contactId} />
 
         {/* Tabs for Activity and Related Records */}
-        <Tabs defaultValue="activity" className="w-full">
+        <Tabs defaultValue="tasks" className="w-full">
           <TabsList>
-            <TabsTrigger value="activity">Activity Feed ({interactions.length})</TabsTrigger>
             <TabsTrigger value="tasks">Tasks ({upcomingTasks.length})</TabsTrigger>
             <TabsTrigger value="emails">Email Campaigns</TabsTrigger>
             <TabsTrigger value="segments">Segment Membership</TabsTrigger>
             <TabsTrigger value="related">Related Records</TabsTrigger>
           </TabsList>
-          <TabsContent value="activity">
-            <ContactActivityFeed interactions={interactions} />
-          </TabsContent>
           <TabsContent value="tasks" className="space-y-4">
             <Dialog>
               <DialogTrigger asChild>
