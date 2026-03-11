@@ -1,22 +1,73 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import { FeatureGroup } from 'react-leaflet';
-import { EditControl } from 'react-leaflet-draw';
+import { MapContainer, TileLayer, Marker, Popup, useMap, FeatureGroup } from 'react-leaflet';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, X, Home } from 'lucide-react';
+import { MapPin, X, Pencil } from 'lucide-react';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 
 // Fix for default marker icons in React-Leaflet
-import L from 'leaflet';
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
+
+// Drawing Controls Component
+function DrawingControls({ onAreaCreated, onAreaDeleted }) {
+  const map = useMap();
+  const featureGroupRef = useRef(null);
+
+  useEffect(() => {
+    if (!map) return;
+
+    const drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+    featureGroupRef.current = drawnItems;
+
+    const drawControl = new L.Control.Draw({
+      position: 'topright',
+      draw: {
+        rectangle: true,
+        circle: true,
+        polygon: true,
+        polyline: false,
+        marker: false,
+        circlemarker: false
+      },
+      edit: {
+        featureGroup: drawnItems,
+        edit: false,
+        remove: true
+      }
+    });
+
+    map.addControl(drawControl);
+
+    map.on(L.Draw.Event.CREATED, (e) => {
+      const layer = e.layer;
+      drawnItems.addLayer(layer);
+      const geoJSON = layer.toGeoJSON();
+      if (geoJSON.geometry.type === 'Polygon') {
+        onAreaCreated(geoJSON.geometry.coordinates[0]);
+      }
+    });
+
+    map.on(L.Draw.Event.DELETED, () => {
+      onAreaDeleted();
+    });
+
+    return () => {
+      map.removeControl(drawControl);
+      map.removeLayer(drawnItems);
+    };
+  }, [map, onAreaCreated, onAreaDeleted]);
+
+  return null;
+}
 
 function MapControls({ properties, onPropertyClick, customArea, onClearArea }) {
   const map = useMap();
@@ -36,27 +87,21 @@ function MapControls({ properties, onPropertyClick, customArea, onClearArea }) {
 export default function MapSearchView({ properties, onPropertyClick, onAreaFilter }) {
   const [customArea, setCustomArea] = useState(null);
 
-  const handleCreated = (e) => {
-    const layer = e.layer;
-    const geoJSON = layer.toGeoJSON();
+  const handleAreaCreated = (coordinates) => {
+    setCustomArea(coordinates);
     
-    if (geoJSON.geometry.type === 'Polygon') {
-      const coordinates = geoJSON.geometry.coordinates[0];
-      setCustomArea(coordinates);
-      
-      // Filter properties within the drawn area
-      const filteredIds = properties
-        .filter(p => {
-          if (!p.latitude || !p.longitude) return false;
-          return isPointInPolygon([p.longitude, p.latitude], coordinates);
-        })
-        .map(p => p.id);
-      
-      onAreaFilter(filteredIds);
-    }
+    // Filter properties within the drawn area
+    const filteredIds = properties
+      .filter(p => {
+        if (!p.latitude || !p.longitude) return false;
+        return isPointInPolygon([p.longitude, p.latitude], coordinates);
+      })
+      .map(p => p.id);
+    
+    onAreaFilter(filteredIds);
   };
 
-  const handleDeleted = () => {
+  const handleAreaDeleted = () => {
     setCustomArea(null);
     onAreaFilter(null);
   };
@@ -114,25 +159,10 @@ export default function MapSearchView({ properties, onPropertyClick, onAreaFilte
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
         
-        <FeatureGroup>
-          <EditControl
-            position="topright"
-            onCreated={handleCreated}
-            onDeleted={handleDeleted}
-            draw={{
-              rectangle: true,
-              circle: true,
-              polygon: true,
-              polyline: false,
-              marker: false,
-              circlemarker: false
-            }}
-            edit={{
-              edit: false,
-              remove: true
-            }}
-          />
-        </FeatureGroup>
+        <DrawingControls 
+          onAreaCreated={handleAreaCreated}
+          onAreaDeleted={handleAreaDeleted}
+        />
 
         {properties.map(property => (
           <Marker
