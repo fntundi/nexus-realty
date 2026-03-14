@@ -47,20 +47,26 @@ function DrawingControls({ onAreaCreated, onAreaDeleted }) {
 
     map.addControl(drawControl);
 
-    map.on(L.Draw.Event.CREATED, (e) => {
+    const handleCreated = (e) => {
       const layer = e.layer;
       drawnItems.addLayer(layer);
       const geoJSON = layer.toGeoJSON();
       if (geoJSON.geometry.type === 'Polygon') {
         onAreaCreated(geoJSON.geometry.coordinates[0]);
       }
-    });
+    };
 
-    map.on(L.Draw.Event.DELETED, () => {
+    const handleDeleted = () => {
       onAreaDeleted();
-    });
+    };
+
+    map.on(L.Draw.Event.CREATED, handleCreated);
+    map.on(L.Draw.Event.DELETED, handleDeleted);
 
     return () => {
+      // Proper cleanup to prevent memory leaks
+      map.off(L.Draw.Event.CREATED, handleCreated);
+      map.off(L.Draw.Event.DELETED, handleDeleted);
       map.removeControl(drawControl);
       map.removeLayer(drawnItems);
     };

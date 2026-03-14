@@ -74,16 +74,26 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'No suitable agent found for assignment' }, { status: 400 });
     }
 
-    // Assign lead to agent
-    const updatedLead = await base44.asServiceRole.entities.Lead.update(lead.id, {
-      status: 'assigned',
-      assigned_agent_id: bestAgent.id,
-      assigned_date: new Date().toISOString(),
-      assignment_method: 'auto'
-    });
+    // Assign lead to agent with transaction-like behavior
+    let updatedLead;
+    let notification;
+    
+    try {
+      updatedLead = await base44.asServiceRole.entities.Lead.update(lead.id, {
+        status: 'assigned',
+        assigned_agent_id: bestAgent.id,
+        assigned_date: new Date().toISOString(),
+        assignment_method: 'auto'
+      });
 
-    // Create notification for agent
-    await base44.asServiceRole.entities.Notification.create({
+      // Update agent workload
+      await base44.asServiceRole.entities.Agent.update(bestAgent.id, {
+        current_workload: (bestAgent.current_workload || 0) + 1,
+        total_assignments: (bestAgent.total_assignments || 0) + 1
+      });
+
+      // Create notification for agent
+      notification = await base44.asServiceRole.entities.Notification.create({
       recipient_email: bestAgent.user_email,
       notification_type: 'lead_assigned',
       title: 'New Lead Assigned',
@@ -99,6 +109,20 @@ Deno.serve(async (req) => {
         market: lead.market_id
       }
     });
+    } catch (error) {
+      // Compensating transaction - rollback lead assignment if notification fails
+      if (updatedLead) {
+        await base44.asServiceRole.entities.Lead.update(lead.id, {
+          status: 'unassigned',
+          assigned_agent_id: null,
+          assigned_date: null
+        });
+        await base44.asServiceRole.entities.Agent.update(bestAgent.id, {
+          current_workload: Math.max(0, (bestAgent.current_workload || 0) - 1)
+        });
+      }
+      throw error;
+    }
 
     return Response.json({
       success: true,

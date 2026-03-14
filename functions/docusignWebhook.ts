@@ -1,11 +1,46 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { logAuditEvent } from './auditLogger.js';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     
+    // Verify webhook signature for security
+    const signature = req.headers.get('x-docusign-signature-1');
+    const webhookSecret = Deno.env.get('DOCUSIGN_WEBHOOK_SECRET');
+    
+    if (!signature || !webhookSecret) {
+      await logAuditEvent({
+        type: 'unauthorized_attempt',
+        action: 'webhook_call',
+        resource: 'docusign_webhook',
+        status: 'failed',
+        details: { reason: 'Missing signature or secret' },
+        ipAddress: req.headers.get('x-forwarded-for') || 'unknown'
+      });
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
     // DocuSign sends XML webhooks
     const body = await req.text();
+    
+    // Verify HMAC signature
+    const crypto = await import('node:crypto');
+    const hmac = crypto.createHmac('sha256', webhookSecret);
+    hmac.update(body);
+    const expectedSignature = hmac.digest('base64');
+    
+    if (signature !== expectedSignature) {
+      await logAuditEvent({
+        type: 'unauthorized_attempt',
+        action: 'webhook_call',
+        resource: 'docusign_webhook',
+        status: 'failed',
+        details: { reason: 'Invalid signature' },
+        ipAddress: req.headers.get('x-forwarded-for') || 'unknown'
+      });
+      return Response.json({ error: 'Invalid signature' }, { status: 403 });
+    }
     
     // Parse the webhook data (DocuSign sends XML, you may need to parse it)
     // For now, we'll expect JSON format for simplicity
@@ -78,6 +113,21 @@ Deno.serve(async (req) => {
     await base44.asServiceRole.entities.Document.update(document.id, {
       status: documentStatus,
       signature_request: signatureRequest
+    });
+    
+    // Audit log for compliance
+    await logAuditEvent({
+      type: 'data_modification',
+      action: 'update',
+      resource: 'Document',
+      resourceId: document.id,
+      details: { 
+        status: documentStatus, 
+        envelopeId,
+        webhook_source: 'docusign'
+      },
+      status: 'success',
+      ipAddress: req.headers.get('x-forwarded-for') || 'unknown'
     });
 
     // Send notifications

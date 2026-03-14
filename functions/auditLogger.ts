@@ -52,9 +52,14 @@ export async function logAuditEvent(logData) {
       severity: getSeverity(logData.type, logData.status)
     };
     
-    // In a production system, this would write to a secure audit log table
-    // For now, log to console (in real implementation, use database)
-    console.log('[AUDIT]', JSON.stringify(auditEntry));
+    // Write to AuditLog entity for compliance
+    try {
+      const base44 = createClientFromRequest({ headers: new Headers() });
+      await base44.asServiceRole.entities.AuditLog.create(auditEntry);
+    } catch (error) {
+      // Fallback to console if entity write fails
+      console.log('[AUDIT]', JSON.stringify(auditEntry));
+    }
     
     return auditEntry;
   } catch (error) {

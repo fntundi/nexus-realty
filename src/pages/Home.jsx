@@ -1,4 +1,6 @@
 import React from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -15,25 +17,59 @@ export default function Home() {
 }
 
 function BuilderDashboard() {
+  // Call all hooks first
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: () => base44.auth.me()
+  });
+
   const { data: leads = [], isLoading: leadsLoading } = useQuery({
     queryKey: ['leads'],
-    queryFn: () => base44.entities.Lead.list('-created_date')
+    queryFn: () => base44.entities.Lead.list('-created_date'),
+    enabled: !!user && user.role === 'admin'
   });
 
   const { data: agents = [] } = useQuery({
     queryKey: ['agents'],
-    queryFn: () => base44.entities.Agent.list()
+    queryFn: () => base44.entities.Agent.list(),
+    enabled: !!user && user.role === 'admin'
   });
 
   const { data: transactions = [] } = useQuery({
     queryKey: ['transactions'],
-    queryFn: () => base44.entities.Transaction.list()
+    queryFn: () => base44.entities.Transaction.list(),
+    enabled: !!user && user.role === 'admin'
   });
 
   const { data: markets = [] } = useQuery({
     queryKey: ['markets'],
-    queryFn: () => base44.entities.Market.list()
+    queryFn: () => base44.entities.Market.list(),
+    enabled: !!user && user.role === 'admin'
   });
+
+  // Check authorization after all hooks
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (user.role !== 'admin') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardContent className="pt-6 text-center space-y-4">
+            <p className="text-slate-600">This dashboard is only accessible to builders/admins.</p>
+            <Link to={createPageUrl('Home')}>
+              <Button variant="outline">Back to Home</Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const stats = {
     totalLeads: leads.length,

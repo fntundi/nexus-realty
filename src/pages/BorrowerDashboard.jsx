@@ -7,6 +7,7 @@ import { FileText, MessageSquare, CheckCircle, Clock, AlertCircle } from 'lucide
 import LoanProgressTracker from '@/components/borrower/LoanProgressTracker';
 import BorrowerDocumentPortal from '@/components/borrower/BorrowerDocumentPortal';
 import LoanAssistantChatbot from '@/components/borrower/LoanAssistantChatbot';
+import ErrorBoundary from '@/components/ui/error-boundary';
 
 export default function BorrowerDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -60,6 +61,7 @@ export default function BorrowerDashboard() {
   const unreadMessages = messages.filter(m => !m.read);
 
   return (
+    <ErrorBoundary fallbackMessage="Error loading borrower dashboard. Please refresh the page.">
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
@@ -236,5 +238,6 @@ export default function BorrowerDashboard() {
         </div>
       </div>
     </div>
+    </ErrorBoundary>
   );
 }

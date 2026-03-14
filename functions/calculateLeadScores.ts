@@ -8,6 +8,11 @@ Deno.serve(async (req) => {
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    
+    // Only admins can bulk calculate scores
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
 
     const { model_id, contact_id } = await req.json();
 
@@ -44,18 +49,29 @@ Deno.serve(async (req) => {
         score: calculateScore(c, model)
       }));
 
-      // Update contacts with new scores
-      for (const contact of contacts) {
-        const score = calculateScore(contact, model);
-        await base44.asServiceRole.entities.Contact.update(contact.id, {
-          lead_score: score,
-          last_score_update: new Date().toISOString()
-        });
-      }
+      // Update contacts with new scores (with error handling)
+      const updatePromises = contacts.map(async (contact) => {
+        try {
+          const score = calculateScore(contact, model);
+          await base44.asServiceRole.entities.Contact.update(contact.id, {
+            lead_score: score,
+            last_score_update: new Date().toISOString()
+          });
+          return { success: true, contact_id: contact.id };
+        } catch (error) {
+          console.error(`Failed to update contact ${contact.id}:`, error);
+          return { success: false, contact_id: contact.id, error: error.message };
+        }
+      });
+      
+      const updateResults = await Promise.allSettled(updatePromises);
+      const successCount = updateResults.filter(r => r.status === 'fulfilled' && r.value.success).length;
+      const failureCount = updateResults.length - successCount;
 
       return Response.json({
         success: true,
-        contacts_scored: results.length,
+        contacts_scored: successCount,
+        failures: failureCount,
         results: results.sort((a, b) => b.score - a.score)
       });
     }

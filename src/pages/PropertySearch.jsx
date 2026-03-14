@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,6 +14,8 @@ import AIPropertyRecommendations from '../components/search/AIPropertyRecommenda
 import SaveSearchDialog from '../components/search/SaveSearchDialog';
 import SavedSearchesList from '../components/search/SavedSearchesList';
 import MarketDataWidget from '../components/market/MarketDataWidget';
+import ErrorBoundary from '@/components/ui/error-boundary';
+import { sanitizeSearchQuery } from '@/lib/inputValidation';
 
 export default function PropertySearch() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -64,55 +66,61 @@ export default function PropertySearch() {
     }
   });
 
-  const filteredProperties = properties.filter(property => {
-    // Custom area filter (from map drawing)
-    if (customAreaIds && !customAreaIds.includes(property.id)) {
-      return false;
-    }
+  // Memoize filtered properties for performance
+  const filteredProperties = useMemo(() => {
+    // Sanitize search term
+    const sanitizedSearch = sanitizeSearchQuery(searchTerm);
+    
+    return properties.filter(property => {
+      // Custom area filter (from map drawing)
+      if (customAreaIds && !customAreaIds.includes(property.id)) {
+        return false;
+      }
 
-    // Search term filter
-    const searchLower = searchTerm.toLowerCase();
-    const matchesSearch = !searchTerm || 
-      property.address?.toLowerCase().includes(searchLower) ||
-      property.city?.toLowerCase().includes(searchLower) ||
-      property.state?.toLowerCase().includes(searchLower) ||
-      property.zip_code?.includes(searchTerm);
+      // Search term filter
+      const searchLower = sanitizedSearch.toLowerCase();
+      const matchesSearch = !sanitizedSearch || 
+        property.address?.toLowerCase().includes(searchLower) ||
+        property.city?.toLowerCase().includes(searchLower) ||
+        property.state?.toLowerCase().includes(searchLower) ||
+        property.zip_code?.includes(sanitizedSearch);
 
-    // Market filter
-    const matchesMarket = selectedMarket === 'all' || property.market_id === selectedMarket;
+      // Market filter
+      const matchesMarket = selectedMarket === 'all' || property.market_id === selectedMarket;
 
-    // Price filter
-    const matchesPrice = property.price >= filters.price_range[0] && property.price <= filters.price_range[1];
+      // Price filter
+      const matchesPrice = property.price >= filters.price_range[0] && property.price <= filters.price_range[1];
 
-    // Bedrooms filter
-    const matchesBedrooms = property.bedrooms >= filters.bedrooms[0] && property.bedrooms <= filters.bedrooms[1];
+      // Bedrooms filter
+      const matchesBedrooms = property.bedrooms >= filters.bedrooms[0] && property.bedrooms <= filters.bedrooms[1];
 
-    // Bathrooms filter
-    const matchesBathrooms = property.bathrooms >= filters.bathrooms[0] && property.bathrooms <= filters.bathrooms[1];
+      // Bathrooms filter
+      const matchesBathrooms = property.bathrooms >= filters.bathrooms[0] && property.bathrooms <= filters.bathrooms[1];
 
-    // Square footage filter
-    const matchesSquareFeet = !filters.square_feet || 
-      (property.square_feet >= filters.square_feet[0] && property.square_feet <= filters.square_feet[1]);
+      // Square footage filter
+      const matchesSquareFeet = !filters.square_feet || 
+        (property.square_feet >= filters.square_feet[0] && property.square_feet <= filters.square_feet[1]);
 
-    // Property type filter
-    const matchesType = filters.property_types.length === 0 || filters.property_types.includes(property.property_type);
+      // Property type filter
+      const matchesType = filters.property_types.length === 0 || filters.property_types.includes(property.property_type);
 
-    // School district filter
-    const matchesSchool = !filters.school_district || property.school_district === filters.school_district;
+      // School district filter
+      const matchesSchool = !filters.school_district || property.school_district === filters.school_district;
 
-    // Amenities filter
-    const matchesAmenities = filters.amenities.length === 0 || 
-      filters.amenities.every(amenity => property.amenities?.includes(amenity));
+      // Amenities filter
+      const matchesAmenities = filters.amenities.length === 0 || 
+        filters.amenities.every(amenity => property.amenities?.includes(amenity));
 
-    // Location filter
-    const matchesLocation = !filters.location_keyword || 
-      property.address?.toLowerCase().includes(filters.location_keyword.toLowerCase()) ||
-      property.city?.toLowerCase().includes(filters.location_keyword.toLowerCase());
+      // Location filter
+      const matchesLocation = !filters.location_keyword || 
+        property.address?.toLowerCase().includes(filters.location_keyword.toLowerCase()) ||
+        property.city?.toLowerCase().includes(filters.location_keyword.toLowerCase());
 
-    return matchesSearch && matchesMarket && matchesType && matchesPrice && 
-           matchesBedrooms && matchesBathrooms && matchesSquareFeet && 
-           matchesSchool && matchesAmenities && matchesLocation;
-  });
+      return matchesSearch && matchesMarket && matchesType && matchesPrice && 
+             matchesBedrooms && matchesBathrooms && matchesSquareFeet && 
+             matchesSchool && matchesAmenities && matchesLocation;
+    });
+  }, [properties, searchTerm, selectedMarket, customAreaIds, filters]);
 
   const handlePropertyClick = (property) => {
     setSelectedProperty(property);
@@ -145,6 +153,7 @@ export default function PropertySearch() {
   };
 
   return (
+    <ErrorBoundary fallbackMessage="Error loading property search. Please refresh the page.">
     <div className="min-h-screen bg-slate-50">
       {/* Search Header */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
@@ -289,5 +298,6 @@ export default function PropertySearch() {
         </div>
       </div>
     </div>
+    </ErrorBoundary>
   );
 }

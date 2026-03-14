@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import FollowUpReminders from '../components/agent/FollowUpReminders';
 import PerformanceAnalytics from '../components/agent/PerformanceAnalytics';
+import ErrorBoundary from '@/components/ui/error-boundary';
 
 export default function AgentDashboard() {
   const [selectedView, setSelectedView] = useState('hot-leads');
@@ -90,6 +91,7 @@ export default function AgentDashboard() {
   const getProperty = (propertyId) => properties.find(p => p.id === propertyId);
 
   return (
+    <ErrorBoundary fallbackMessage="Error loading agent dashboard. Please refresh the page.">
     <div className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
@@ -284,6 +286,7 @@ export default function AgentDashboard() {
         </Link>
       </div>
     </div>
+    </ErrorBoundary>
   );
 }
 

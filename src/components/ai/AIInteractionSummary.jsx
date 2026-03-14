@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sparkles, FileText, TrendingUp, User, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { callAIWithProtection } from '@/lib/aiCircuitBreaker';
 
 export default function AIInteractionSummary({ contact, interactions, transactions }) {
   const [summary, setSummary] = useState(null);
@@ -32,7 +33,9 @@ Provide:
 
 Keep it concise and actionable for a busy agent.`;
 
-      const result = await base44.integrations.Core.InvokeLLM({
+      // Use circuit breaker and retry logic
+      const result = await callAIWithProtection(
+        () => base44.integrations.Core.InvokeLLM({
         prompt,
         response_json_schema: {
           type: "object",
@@ -53,8 +56,20 @@ Keep it concise and actionable for a busy agent.`;
               items: { type: "string" }
             }
           }
+        }),
+        {
+          timeout: 30000,
+          maxRetries: 2,
+          fallback: () => ({
+            relationship_overview: 'Unable to generate summary at this time. Please try again.',
+            key_milestones: [],
+            client_preferences: [],
+            current_status: 'Analysis unavailable',
+            next_steps: 'Retry generation',
+            concerns: []
+          })
         }
-      });
+      );
 
       return result;
     },
