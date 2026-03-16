@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sparkles, FileText, TrendingUp, User, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { callAIWithProtection } from '@/lib/aiCircuitBreaker';
+import { callAIWithProtection } from '@/components/lib/aiCircuitBreaker';
 
 export default function AIInteractionSummary({ contact, interactions, transactions }) {
   const [summary, setSummary] = useState(null);
@@ -36,24 +36,16 @@ Keep it concise and actionable for a busy agent.`;
       // Use circuit breaker and retry logic
       const result = await callAIWithProtection(
         () => base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            relationship_overview: { type: "string" },
-            key_milestones: {
-              type: "array",
-              items: { type: "string" }
-            },
-            client_preferences: {
-              type: "array",
-              items: { type: "string" }
-            },
-            current_status: { type: "string" },
-            next_steps: { type: "string" },
-            concerns: {
-              type: "array",
-              items: { type: "string" }
+          prompt,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              relationship_overview: { type: "string" },
+              key_milestones: { type: "array", items: { type: "string" } },
+              client_preferences: { type: "array", items: { type: "string" } },
+              current_status: { type: "string" },
+              next_steps: { type: "string" },
+              concerns: { type: "array", items: { type: "string" } }
             }
           }
         }),
