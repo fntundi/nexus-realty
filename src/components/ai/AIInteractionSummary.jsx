@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Sparkles, FileText, TrendingUp, User, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { callAIWithProtection } from '@/components/lib/aiCircuitBreaker';
+import { callAIWithProtection } from '@/lib/aiCircuitBreaker';
 
 export default function AIInteractionSummary({ contact, interactions, transactions }) {
   const [summary, setSummary] = useState(null);
