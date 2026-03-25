@@ -6,6 +6,7 @@ import { pagesConfig } from './pages.config'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import TeamInbox from './pages/TeamInbox';
+import FollowUpBossMigration from './pages/FollowUpBossMigration';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
@@ -60,6 +61,7 @@ const AuthenticatedApp = () => {
         />
       ))}
       <Route path="/TeamInbox" element={<LayoutWrapper currentPageName="TeamInbox"><TeamInbox /></LayoutWrapper>} />
+      <Route path="/FollowUpBossMigration" element={<LayoutWrapper currentPageName="FollowUpBossMigration"><FollowUpBossMigration /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
