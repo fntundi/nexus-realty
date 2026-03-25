@@ -1,8 +1,10 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
 /**
  * Audit Logging for Security & Compliance
- * Log all sensitive operations for compliance and breach detection
+ * 
+ * Used as both a callable endpoint AND imported utility by other functions.
+ * POST payload: { type, action, resource, resourceId, details, status }
  */
 
 const LOG_TYPES = {
@@ -16,58 +18,18 @@ const LOG_TYPES = {
   UNAUTHORIZED_ATTEMPT: 'unauthorized_attempt'
 };
 
-// Sanitize data for audit logs (remove passwords, keys, etc)
 function sanitizeForLog(data) {
   if (typeof data !== 'object' || data === null) return data;
-  
   const sanitized = { ...data };
   const sensitiveKeys = ['password', 'api_key', 'secret', 'token', 'ssn', 'credit_card'];
-  
   Object.keys(sanitized).forEach(key => {
     if (sensitiveKeys.some(s => key.toLowerCase().includes(s))) {
       sanitized[key] = '[REDACTED]';
     }
   });
-  
   return sanitized;
 }
 
-/**
- * Main audit log function
- * @param {Object} logData - { type, userId, userEmail, action, resource, resourceId, details, status, ipAddress, timestamp }
- */
-export async function logAuditEvent(logData) {
-  try {
-    const auditEntry = {
-      log_type: logData.type,
-      user_email: logData.userEmail,
-      user_id: logData.userId,
-      action: logData.action,
-      resource: logData.resource,
-      resource_id: logData.resourceId,
-      details: sanitizeForLog(logData.details),
-      status: logData.status || 'success',
-      ip_address: logData.ipAddress,
-      timestamp: new Date().toISOString(),
-      severity: getSeverity(logData.type, logData.status)
-    };
-    
-    // Write to AuditLog entity for compliance
-    try {
-      const base44 = createClientFromRequest({ headers: new Headers() });
-      await base44.asServiceRole.entities.AuditLog.create(auditEntry);
-    } catch (error) {
-      // Fallback to console if entity write fails
-      console.log('[AUDIT]', JSON.stringify(auditEntry));
-    }
-    
-    return auditEntry;
-  } catch (error) {
-    console.error('[AUDIT_ERROR]', error.message);
-  }
-}
-
-// Determine severity level
 function getSeverity(logType, status) {
   if (status === 'failed' || logType === 'unauthorized_attempt') return 'high';
   if (logType === 'pii_access' || logType === 'data_modification') return 'medium';
@@ -75,14 +37,49 @@ function getSeverity(logType, status) {
 }
 
 /**
- * Log data access (PII reads, sensitive queries)
+ * Core audit event logger — requires a real Request object for auth context.
  */
-export async function logDataAccess(req, { resource, resourceId, fieldAccessed, foundPII }) {
+async function logAuditEvent(req, logData) {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    
-    await logAuditEvent({
+    let userEmail = logData.userEmail;
+    let userId = logData.userId;
+
+    // Attempt to resolve user from request if not provided
+    if (!userEmail) {
+      try {
+        const user = await base44.auth.me();
+        userEmail = user?.email;
+        userId = user?.id;
+      } catch (_) { /* unauthenticated callers */ }
+    }
+
+    const auditEntry = {
+      log_type: logData.type,
+      user_email: userEmail,
+      user_id: userId,
+      action: logData.action,
+      resource: logData.resource,
+      resource_id: logData.resourceId,
+      details: sanitizeForLog(logData.details),
+      status: logData.status || 'success',
+      ip_address: req.headers?.get?.('x-forwarded-for') || 'unknown',
+      severity: getSeverity(logData.type, logData.status)
+    };
+
+    await base44.asServiceRole.entities.AuditLog.create(auditEntry);
+    return auditEntry;
+  } catch (error) {
+    // Fallback — never let audit failure crash the caller
+    console.log('[AUDIT]', JSON.stringify({ ...logData, error: error.message }));
+  }
+}
+
+async function logDataAccess(req, { resource, resourceId, fieldAccessed, foundPII }) {
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me().catch(() => null);
+    await logAuditEvent(req, {
       type: foundPII ? LOG_TYPES.PII_ACCESS : LOG_TYPES.DATA_ACCESS,
       userId: user?.id,
       userEmail: user?.email,
@@ -90,23 +87,18 @@ export async function logDataAccess(req, { resource, resourceId, fieldAccessed, 
       resource,
       resourceId,
       details: { fieldAccessed, foundPII },
-      status: 'success',
-      ipAddress: req.headers.get('x-forwarded-for') || 'unknown'
+      status: 'success'
     });
   } catch (error) {
     console.error('[LOG_ERROR]', error.message);
   }
 }
 
-/**
- * Log data modifications (creates, updates, deletes)
- */
-export async function logDataModification(req, { action, resource, resourceId, changes }) {
+async function logDataModification(req, { action, resource, resourceId, changes }) {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    
-    await logAuditEvent({
+    const user = await base44.auth.me().catch(() => null);
+    await logAuditEvent(req, {
       type: LOG_TYPES.DATA_MODIFICATION,
       userId: user?.id,
       userEmail: user?.email,
@@ -114,23 +106,18 @@ export async function logDataModification(req, { action, resource, resourceId, c
       resource,
       resourceId,
       details: { changes: sanitizeForLog(changes) },
-      status: 'success',
-      ipAddress: req.headers.get('x-forwarded-for') || 'unknown'
+      status: 'success'
     });
   } catch (error) {
     console.error('[LOG_ERROR]', error.message);
   }
 }
 
-/**
- * Log file access/downloads
- */
-export async function logFileAccess(req, { fileName, fileSize, accessType }) {
+async function logFileAccess(req, { fileName, fileSize, accessType }) {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    
-    await logAuditEvent({
+    const user = await base44.auth.me().catch(() => null);
+    await logAuditEvent(req, {
       type: LOG_TYPES.FILE_ACCESS,
       userId: user?.id,
       userEmail: user?.email,
@@ -138,56 +125,71 @@ export async function logFileAccess(req, { fileName, fileSize, accessType }) {
       resource: 'file',
       resourceId: fileName,
       details: { fileName, fileSize },
-      status: 'success',
-      ipAddress: req.headers.get('x-forwarded-for') || 'unknown'
+      status: 'success'
     });
   } catch (error) {
     console.error('[LOG_ERROR]', error.message);
   }
 }
 
-/**
- * Log failed authentication attempts
- */
-export async function logFailedAuth(req, { reason, email }) {
-  try {
-    const ipAddress = req.headers.get('x-forwarded-for') || 'unknown';
-    
-    await logAuditEvent({
-      type: LOG_TYPES.FAILED_AUTH,
-      userEmail: email || 'unknown',
-      action: 'failed_login',
-      resource: 'authentication',
-      details: { reason },
-      status: 'failed',
-      ipAddress
-    });
-  } catch (error) {
-    console.error('[LOG_ERROR]', error.message);
-  }
+async function logFailedAuth(req, { reason, email }) {
+  await logAuditEvent(req, {
+    type: LOG_TYPES.FAILED_AUTH,
+    userEmail: email || 'unknown',
+    action: 'failed_login',
+    resource: 'authentication',
+    details: { reason },
+    status: 'failed'
+  });
 }
 
-/**
- * Log unauthorized access attempts
- */
-export async function logUnauthorizedAttempt(req, { resource, action, reason }) {
+async function logUnauthorizedAttempt(req, { resource, action, reason }) {
   try {
     const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
-    
-    await logAuditEvent({
+    const user = await base44.auth.me().catch(() => null);
+    await logAuditEvent(req, {
       type: LOG_TYPES.UNAUTHORIZED_ATTEMPT,
       userId: user?.id,
       userEmail: user?.email,
       action,
       resource,
       details: { reason },
-      status: 'failed',
-      ipAddress: req.headers.get('x-forwarded-for') || 'unknown'
+      status: 'failed'
     });
   } catch (error) {
     console.error('[LOG_ERROR]', error.message);
   }
 }
 
-export { LOG_TYPES };
+// Export utilities for use by other functions
+export {
+  logAuditEvent,
+  logDataAccess,
+  logDataModification,
+  logFileAccess,
+  logFailedAuth,
+  logUnauthorizedAttempt,
+  LOG_TYPES
+};
+
+// Direct endpoint: POST { type, action, resource, resourceId, details, status }
+Deno.serve(async (req) => {
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user || !['admin', 'agent'].includes(user.role)) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const payload = await req.json();
+    const entry = await logAuditEvent(req, {
+      ...payload,
+      userEmail: user.email,
+      userId: user.id
+    });
+
+    return Response.json({ success: true, entry });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+});
