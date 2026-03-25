@@ -15,6 +15,20 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
+    // Verify the user owns this document or is admin/agent
+    const doc = await base44.asServiceRole.entities.Document.get(documentId);
+    if (!doc) {
+      return Response.json({ error: 'Document not found' }, { status: 404 });
+    }
+    const isOwner = doc.uploaded_by === user.email || doc.uploaded_by_email === user.email;
+    if (!isOwner && !['admin', 'agent'].includes(user.role)) {
+      return Response.json({ error: 'Forbidden: You do not have access to this document' }, { status: 403 });
+    }
+
+    if (false) {  // replaced by check above
+      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
     // Define verification rules by document type
     const verificationRules = {
       identification: {

@@ -34,14 +34,21 @@ export default function AgentDashboard() {
     enabled: !!user?.email
   });
 
-  // Get agent's active transactions
+  // Get current agent profile to resolve agent_id
+  const { data: agentProfile } = useQuery({
+    queryKey: ['agent-profile', user?.email],
+    queryFn: () => base44.entities.Agent.filter({ user_email: user?.email }).then(a => a[0]),
+    enabled: !!user?.email
+  });
+
+  // Get agent's active transactions using correct agent_id field
   const { data: transactions = [] } = useQuery({
-    queryKey: ['agent-transactions', user?.email],
+    queryKey: ['agent-transactions', agentProfile?.id],
     queryFn: () => base44.entities.Transaction.filter(
-      { agent_email: user?.email, status: 'active' },
+      { agent_id: agentProfile?.id, status: 'active' },
       '-updated_date'
     ),
-    enabled: !!user?.email
+    enabled: !!agentProfile?.id
   });
 
   // Get overdue tasks

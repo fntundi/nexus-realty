@@ -27,14 +27,18 @@ Deno.serve(async (req) => {
       for (const contact of matchingContacts) {
         try {
           if (rule.action_type === 'reassign_lead') {
-            // Reassign related leads to new agent
+            // Reassign related leads to new agent — look up Agent ID from email
             const leads = await base44.asServiceRole.entities.Lead.filter({
               buyer_email: contact.email
             });
+            const targetAgents = rule.reassign_to_agent_email
+              ? await base44.asServiceRole.entities.Agent.filter({ user_email: rule.reassign_to_agent_email })
+              : [];
+            const targetAgentId = targetAgents[0]?.id || null;
 
             for (const lead of leads) {
               await base44.asServiceRole.entities.Lead.update(lead.id, {
-                assigned_agent_id: rule.reassign_to_agent_email,
+                assigned_agent_id: targetAgentId,
                 status: 'assigned',
                 assigned_date: new Date().toISOString()
               });
