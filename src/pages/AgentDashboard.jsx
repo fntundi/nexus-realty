@@ -1,23 +1,25 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Flame, Clock, CheckCircle2, AlertCircle, TrendingUp, 
-  Phone, Mail, MapPin, DollarSign, Calendar, ArrowRight, Bell, BarChart3 
+  Phone, Mail, DollarSign, Calendar, ArrowRight, Bell, BarChart3 
 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import FollowUpReminders from '../components/agent/FollowUpReminders';
 import PerformanceAnalytics from '../components/agent/PerformanceAnalytics';
+import DealKanbanBoard from '../components/agent/DealKanbanBoard';
 import ErrorBoundary from '@/components/ui/error-boundary';
 
 export default function AgentDashboard() {
   const [selectedView, setSelectedView] = useState('hot-leads');
+  const queryClient = useQueryClient();
 
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -99,16 +101,16 @@ export default function AgentDashboard() {
 
   return (
     <ErrorBoundary fallbackMessage="Error loading agent dashboard. Please refresh the page.">
-    <div className="min-h-screen bg-slate-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-slate-50 p-3 sm:p-6">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Your Pipeline</h1>
-          <p className="text-slate-600 mt-1">{user.full_name} • Focus on what matters most</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">Your Pipeline</h1>
+          <p className="text-slate-600 mt-1 text-sm sm:text-base">{user.full_name} • Focus on what matters most</p>
         </div>
 
         {/* Quick Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           <MetricCard
             label="Hot Leads"
             value={hotLeads.length}
@@ -162,17 +164,17 @@ export default function AgentDashboard() {
 
         {/* Main Content Tabs */}
         <Tabs value={selectedView} onValueChange={setSelectedView} className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="hot-leads">Hot Leads</TabsTrigger>
-            <TabsTrigger value="warm-leads">Warm Leads</TabsTrigger>
-            <TabsTrigger value="transactions">Active Deals</TabsTrigger>
-            <TabsTrigger value="tasks">Tasks</TabsTrigger>
-            <TabsTrigger value="reminders">
-              <Bell className="w-4 h-4 mr-2" />
+          <TabsList className="flex w-full overflow-x-auto">
+            <TabsTrigger value="hot-leads" className="flex-shrink-0 text-xs sm:text-sm">Hot Leads</TabsTrigger>
+            <TabsTrigger value="warm-leads" className="flex-shrink-0 text-xs sm:text-sm">Warm Leads</TabsTrigger>
+            <TabsTrigger value="transactions" className="flex-shrink-0 text-xs sm:text-sm">Active Deals</TabsTrigger>
+            <TabsTrigger value="tasks" className="flex-shrink-0 text-xs sm:text-sm">Tasks</TabsTrigger>
+            <TabsTrigger value="reminders" className="flex-shrink-0 text-xs sm:text-sm">
+              <Bell className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
               Follow-Ups
             </TabsTrigger>
-            <TabsTrigger value="analytics">
-              <BarChart3 className="w-4 h-4 mr-2" />
+            <TabsTrigger value="analytics" className="flex-shrink-0 text-xs sm:text-sm">
+              <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
               Analytics
             </TabsTrigger>
           </TabsList>
@@ -225,13 +227,11 @@ export default function AgentDashboard() {
             )}
           </TabsContent>
 
-          {/* Active Deals */}
-          <TabsContent value="transactions" className="space-y-4 mt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-semibold text-slate-900">Deals in Progress</h2>
-                <p className="text-sm text-slate-600">Keep transactions moving forward</p>
-              </div>
+          {/* Active Deals — Kanban */}
+          <TabsContent value="transactions" className="mt-4">
+            <div className="mb-3">
+              <h2 className="text-base sm:text-lg font-semibold text-slate-900">Deals in Progress</h2>
+              <p className="text-xs sm:text-sm text-slate-600">Drag cards to move deals between stages</p>
             </div>
 
             {transactions.length === 0 ? (
@@ -241,11 +241,11 @@ export default function AgentDashboard() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="space-y-3">
-                {transactions.map(txn => (
-                  <TransactionCard key={txn.id} transaction={txn} getProperty={getProperty} />
-                ))}
-              </div>
+              <DealKanbanBoard
+                transactions={transactions}
+                properties={properties}
+                onTransactionUpdate={() => queryClient.invalidateQueries({ queryKey: ['agent-transactions'] })}
+              />
             )}
           </TabsContent>
 
@@ -286,7 +286,7 @@ export default function AgentDashboard() {
 
         {/* Quick Action Button */}
         <Link to={createPageUrl('Contacts')}>
-          <Button className="w-full bg-blue-600 hover:bg-blue-700 h-12 text-base">
+          <Button className="w-full h-11 sm:h-12 text-sm sm:text-base">
             <ArrowRight className="w-4 h-4 mr-2" />
             View All Contacts & Manage Pipeline
           </Button>
@@ -310,12 +310,12 @@ function MetricCard({ label, value, icon, color, onClick }) {
       className={`cursor-pointer hover:shadow-md transition-all border ${colorClasses[color]}`}
       onClick={onClick}
     >
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-slate-600">{label}</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between pb-1 px-3 pt-3 sm:px-6 sm:pt-6 sm:pb-2">
+        <CardTitle className="text-xs sm:text-sm font-medium text-slate-600">{label}</CardTitle>
         {icon}
       </CardHeader>
-      <CardContent>
-        <div className="text-3xl font-bold text-slate-900">{value}</div>
+      <CardContent className="px-3 pb-3 sm:px-6 sm:pb-6">
+        <div className="text-2xl sm:text-3xl font-bold text-slate-900">{value}</div>
       </CardContent>
     </Card>
   );
