@@ -1,0 +1,138 @@
+{
+  "name": "DripCampaign",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Campaign name"
+    },
+    "description": {
+      "type": "string"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Market scope (empty = all markets)"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "score_threshold",
+        "score_increase",
+        "inactivity",
+        "lead_status_change",
+        "manual"
+      ],
+      "description": "What triggers this campaign"
+    },
+    "trigger_config": {
+      "type": "object",
+      "description": "Trigger configuration",
+      "properties": {
+        "score_min": {
+          "type": "number",
+          "description": "Minimum lead score to trigger"
+        },
+        "score_max": {
+          "type": "number",
+          "description": "Maximum lead score to trigger"
+        },
+        "score_increase_by": {
+          "type": "number",
+          "description": "Score must have increased by this amount"
+        },
+        "inactivity_days": {
+          "type": "number",
+          "description": "Days of no interaction before triggering"
+        },
+        "lead_status": {
+          "type": "string",
+          "description": "Lead status that triggers"
+        },
+        "contact_type": {
+          "type": "string",
+          "enum": [
+            "buyer",
+            "seller",
+            "lender",
+            "other",
+            "any"
+          ],
+          "default": "any"
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "description": "Ordered sequence of messages",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step_number": {
+            "type": "number"
+          },
+          "delay_days": {
+            "type": "number",
+            "default": 0,
+            "description": "Days after previous step (or trigger for step 1)"
+          },
+          "channel": {
+            "type": "string",
+            "enum": [
+              "email",
+              "sms",
+              "notification"
+            ],
+            "default": "email"
+          },
+          "subject": {
+            "type": "string",
+            "description": "Email subject (supports {{first_name}}, {{property_address}}, {{lead_score}})"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message body (supports template variables)"
+          },
+          "from_name": {
+            "type": "string"
+          }
+        }
+      },
+      "default": []
+    },
+    "enrollment_limit": {
+      "type": "number",
+      "description": "Max contacts enrolled at once (0 = unlimited)",
+      "default": 0
+    },
+    "stop_on_reply": {
+      "type": "boolean",
+      "default": true,
+      "description": "Stop campaign if contact replies"
+    },
+    "stop_on_stage_change": {
+      "type": "boolean",
+      "default": true,
+      "description": "Stop if lead stage changes"
+    },
+    "execution_count": {
+      "type": "number",
+      "default": 0
+    },
+    "last_executed": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "enrolled_count": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "name",
+    "trigger_type"
+  ]
+}

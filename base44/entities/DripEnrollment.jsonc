@@ -1,0 +1,85 @@
+{
+  "name": "DripEnrollment",
+  "type": "object",
+  "properties": {
+    "campaign_id": {
+      "type": "string",
+      "description": "Reference to DripCampaign"
+    },
+    "contact_id": {
+      "type": "string",
+      "description": "Reference to Contact"
+    },
+    "contact_email": {
+      "type": "string"
+    },
+    "contact_name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "completed",
+        "paused",
+        "stopped"
+      ],
+      "default": "active"
+    },
+    "current_step": {
+      "type": "number",
+      "default": 1
+    },
+    "enrolled_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "next_send_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_sent_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completed_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step_number": {
+            "type": "number"
+          },
+          "sent_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "channel": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "sent",
+              "failed",
+              "skipped"
+            ]
+          }
+        }
+      },
+      "default": []
+    },
+    "stop_reason": {
+      "type": "string"
+    },
+    "trigger_score": {
+      "type": "number",
+      "description": "Lead score at time of enrollment"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "contact_id",
+    "contact_email"
+  ]
+}
