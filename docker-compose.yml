@@ -1,0 +1,84 @@
+# Production-ready docker-compose suite for the Nexus Realty application.
+# All services share a single docker network ('nexus-net') so they can address
+# each other by service name (postgres, backend, frontend).
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nexus-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-nexus}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-nexus_password}
+      POSTGRES_DB: ${POSTGRES_DB:-nexus_realty}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - nexus-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-nexus} -d ${POSTGRES_DB:-nexus_realty}"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nexus-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-nexus}:${POSTGRES_PASSWORD:-nexus_password}@postgres:5432/${POSTGRES_DB:-nexus_realty}
+      DATABASE_URL_SYNC: postgresql+psycopg2://${POSTGRES_USER:-nexus}:${POSTGRES_PASSWORD:-nexus_password}@postgres:5432/${POSTGRES_DB:-nexus_realty}
+      APP_SECRET_KEY: ${APP_SECRET_KEY:-please-change-this-in-production}
+      APP_ID: ${APP_ID:-nexus-realty}
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+    ports:
+      - "${BACKEND_PORT:-8001}:8001"
+    networks:
+      - nexus-net
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8001/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 25s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        # leave empty so the bundle uses same-origin requests (proxied via nginx)
+        VITE_API_BASE_URL: ""
+    container_name: nexus-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    networks:
+      - nexus-net
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  nexus-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
