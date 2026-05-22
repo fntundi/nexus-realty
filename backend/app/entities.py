@@ -46,14 +46,32 @@ def _apply_filter(stmt, entity_type: str, criteria: dict):
                 stmt = stmt.where(col.astext.in_([str(v) for v in val["$in"]]))
             elif "$nin" in val:
                 stmt = stmt.where(~col.astext.in_([str(v) for v in val["$nin"]]))
-            elif "$gt" in val:
-                stmt = stmt.where(col.astext > str(val["$gt"]))
-            elif "$gte" in val:
-                stmt = stmt.where(col.astext >= str(val["$gte"]))
-            elif "$lt" in val:
-                stmt = stmt.where(col.astext < str(val["$lt"]))
-            elif "$lte" in val:
-                stmt = stmt.where(col.astext <= str(val["$lte"]))
+            elif any(op in val for op in ("$gt", "$gte", "$lt", "$lte")):
+                from sqlalchemy import cast, Numeric, or_
+                # use numeric cast for ordering when comparing to a number
+                for op, sql_op in (("$gt", ">"), ("$gte", ">="), ("$lt", "<"), ("$lte", "<=")):
+                    if op not in val:
+                        continue
+                    rhs = val[op]
+                    if isinstance(rhs, (int, float)):
+                        numeric_col = cast(col.astext, Numeric)
+                        if sql_op == ">":
+                            stmt = stmt.where(numeric_col > rhs)
+                        elif sql_op == ">=":
+                            stmt = stmt.where(numeric_col >= rhs)
+                        elif sql_op == "<":
+                            stmt = stmt.where(numeric_col < rhs)
+                        elif sql_op == "<=":
+                            stmt = stmt.where(numeric_col <= rhs)
+                    else:
+                        if sql_op == ">":
+                            stmt = stmt.where(col.astext > str(rhs))
+                        elif sql_op == ">=":
+                            stmt = stmt.where(col.astext >= str(rhs))
+                        elif sql_op == "<":
+                            stmt = stmt.where(col.astext < str(rhs))
+                        elif sql_op == "<=":
+                            stmt = stmt.where(col.astext <= str(rhs))
             elif "$ne" in val:
                 stmt = stmt.where(col.astext != str(val["$ne"]))
             elif "$contains" in val:
