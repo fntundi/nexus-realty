@@ -28,3 +28,8 @@ dist-ssr
 *.sw?
 
 .env
+*.env
+credentials.json
+*.pem
+*.key
+.credentials
