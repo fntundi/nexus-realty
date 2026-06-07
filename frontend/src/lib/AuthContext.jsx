@@ -25,8 +25,11 @@ export const AuthProvider = ({ children }) => {
         const res = await fetch(`${apiBase}/api/apps/public/prod/public-settings/by-id/local`);
         const publicSettings = await res.json();
         setAppPublicSettings(publicSettings);
-      } catch (e) {
-        // non-fatal
+      } catch (err) {
+        // Non-fatal: surface to the console so the issue is debuggable but
+        // continue booting the app with default settings.
+        // eslint-disable-next-line no-console
+        console.error('Failed to load app public settings:', err);
       }
       setIsLoadingPublicSettings(false);
       await checkUserAuth();

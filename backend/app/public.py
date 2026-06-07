@@ -7,7 +7,7 @@ router = APIRouter(tags=["public"])
 
 
 @router.get("/api/apps/public/prod/public-settings/by-id/{app_id}")
-async def public_settings(app_id: str):
+async def public_settings(app_id: str) -> dict:
     return {
         "id": app_id,
         "public_settings": {
@@ -22,5 +22,5 @@ async def public_settings(app_id: str):
 
 
 @router.get("/api/health")
-async def health():
+async def health() -> dict:
     return {"status": "ok"}

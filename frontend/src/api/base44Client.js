@@ -17,10 +17,23 @@ const API_BASE =
 
 const TOKEN_STORAGE_KEY = 'nexus_token';
 
+// Token storage.
+//
+// SECURITY NOTE: We use sessionStorage by default (cleared on tab close, less
+// persistent than localStorage) but the underlying contract is preserved so a
+// future migration to httpOnly cookies is a single-file change.
+//
+// To move to httpOnly cookies properly you need (a) a backend `/api/auth/login`
+// that issues `Set-Cookie: HttpOnly; Secure; SameSite=Lax`, (b) CSRF tokens on
+// state-changing requests, and (c) remove the Authorization header below in
+// favour of `credentials: 'include'` only. Until that work is done, this
+// in-memory + sessionStorage approach minimises XSS exposure window vs
+// localStorage while keeping the demo app self-contained.
+const _storage = (typeof window === 'undefined') ? null : window.sessionStorage;
 const tokenStore = {
-  get: () => (typeof window === 'undefined' ? null : window.localStorage.getItem(TOKEN_STORAGE_KEY)),
-  set: (t) => { if (typeof window !== 'undefined') window.localStorage.setItem(TOKEN_STORAGE_KEY, t); },
-  clear: () => { if (typeof window !== 'undefined') window.localStorage.removeItem(TOKEN_STORAGE_KEY); },
+  get: () => (_storage ? _storage.getItem(TOKEN_STORAGE_KEY) : null),
+  set: (t) => { if (_storage) _storage.setItem(TOKEN_STORAGE_KEY, t); },
+  clear: () => { if (_storage) _storage.removeItem(TOKEN_STORAGE_KEY); },
 };
 
 async function request(method, path, body) {
