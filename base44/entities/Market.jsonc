@@ -1,0 +1,108 @@
+{
+  "name": "Market",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Market name (e.g., Austin, Phoenix)"
+    },
+    "state": {
+      "type": "string",
+      "description": "State/province"
+    },
+    "country": {
+      "type": "string",
+      "default": "USA",
+      "description": "Country"
+    },
+    "idx_feed_url": {
+      "type": "string",
+      "description": "IDX data feed URL"
+    },
+    "idx_config": {
+      "type": "object",
+      "description": "IDX-specific configuration settings"
+    },
+    "idx_settings": {
+      "type": "object",
+      "description": "IDX integration configuration for this market",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether IDX is enabled for this market"
+        },
+        "api_key": {
+          "type": "string",
+          "description": "IDX provider API key"
+        },
+        "api_url": {
+          "type": "string",
+          "description": "IDX provider API endpoint URL"
+        },
+        "mls_id": {
+          "type": "string",
+          "description": "MLS identification number"
+        },
+        "sync_frequency": {
+          "type": "string",
+          "enum": [
+            "hourly",
+            "daily",
+            "manual"
+          ],
+          "default": "hourly",
+          "description": "How often to sync listings"
+        },
+        "last_sync": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last successful sync timestamp"
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive"
+      ],
+      "default": "active"
+    },
+    "assignment_rules": {
+      "type": "object",
+      "description": "Auto-assignment algorithm configuration",
+      "properties": {
+        "territory_weight": {
+          "type": "number",
+          "default": 0.25
+        },
+        "workload_weight": {
+          "type": "number",
+          "default": 0.2
+        },
+        "rotation_weight": {
+          "type": "number",
+          "default": 0.15
+        },
+        "success_rate_weight": {
+          "type": "number",
+          "default": 0.2
+        },
+        "property_performance_weight": {
+          "type": "number",
+          "default": 0.1
+        },
+        "lead_source_weight": {
+          "type": "number",
+          "default": 0.1
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "state",
+    "country"
+  ]
+}

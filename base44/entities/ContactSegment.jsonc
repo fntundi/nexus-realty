@@ -1,0 +1,92 @@
+{
+  "name": "ContactSegment",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Segment name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Segment description"
+    },
+    "criteria": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "enum": [
+              "lead_score",
+              "status",
+              "contact_type",
+              "market_id",
+              "tags",
+              "assigned_agent_email",
+              "company",
+              "last_interaction_date"
+            ],
+            "description": "Field to filter on"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "greater_than",
+              "less_than",
+              "contains",
+              "in",
+              "between",
+              "date_after",
+              "date_before"
+            ],
+            "description": "Comparison operator"
+          },
+          "value": {
+            "description": "Value to compare against (can be string, number, or array)"
+          },
+          "logic": {
+            "type": "string",
+            "enum": [
+              "AND",
+              "OR"
+            ],
+            "default": "AND",
+            "description": "Logical operator for combining criteria"
+          }
+        },
+        "required": [
+          "field",
+          "operator",
+          "value"
+        ]
+      },
+      "default": [],
+      "description": "Filtering criteria"
+    },
+    "contact_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of contacts matching criteria"
+    },
+    "is_dynamic": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether segment updates dynamically as contacts change"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Email of user who created segment"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time segment was evaluated"
+    }
+  },
+  "required": [
+    "name",
+    "criteria"
+  ]
+}

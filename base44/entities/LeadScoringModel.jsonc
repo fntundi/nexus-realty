@@ -1,0 +1,150 @@
+{
+  "name": "LeadScoringModel",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Model name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Model description"
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Market this model applies to"
+    },
+    "is_default": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is the default scoring model"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether model is active"
+    },
+    "scoring_factors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "factor_id": {
+            "type": "string",
+            "description": "Unique factor identifier"
+          },
+          "factor_name": {
+            "type": "string",
+            "description": "Name of scoring factor"
+          },
+          "factor_type": {
+            "type": "string",
+            "enum": [
+              "behavioral",
+              "demographic",
+              "engagement",
+              "interaction",
+              "custom"
+            ],
+            "description": "Type of factor"
+          },
+          "field_name": {
+            "type": "string",
+            "description": "Contact field to evaluate"
+          },
+          "weight": {
+            "type": "number",
+            "description": "Weight/importance of this factor (0-100)"
+          },
+          "condition": {
+            "type": "object",
+            "description": "Condition to evaluate",
+            "properties": {
+              "operator": {
+                "type": "string",
+                "enum": [
+                  "equals",
+                  "contains",
+                  "greater_than",
+                  "less_than",
+                  "in_range"
+                ],
+                "description": "Comparison operator"
+              },
+              "value": {
+                "description": "Value to compare against"
+              },
+              "min_value": {
+                "type": "number"
+              },
+              "max_value": {
+                "type": "number"
+              }
+            }
+          },
+          "points": {
+            "type": "number",
+            "description": "Points awarded if condition met"
+          }
+        }
+      },
+      "default": [],
+      "description": "Factors used in scoring model"
+    },
+    "max_score": {
+      "type": "number",
+      "default": 100,
+      "description": "Maximum possible score"
+    },
+    "recalculation_frequency": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "monthly",
+        "on_interaction"
+      ],
+      "default": "daily",
+      "description": "How often scores are recalculated"
+    },
+    "model_performance": {
+      "type": "object",
+      "description": "Performance metrics for this model",
+      "properties": {
+        "total_leads_scored": {
+          "type": "number",
+          "default": 0
+        },
+        "avg_score": {
+          "type": "number",
+          "default": 0
+        },
+        "conversion_rate_high_scorers": {
+          "type": "number",
+          "description": "Conversion rate for leads scoring 75+"
+        },
+        "conversion_rate_low_scorers": {
+          "type": "number",
+          "description": "Conversion rate for leads scoring <50"
+        },
+        "accuracy_percentage": {
+          "type": "number",
+          "description": "How accurate model is at predicting conversions"
+        }
+      }
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Email of user who created model"
+    },
+    "last_modified_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last modification timestamp"
+    }
+  },
+  "required": [
+    "name",
+    "scoring_factors"
+  ]
+}

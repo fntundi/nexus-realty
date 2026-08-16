@@ -1,0 +1,89 @@
+{
+  "name": "FileMetadata",
+  "type": "object",
+  "properties": {
+    "file_uri": {
+      "type": "string",
+      "description": "Private storage file URI (from UploadPrivateFile)"
+    },
+    "file_name": {
+      "type": "string",
+      "description": "Original file name"
+    },
+    "file_size": {
+      "type": "number",
+      "description": "File size in bytes"
+    },
+    "file_type": {
+      "type": "string",
+      "enum": [
+        "id",
+        "financial",
+        "legal",
+        "medical",
+        "contract",
+        "other"
+      ],
+      "description": "Classification of file contents for access control"
+    },
+    "uploaded_by_email": {
+      "type": "string",
+      "description": "Email of user who uploaded"
+    },
+    "uploaded_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Upload timestamp"
+    },
+    "related_entity_type": {
+      "type": "string",
+      "description": "Entity type this file is related to (Contact, Transaction, etc)"
+    },
+    "related_entity_id": {
+      "type": "string",
+      "description": "ID of related entity"
+    },
+    "access_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of times downloaded/accessed"
+    },
+    "last_accessed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last access timestamp"
+    },
+    "last_accessed_by": {
+      "type": "string",
+      "description": "Email of last accessor"
+    },
+    "is_sensitive": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether file contains PII/sensitive data"
+    },
+    "description": {
+      "type": "string",
+      "description": "User-provided description of file contents"
+    },
+    "mime_type": {
+      "type": "string",
+      "description": "MIME type of file (application/pdf, image/jpeg, etc)"
+    },
+    "deleted": {
+      "type": "boolean",
+      "default": false,
+      "description": "Soft-delete flag for retention"
+    },
+    "deletion_requested_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When deletion was requested (for compliance hold)"
+    }
+  },
+  "required": [
+    "file_uri",
+    "file_name",
+    "uploaded_by_email"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "AppConfig",
+  "type": "object",
+  "properties": {
+    "config_key": {
+      "type": "string",
+      "description": "Unique configuration key"
+    },
+    "config_value": {
+      "type": "object",
+      "description": "Configuration value as JSON object"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of this configuration"
+    }
+  },
+  "required": [
+    "config_key"
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "name": "TaskTemplate",
+  "type": "object",
+  "properties": {
+    "market_id": {
+      "type": "string",
+      "description": "Reference to Market entity (optional for global templates)"
+    },
+    "trigger_stage": {
+      "type": "string",
+      "enum": [
+        "pre_qual",
+        "showing",
+        "offer",
+        "under_contract",
+        "closing"
+      ],
+      "description": "Transaction stage that triggers this task"
+    },
+    "trigger_event": {
+      "type": "string",
+      "enum": [
+        "stage_entered",
+        "stage_completed",
+        "milestone_completed"
+      ],
+      "default": "stage_entered",
+      "description": "Specific event that triggers task creation"
+    },
+    "milestone_id": {
+      "type": "string",
+      "description": "Specific milestone ID if trigger is milestone-based"
+    },
+    "task_title": {
+      "type": "string",
+      "description": "Template for task title (supports {{variables}})"
+    },
+    "task_description": {
+      "type": "string",
+      "description": "Template for task description (supports {{variables}})"
+    },
+    "task_type": {
+      "type": "string",
+      "enum": [
+        "call",
+        "meeting",
+        "follow_up",
+        "email",
+        "document",
+        "other"
+      ],
+      "description": "Type of task"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium",
+      "description": "Task priority"
+    },
+    "assign_to_role": {
+      "type": "string",
+      "enum": [
+        "agent",
+        "buyer",
+        "lender",
+        "transaction_coordinator"
+      ],
+      "description": "Role to assign task to"
+    },
+    "due_days_offset": {
+      "type": "number",
+      "description": "Days after trigger to set due date (negative for before)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether template is active"
+    },
+    "order": {
+      "type": "number",
+      "default": 0,
+      "description": "Order for display purposes"
+    }
+  },
+  "required": [
+    "trigger_stage",
+    "task_title",
+    "task_type",
+    "assign_to_role",
+    "due_days_offset"
+  ]
+}

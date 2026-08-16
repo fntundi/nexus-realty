@@ -1,0 +1,141 @@
+{
+  "name": "OnboardingWorkflow",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Workflow name"
+    },
+    "client_type": {
+      "type": "string",
+      "enum": [
+        "buyer",
+        "seller",
+        "lender",
+        "all"
+      ],
+      "description": "Type of client this workflow applies to"
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Market this workflow applies to (optional)"
+    },
+    "welcome_message": {
+      "type": "object",
+      "properties": {
+        "subject": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "send_immediately": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "description": "Welcome email/message template"
+    },
+    "checklist_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "order": {
+            "type": "number"
+          },
+          "required": {
+            "type": "boolean",
+            "default": true
+          },
+          "estimated_days": {
+            "type": "number",
+            "description": "Days after onboarding start to complete"
+          },
+          "assigned_to": {
+            "type": "string",
+            "enum": [
+              "agent",
+              "client",
+              "both"
+            ],
+            "default": "agent"
+          },
+          "reminder_before_days": {
+            "type": "number",
+            "description": "Send reminder X days before due"
+          }
+        }
+      },
+      "default": [],
+      "description": "Onboarding checklist steps"
+    },
+    "auto_tasks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "task_title": {
+            "type": "string"
+          },
+          "task_description": {
+            "type": "string"
+          },
+          "task_type": {
+            "type": "string",
+            "enum": [
+              "call",
+              "meeting",
+              "follow_up",
+              "email",
+              "document",
+              "other"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "due_days_offset": {
+            "type": "number",
+            "description": "Days after onboarding to set due date"
+          },
+          "assign_to": {
+            "type": "string",
+            "enum": [
+              "agent",
+              "buyer",
+              "lender"
+            ]
+          }
+        }
+      },
+      "default": [],
+      "description": "Tasks to auto-create on onboarding"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether workflow is active"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Email of workflow creator"
+    }
+  },
+  "required": [
+    "name",
+    "client_type"
+  ]
+}

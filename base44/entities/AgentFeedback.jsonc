@@ -1,0 +1,69 @@
+{
+  "name": "AgentFeedback",
+  "type": "object",
+  "properties": {
+    "transaction_id": {
+      "type": "string",
+      "description": "Reference to Transaction entity"
+    },
+    "client_email": {
+      "type": "string",
+      "description": "Email of the client providing feedback"
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "Reference to Agent entity"
+    },
+    "agent_email": {
+      "type": "string",
+      "description": "Email of the agent being reviewed"
+    },
+    "overall_rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Overall rating 1-5"
+    },
+    "communication_rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Communication rating 1-5"
+    },
+    "expertise_rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Expertise rating 1-5"
+    },
+    "professionalism_rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Professionalism rating 1-5"
+    },
+    "would_recommend": {
+      "type": "boolean",
+      "description": "Would the client recommend this agent?"
+    },
+    "comments": {
+      "type": "string",
+      "description": "Detailed feedback comments"
+    },
+    "property_address": {
+      "type": "string",
+      "description": "Property address for context"
+    },
+    "feedback_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the feedback was submitted"
+    }
+  },
+  "required": [
+    "transaction_id",
+    "client_email",
+    "agent_id",
+    "overall_rating"
+  ]
+}

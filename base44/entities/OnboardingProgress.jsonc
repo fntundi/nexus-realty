@@ -1,0 +1,106 @@
+{
+  "name": "OnboardingProgress",
+  "type": "object",
+  "properties": {
+    "contact_id": {
+      "type": "string",
+      "description": "Reference to Contact entity"
+    },
+    "workflow_id": {
+      "type": "string",
+      "description": "Reference to OnboardingWorkflow entity"
+    },
+    "started_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When onboarding started"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When onboarding was completed"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "in_progress",
+        "completed",
+        "paused",
+        "cancelled"
+      ],
+      "default": "in_progress",
+      "description": "Current onboarding status"
+    },
+    "checklist_progress": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "item_index": {
+            "type": "number"
+          },
+          "title": {
+            "type": "string"
+          },
+          "completed": {
+            "type": "boolean",
+            "default": false
+          },
+          "completed_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completed_by": {
+            "type": "string"
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Progress on checklist items"
+    },
+    "generated_task_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "IDs of auto-generated tasks"
+    },
+    "welcome_message_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether welcome message was sent"
+    },
+    "welcome_message_sent_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "last_reminder_sent": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last reminder date"
+    },
+    "completion_percentage": {
+      "type": "number",
+      "default": 0,
+      "description": "Percentage of checklist completed"
+    },
+    "assigned_agent_email": {
+      "type": "string",
+      "description": "Agent managing this onboarding"
+    }
+  },
+  "required": [
+    "contact_id",
+    "workflow_id",
+    "started_date",
+    "assigned_agent_email"
+  ]
+}

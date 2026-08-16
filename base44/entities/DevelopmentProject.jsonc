@@ -1,0 +1,112 @@
+{
+  "name": "DevelopmentProject",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Project name"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "new_construction",
+        "renovation",
+        "subdivision",
+        "commercial",
+        "mixed_use"
+      ],
+      "description": "Type of development project"
+    },
+    "developer_email": {
+      "type": "string",
+      "description": "Email of lead developer/owner"
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Reference to Market entity"
+    },
+    "description": {
+      "type": "string",
+      "description": "Project overview and details"
+    },
+    "location": {
+      "type": "string",
+      "description": "Full address or area name"
+    },
+    "total_units": {
+      "type": "number",
+      "description": "Total units in project"
+    },
+    "estimated_value": {
+      "type": "number",
+      "description": "Total project value in dollars"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Project start date"
+    },
+    "estimated_completion": {
+      "type": "string",
+      "format": "date",
+      "description": "Expected completion date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "planning",
+        "pre_construction",
+        "construction",
+        "pre_sale",
+        "sales_open",
+        "completed"
+      ],
+      "default": "planning",
+      "description": "Current project status"
+    },
+    "amenities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Project amenities (pool, gym, community space, etc.)"
+    },
+    "hero_image_url": {
+      "type": "string",
+      "description": "Main project image for marketing"
+    },
+    "project_images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Additional project photos"
+    },
+    "summary_stats": {
+      "type": "object",
+      "description": "Quick stats for marketing",
+      "properties": {
+        "min_price": {
+          "type": "number"
+        },
+        "max_price": {
+          "type": "number"
+        },
+        "avg_size_sqft": {
+          "type": "number"
+        },
+        "green_space_acres": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "required": [
+    "name",
+    "type",
+    "developer_email",
+    "location"
+  ]
+}

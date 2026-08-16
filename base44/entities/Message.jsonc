@@ -1,0 +1,60 @@
+{
+  "name": "Message",
+  "type": "object",
+  "properties": {
+    "transaction_id": {
+      "type": "string",
+      "description": "Reference to Transaction entity"
+    },
+    "sender_email": {
+      "type": "string",
+      "description": "Email of the sender"
+    },
+    "recipient_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Emails of recipients"
+    },
+    "content": {
+      "type": "string",
+      "description": "Message content"
+    },
+    "attachment_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "URLs of attached files"
+    },
+    "message_type": {
+      "type": "string",
+      "enum": [
+        "message",
+        "document_request",
+        "document_upload",
+        "system"
+      ],
+      "default": "message",
+      "description": "Type of message"
+    },
+    "read_by": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Emails of users who have read this message"
+    },
+    "is_important": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "transaction_id",
+    "sender_email",
+    "content"
+  ]
+}

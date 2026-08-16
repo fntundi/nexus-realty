@@ -1,0 +1,306 @@
+{
+  "name": "Document",
+  "type": "object",
+  "properties": {
+    "transaction_id": {
+      "type": "string",
+      "description": "Reference to Transaction entity"
+    },
+    "lead_id": {
+      "type": "string",
+      "description": "Reference to Lead entity (if not yet a transaction)"
+    },
+    "document_type": {
+      "type": "string",
+      "description": "Type of document (e.g., pre_approval_letter, purchase_agreement, inspection_report)"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "contract",
+        "disclosure",
+        "inspection",
+        "appraisal",
+        "loan",
+        "insurance",
+        "closing",
+        "identification",
+        "income_proof",
+        "bank_statement",
+        "property_appraisal",
+        "title_report",
+        "other"
+      ],
+      "default": "other",
+      "description": "Document category"
+    },
+    "auto_categorized": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether category was auto-assigned by AI"
+    },
+    "categorization_confidence": {
+      "type": "number",
+      "description": "AI confidence score for auto-categorization (0-100)"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "pre_qual",
+        "showing",
+        "offer",
+        "under_contract",
+        "closing"
+      ],
+      "description": "Transaction stage this document belongs to"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL to the uploaded document"
+    },
+    "file_name": {
+      "type": "string",
+      "description": "Original file name"
+    },
+    "file_size": {
+      "type": "number",
+      "description": "File size in bytes"
+    },
+    "file_type": {
+      "type": "string",
+      "description": "MIME type of the file"
+    },
+    "uploaded_by": {
+      "type": "string",
+      "description": "Email of user who uploaded"
+    },
+    "uploaded_by_email": {
+      "type": "string",
+      "description": "Email of user who uploaded the document"
+    },
+    "uploaded_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Upload timestamp"
+    },
+    "upload_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending_review",
+        "approved",
+        "rejected",
+        "expired",
+        "awaiting_signatures",
+        "partially_signed",
+        "fully_signed"
+      ],
+      "default": "pending_review"
+    },
+    "verification_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "verified",
+        "rejected",
+        "warn"
+      ],
+      "default": "pending",
+      "description": "Verification status for lender review"
+    },
+    "verification_notes": {
+      "type": "string",
+      "description": "Notes from lender verification"
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When document was verified"
+    },
+    "ai_verification_result": {
+      "type": "object",
+      "description": "AI verification analysis results"
+    },
+    "borrower_notes": {
+      "type": "string",
+      "description": "Notes from borrower when uploading"
+    },
+    "version": {
+      "type": "number",
+      "default": 1,
+      "description": "Current version number"
+    },
+    "parent_document_id": {
+      "type": "string",
+      "description": "Reference to original document if this is a new version"
+    },
+    "is_latest_version": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this is the current active version"
+    },
+    "version_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "number"
+          },
+          "file_url": {
+            "type": "string"
+          },
+          "file_name": {
+            "type": "string"
+          },
+          "uploaded_by": {
+            "type": "string"
+          },
+          "upload_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "History of previous versions"
+    },
+    "signature_request": {
+      "type": "object",
+      "properties": {
+        "docusign_envelope_id": {
+          "type": "string",
+          "description": "DocuSign envelope ID"
+        },
+        "requested_by": {
+          "type": "string",
+          "description": "Email of user who initiated signature request"
+        },
+        "requested_date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "due_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "message": {
+          "type": "string",
+          "description": "Message to signers"
+        },
+        "signers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string",
+                "enum": [
+                  "agent",
+                  "buyer",
+                  "lender",
+                  "seller",
+                  "other"
+                ]
+              },
+              "order": {
+                "type": "number",
+                "description": "Signing order (1, 2, 3...)"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "sent",
+                  "delivered",
+                  "signed",
+                  "declined"
+                ],
+                "default": "pending"
+              },
+              "signed_date": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "docusign_recipient_id": {
+                "type": "string"
+              },
+              "declined_reason": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "completion_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When all signatures were collected"
+        }
+      },
+      "description": "E-signature request details"
+    },
+    "signed_document_url": {
+      "type": "string",
+      "description": "URL to the final signed document"
+    },
+    "access_control": {
+      "type": "object",
+      "properties": {
+        "visible_to_agent": {
+          "type": "boolean",
+          "default": true
+        },
+        "visible_to_buyer": {
+          "type": "boolean",
+          "default": true
+        },
+        "visible_to_lender": {
+          "type": "boolean",
+          "default": false
+        },
+        "visible_to_builder": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "default": {
+        "visible_to_agent": true,
+        "visible_to_buyer": true,
+        "visible_to_lender": false,
+        "visible_to_builder": true
+      },
+      "description": "Role-based visibility controls"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Custom tags for organization"
+    }
+  },
+  "required": [
+    "document_type",
+    "file_url",
+    "uploaded_by"
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "name": "VirtualStaging",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "room_name": {
+      "type": "string",
+      "description": "Name of the room being staged (Living Room, Master Bedroom, etc.)"
+    },
+    "original_image_url": {
+      "type": "string",
+      "description": "URL to the original room photo"
+    },
+    "staged_image_url": {
+      "type": "string",
+      "description": "URL to the AI-generated staged version"
+    },
+    "staging_style": {
+      "type": "string",
+      "enum": [
+        "modern_minimalist",
+        "luxury",
+        "cozy",
+        "professional",
+        "eclectic"
+      ],
+      "default": "luxury",
+      "description": "Style of virtual staging applied"
+    },
+    "generation_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "processing",
+        "completed",
+        "failed"
+      ],
+      "default": "pending",
+      "description": "Status of AI image generation"
+    },
+    "generation_error": {
+      "type": "string",
+      "description": "Error message if generation failed"
+    },
+    "generated_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the staged image was generated"
+    },
+    "viewer_impressions": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of times viewed by buyers"
+    },
+    "created_by_email": {
+      "type": "string",
+      "description": "Email of agent/user who created the staging"
+    }
+  },
+  "required": [
+    "property_id",
+    "room_name",
+    "original_image_url"
+  ]
+}

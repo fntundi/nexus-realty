@@ -1,0 +1,113 @@
+{
+  "name": "Task",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Task title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Task description"
+    },
+    "task_type": {
+      "type": "string",
+      "enum": [
+        "call",
+        "meeting",
+        "follow_up",
+        "email",
+        "document",
+        "other"
+      ],
+      "default": "follow_up",
+      "description": "Type of task"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending",
+      "description": "Task status"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium",
+      "description": "Task priority"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Task due date and time"
+    },
+    "assigned_to_email": {
+      "type": "string",
+      "description": "Email of user assigned to this task"
+    },
+    "contact_id": {
+      "type": "string",
+      "description": "Related contact ID"
+    },
+    "transaction_id": {
+      "type": "string",
+      "description": "Related transaction ID"
+    },
+    "contact_email": {
+      "type": "string",
+      "description": "Email of contact related to task"
+    },
+    "meeting_location": {
+      "type": "string",
+      "description": "Meeting location (for call/meeting tasks)"
+    },
+    "meeting_link": {
+      "type": "string",
+      "description": "Video call or meeting link"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "description": "Expected duration in minutes"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When task was completed"
+    },
+    "completed_by_email": {
+      "type": "string",
+      "description": "Email of user who completed task"
+    },
+    "calendar_event_id": {
+      "type": "string",
+      "description": "External calendar event ID"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Tags for organization"
+    }
+  },
+  "required": [
+    "title",
+    "task_type",
+    "due_date",
+    "assigned_to_email"
+  ]
+}

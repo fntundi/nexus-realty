@@ -1,0 +1,97 @@
+{
+  "name": "Reminder",
+  "type": "object",
+  "properties": {
+    "agent_email": {
+      "type": "string",
+      "description": "Agent this reminder is for"
+    },
+    "transaction_id": {
+      "type": "string",
+      "description": "Reference to Transaction entity"
+    },
+    "reminder_type": {
+      "type": "string",
+      "enum": [
+        "inactive_deal",
+        "closing_approaching",
+        "overdue_milestone",
+        "no_offer"
+      ],
+      "description": "Type of reminder"
+    },
+    "title": {
+      "type": "string",
+      "description": "Reminder title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium",
+      "description": "Reminder priority"
+    },
+    "action_url": {
+      "type": "string",
+      "description": "URL to navigate to for this reminder"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "acknowledged",
+        "completed",
+        "snoozed"
+      ],
+      "default": "pending",
+      "description": "Reminder status"
+    },
+    "snoozed_until": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When snoozed reminder should reappear"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional context (property, buyer, value, etc.)",
+      "properties": {
+        "property_address": {
+          "type": "string"
+        },
+        "buyer_name": {
+          "type": "string"
+        },
+        "deal_value": {
+          "type": "number"
+        },
+        "closing_date": {
+          "type": "string"
+        },
+        "last_activity_date": {
+          "type": "string"
+        },
+        "days_since_activity": {
+          "type": "number"
+        }
+      }
+    },
+    "acknowledged_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When agent acknowledged the reminder"
+    }
+  },
+  "required": [
+    "agent_email",
+    "transaction_id",
+    "reminder_type",
+    "title"
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "name": "CRMSyncRule",
+  "type": "object",
+  "properties": {
+    "crm_connection_id": {
+      "type": "string",
+      "description": "Reference to CRMConnection"
+    },
+    "rule_name": {
+      "type": "string",
+      "description": "Name of sync rule"
+    },
+    "rule_type": {
+      "type": "string",
+      "enum": [
+        "leads",
+        "tasks",
+        "engagement",
+        "custom"
+      ],
+      "description": "Type of data being synced"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether rule is active"
+    },
+    "sync_direction": {
+      "type": "string",
+      "enum": [
+        "to_crm",
+        "from_crm",
+        "bidirectional"
+      ],
+      "default": "bidirectional",
+      "description": "Direction of sync"
+    },
+    "sync_schedule": {
+      "type": "object",
+      "description": "When to sync",
+      "properties": {
+        "frequency": {
+          "type": "string",
+          "enum": [
+            "immediate",
+            "hourly",
+            "daily",
+            "weekly"
+          ],
+          "default": "daily",
+          "description": "Sync frequency"
+        },
+        "time_of_day": {
+          "type": "string",
+          "description": "Time to sync (HH:MM format)"
+        },
+        "day_of_week": {
+          "type": "number",
+          "description": "For weekly syncs (0=Sunday)"
+        }
+      }
+    },
+    "field_mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "local_field": {
+            "type": "string",
+            "description": "Field in this app"
+          },
+          "crm_field": {
+            "type": "string",
+            "description": "Corresponding CRM field"
+          },
+          "sync_direction": {
+            "type": "string",
+            "enum": [
+              "to_crm",
+              "from_crm",
+              "bidirectional"
+            ],
+            "description": "Direction for this field"
+          },
+          "transformation": {
+            "type": "string",
+            "description": "Optional transformation function (e.g., 'uppercase', 'multiply_by_2')"
+          }
+        }
+      },
+      "default": [],
+      "description": "Field-level mappings"
+    },
+    "filters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Field to filter on"
+          },
+          "operator": {
+            "type": "string",
+            "enum": [
+              "equals",
+              "contains",
+              "greater_than",
+              "less_than",
+              "in"
+            ],
+            "description": "Comparison operator"
+          },
+          "value": {
+            "description": "Filter value"
+          }
+        }
+      },
+      "default": [],
+      "description": "Filters to determine which records sync"
+    },
+    "conflict_resolution": {
+      "type": "string",
+      "enum": [
+        "local_wins",
+        "crm_wins",
+        "last_modified_wins"
+      ],
+      "default": "last_modified_wins",
+      "description": "How to handle sync conflicts"
+    },
+    "last_sync_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last successful sync"
+    },
+    "last_sync_status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failed",
+        "partial"
+      ],
+      "default": "success",
+      "description": "Status of last sync"
+    },
+    "sync_stats": {
+      "type": "object",
+      "description": "Statistics",
+      "properties": {
+        "records_synced": {
+          "type": "number",
+          "default": 0
+        },
+        "records_created": {
+          "type": "number",
+          "default": 0
+        },
+        "records_updated": {
+          "type": "number",
+          "default": 0
+        },
+        "sync_errors": {
+          "type": "number",
+          "default": 0
+        },
+        "last_error_message": {
+          "type": "string"
+        }
+      }
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Email of user who created rule"
+    }
+  },
+  "required": [
+    "crm_connection_id",
+    "rule_name",
+    "rule_type"
+  ]
+}

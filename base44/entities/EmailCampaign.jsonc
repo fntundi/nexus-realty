@@ -1,0 +1,121 @@
+{
+  "name": "EmailCampaign",
+  "type": "object",
+  "properties": {
+    "contact_id": {
+      "type": "string",
+      "description": "Reference to Contact"
+    },
+    "sequence_id": {
+      "type": "string",
+      "description": "Reference to EmailSequence"
+    },
+    "template_id": {
+      "type": "string",
+      "description": "Reference to EmailTemplate for this email"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Personalized subject"
+    },
+    "body": {
+      "type": "string",
+      "description": "Personalized body"
+    },
+    "recipient_email": {
+      "type": "string",
+      "description": "Contact's email"
+    },
+    "sent_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When email was sent"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "scheduled",
+        "sent",
+        "bounced",
+        "failed"
+      ],
+      "default": "scheduled",
+      "description": "Campaign status"
+    },
+    "open_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of opens"
+    },
+    "first_open_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "First open timestamp"
+    },
+    "last_open_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last open timestamp"
+    },
+    "click_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of clicks"
+    },
+    "click_events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "link": {
+            "type": "string"
+          },
+          "click_date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "default": [],
+      "description": "Tracked clicks"
+    },
+    "tracking_id": {
+      "type": "string",
+      "description": "Unique tracking ID for this campaign"
+    },
+    "bounce_status": {
+      "type": "string",
+      "enum": [
+        "hard",
+        "soft",
+        "none"
+      ],
+      "default": "none",
+      "description": "Whether email bounced"
+    },
+    "bounce_reason": {
+      "type": "string",
+      "description": "Reason for bounce if applicable"
+    },
+    "unsubscribed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether recipient unsubscribed"
+    },
+    "unsubscribe_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When unsubscribe occurred"
+    },
+    "variant_id": {
+      "type": "string",
+      "description": "Reference to EmailSequenceVariant for A/B testing"
+    }
+  },
+  "required": [
+    "contact_id",
+    "sequence_id",
+    "template_id",
+    "recipient_email"
+  ]
+}

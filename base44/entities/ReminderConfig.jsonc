@@ -1,0 +1,69 @@
+{
+  "name": "ReminderConfig",
+  "type": "object",
+  "properties": {
+    "agent_email": {
+      "type": "string",
+      "description": "Agent email this config belongs to"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether reminders are enabled"
+    },
+    "inactive_deal_days": {
+      "type": "number",
+      "default": 7,
+      "description": "Days of inactivity before reminder (0 to disable)"
+    },
+    "closing_date_days": {
+      "type": "number",
+      "default": 14,
+      "description": "Days before closing date to remind (0 to disable)"
+    },
+    "overdue_milestone_days": {
+      "type": "number",
+      "default": 3,
+      "description": "Days overdue for milestone before reminder (0 to disable)"
+    },
+    "no_offer_days": {
+      "type": "number",
+      "default": 21,
+      "description": "Days in showing stage without offer (0 to disable)"
+    },
+    "check_interval": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "twice_daily",
+        "weekly"
+      ],
+      "default": "daily",
+      "description": "How often to check for reminders"
+    },
+    "reminder_time": {
+      "type": "string",
+      "description": "Preferred time for reminders (HH:MM format)"
+    },
+    "only_active_deals": {
+      "type": "boolean",
+      "default": true,
+      "description": "Only remind about active deals"
+    },
+    "snooze_options": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "default": [
+        1,
+        3,
+        7
+      ],
+      "description": "Available snooze durations in hours"
+    }
+  },
+  "required": [
+    "agent_email"
+  ]
+}

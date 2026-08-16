@@ -1,0 +1,68 @@
+{
+  "name": "PropertyRecommendation",
+  "type": "object",
+  "properties": {
+    "buyer_email": {
+      "type": "string",
+      "description": "Email of buyer receiving recommendation"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "recommendation_score": {
+      "type": "number",
+      "description": "Match score 0-100 indicating how well property matches buyer preferences"
+    },
+    "score_breakdown": {
+      "type": "object",
+      "description": "Detailed breakdown of recommendation score",
+      "properties": {
+        "price_match": {
+          "type": "number",
+          "description": "Score based on price range preference"
+        },
+        "location_match": {
+          "type": "number",
+          "description": "Score based on location preferences"
+        },
+        "features_match": {
+          "type": "number",
+          "description": "Score based on desired amenities/features"
+        },
+        "recent_viewing_bonus": {
+          "type": "number",
+          "description": "Bonus if property viewed recently"
+        },
+        "saved_search_match": {
+          "type": "number",
+          "description": "Score based on saved search criteria"
+        }
+      }
+    },
+    "reason": {
+      "type": "string",
+      "description": "Human-readable reason for recommendation"
+    },
+    "generated_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When recommendation was generated"
+    },
+    "viewed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether buyer has viewed this recommendation"
+    },
+    "is_new_listing": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this is a newly listed property"
+    }
+  },
+  "required": [
+    "buyer_email",
+    "property_id",
+    "recommendation_score"
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "name": "CachedMarketData",
+  "type": "object",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "address": {
+      "type": "string",
+      "description": "Property address"
+    },
+    "estimated_value": {
+      "type": "number",
+      "description": "Current estimated market value"
+    },
+    "value_range_low": {
+      "type": "number",
+      "description": "Lower bound of value estimate"
+    },
+    "value_range_high": {
+      "type": "number",
+      "description": "Upper bound of value estimate"
+    },
+    "price_per_sqft": {
+      "type": "number",
+      "description": "Estimated price per square foot"
+    },
+    "market_trends": {
+      "type": "object",
+      "properties": {
+        "median_price": {
+          "type": "number"
+        },
+        "price_change_30d": {
+          "type": "number",
+          "description": "Percentage change in last 30 days"
+        },
+        "price_change_12m": {
+          "type": "number",
+          "description": "Percentage change in last 12 months"
+        },
+        "days_on_market_avg": {
+          "type": "number"
+        },
+        "inventory_count": {
+          "type": "number"
+        }
+      }
+    },
+    "neighborhood_stats": {
+      "type": "object",
+      "properties": {
+        "median_home_value": {
+          "type": "number"
+        },
+        "median_rent": {
+          "type": "number"
+        },
+        "property_tax_rate": {
+          "type": "number"
+        },
+        "school_rating_avg": {
+          "type": "number"
+        },
+        "walkability_score": {
+          "type": "number"
+        },
+        "crime_rate": {
+          "type": "string",
+          "enum": [
+            "low",
+            "moderate",
+            "high"
+          ]
+        }
+      }
+    },
+    "comparable_sales": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string"
+          },
+          "sold_price": {
+            "type": "number"
+          },
+          "sold_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "bedrooms": {
+            "type": "number"
+          },
+          "bathrooms": {
+            "type": "number"
+          },
+          "square_feet": {
+            "type": "number"
+          }
+        }
+      },
+      "default": []
+    },
+    "fetched_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this data was retrieved"
+    },
+    "expires_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this cache expires"
+    },
+    "provider": {
+      "type": "string",
+      "description": "Data source provider"
+    }
+  },
+  "required": [
+    "address",
+    "fetched_date"
+  ]
+}

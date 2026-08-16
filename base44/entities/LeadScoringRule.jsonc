@@ -1,0 +1,82 @@
+{
+  "name": "LeadScoringRule",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Rule name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Rule description"
+    },
+    "score_threshold": {
+      "type": "number",
+      "description": "Lead score threshold that triggers the rule (0-100)"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether rule is active"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "reassign_lead",
+        "create_task",
+        "send_notification"
+      ],
+      "description": "Action to take when threshold is met"
+    },
+    "reassign_to_agent_email": {
+      "type": "string",
+      "description": "Agent email to reassign to (for reassign_lead action)"
+    },
+    "task_title": {
+      "type": "string",
+      "description": "Task title to create (for create_task action)"
+    },
+    "task_description": {
+      "type": "string",
+      "description": "Task description (for create_task action)"
+    },
+    "task_priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium",
+      "description": "Task priority"
+    },
+    "notification_message": {
+      "type": "string",
+      "description": "Notification message (for send_notification action)"
+    },
+    "notify_agent_email": {
+      "type": "string",
+      "description": "Agent email to notify"
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Market this rule applies to (optional)"
+    },
+    "execution_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of times this rule has executed"
+    },
+    "last_execution": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last execution timestamp"
+    }
+  },
+  "required": [
+    "name",
+    "score_threshold",
+    "action_type"
+  ]
+}

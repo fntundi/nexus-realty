@@ -1,0 +1,71 @@
+{
+  "name": "AlertConfig",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "User email this configuration belongs to"
+    },
+    "alert_type": {
+      "type": "string",
+      "enum": [
+        "high_value_deals",
+        "closing_date_activity",
+        "performance_changes"
+      ],
+      "description": "Type of alert"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this alert is enabled"
+    },
+    "threshold_value": {
+      "type": "number",
+      "description": "Alert threshold (dollar amount for deals, days for closing, percentage for performance)"
+    },
+    "recipient_emails": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Additional email recipients for this alert"
+    },
+    "frequency": {
+      "type": "string",
+      "enum": [
+        "immediate",
+        "daily",
+        "weekly"
+      ],
+      "default": "daily",
+      "description": "How often to send alerts"
+    },
+    "last_alert_sent": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of last alert sent"
+    },
+    "market_filters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Limit alerts to specific markets (empty = all markets)"
+    },
+    "agent_filters": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Limit alerts to specific agents (empty = all agents)"
+    }
+  },
+  "required": [
+    "user_email",
+    "alert_type"
+  ]
+}

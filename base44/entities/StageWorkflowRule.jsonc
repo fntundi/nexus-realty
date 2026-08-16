@@ -1,0 +1,119 @@
+{
+  "name": "StageWorkflowRule",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Rule name (e.g., 'Under Contract \u2192 Closing checklist')"
+    },
+    "description": {
+      "type": "string",
+      "description": "What this rule does"
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Market this rule applies to (empty = all markets)"
+    },
+    "from_stage": {
+      "type": "string",
+      "enum": [
+        "any",
+        "pre_qual",
+        "showing",
+        "offer",
+        "under_contract",
+        "closing"
+      ],
+      "description": "Stage being left (use 'any' to trigger on any transition into to_stage)"
+    },
+    "to_stage": {
+      "type": "string",
+      "enum": [
+        "pre_qual",
+        "showing",
+        "offer",
+        "under_contract",
+        "closing",
+        "closed"
+      ],
+      "description": "Stage being entered that triggers this rule"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "actions": {
+      "type": "array",
+      "description": "List of actions to perform when rule triggers",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action_type": {
+            "type": "string",
+            "enum": [
+              "create_task",
+              "send_notification",
+              "send_email",
+              "generate_checklist"
+            ],
+            "description": "Type of action"
+          },
+          "title": {
+            "type": "string",
+            "description": "Task title or notification title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Task description or message body. Supports {{property_address}}, {{buyer_email}}, {{stage}}, {{agent_email}}"
+          },
+          "assign_to_role": {
+            "type": "string",
+            "enum": [
+              "agent",
+              "buyer",
+              "lender",
+              "builder"
+            ],
+            "description": "Who to assign task to / notify"
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ],
+            "default": "medium"
+          },
+          "due_days_offset": {
+            "type": "number",
+            "default": 3,
+            "description": "Days from trigger date until task is due"
+          },
+          "notify_roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Roles to notify (for send_notification action)"
+          }
+        }
+      },
+      "default": []
+    },
+    "execution_count": {
+      "type": "number",
+      "default": 0
+    },
+    "last_executed": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "name",
+    "from_stage",
+    "to_stage"
+  ]
+}

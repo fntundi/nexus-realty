@@ -1,0 +1,95 @@
+{
+  "name": "BuyerDocumentShare",
+  "type": "object",
+  "properties": {
+    "document_id": {
+      "type": "string",
+      "description": "Reference to Document entity"
+    },
+    "shared_by_email": {
+      "type": "string",
+      "description": "Email of party who shared the document"
+    },
+    "shared_with_email": {
+      "type": "string",
+      "description": "Email of party receiving the document"
+    },
+    "shared_with_name": {
+      "type": "string",
+      "description": "Name of party receiving the document"
+    },
+    "shared_with_role": {
+      "type": "string",
+      "enum": [
+        "lender",
+        "attorney",
+        "inspector",
+        "appraiser",
+        "title_company",
+        "other"
+      ],
+      "description": "Role of the party receiving the document"
+    },
+    "share_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When document was shared"
+    },
+    "access_level": {
+      "type": "string",
+      "enum": [
+        "view_only",
+        "review",
+        "sign"
+      ],
+      "default": "view_only",
+      "description": "What the recipient can do with the document"
+    },
+    "approval_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "signed"
+      ],
+      "default": "pending",
+      "description": "Status of recipient's approval/action"
+    },
+    "approval_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When recipient approved/took action"
+    },
+    "approval_notes": {
+      "type": "string",
+      "description": "Notes from recipient (e.g., rejection reason)"
+    },
+    "docusign_status": {
+      "type": "string",
+      "enum": [
+        "not_applicable",
+        "pending",
+        "in_progress",
+        "completed"
+      ],
+      "default": "not_applicable",
+      "description": "DocuSign status if document needs signatures"
+    },
+    "expires_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When share link expires"
+    },
+    "transaction_id": {
+      "type": "string",
+      "description": "Reference to Transaction entity for context"
+    }
+  },
+  "required": [
+    "document_id",
+    "shared_by_email",
+    "shared_with_email",
+    "shared_with_role"
+  ]
+}

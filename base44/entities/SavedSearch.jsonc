@@ -1,0 +1,122 @@
+{
+  "name": "SavedSearch",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of user who saved the search"
+    },
+    "search_name": {
+      "type": "string",
+      "description": "Custom name for the saved search"
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Reference to Market entity"
+    },
+    "filters": {
+      "type": "object",
+      "description": "Search filter criteria",
+      "properties": {
+        "price_min": {
+          "type": "number"
+        },
+        "price_max": {
+          "type": "number"
+        },
+        "bedrooms_min": {
+          "type": "number"
+        },
+        "bedrooms_max": {
+          "type": "number"
+        },
+        "bathrooms_min": {
+          "type": "number"
+        },
+        "bathrooms_max": {
+          "type": "number"
+        },
+        "square_feet_min": {
+          "type": "number"
+        },
+        "square_feet_max": {
+          "type": "number"
+        },
+        "property_types": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "single_family",
+              "condo",
+              "townhouse",
+              "multi_family",
+              "land"
+            ]
+          }
+        },
+        "amenities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Selected amenities (pool, garage, yard, etc.)"
+        },
+        "location_keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Neighborhoods, schools, or areas"
+        },
+        "radius_miles": {
+          "type": "number",
+          "description": "Search radius in miles from location"
+        }
+      }
+    },
+    "result_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of properties matching this search"
+    },
+    "last_used": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this search was last executed"
+    },
+    "send_alerts": {
+      "type": "boolean",
+      "default": false,
+      "description": "Send email alerts when new properties match"
+    },
+    "alert_frequency": {
+      "type": "string",
+      "enum": [
+        "daily",
+        "weekly",
+        "immediately"
+      ],
+      "default": "daily",
+      "description": "How often to send alerts for new matching properties"
+    },
+    "last_alert_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the last alert was sent"
+    },
+    "alert_properties_sent": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "IDs of properties already alerted about"
+    }
+  },
+  "required": [
+    "user_email",
+    "search_name",
+    "filters"
+  ]
+}

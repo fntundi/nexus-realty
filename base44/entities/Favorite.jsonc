@@ -1,0 +1,34 @@
+{
+  "name": "Favorite",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email of buyer who favorited the property"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Buyer's notes about this property"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Buyer's rating (1-5 stars)"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Custom tags (must-see, backup-option, etc.)"
+    }
+  },
+  "required": [
+    "user_email",
+    "property_id"
+  ]
+}

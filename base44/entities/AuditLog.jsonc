@@ -1,0 +1,72 @@
+{
+  "name": "AuditLog",
+  "type": "object",
+  "properties": {
+    "log_type": {
+      "type": "string",
+      "enum": [
+        "data_access",
+        "data_modification",
+        "file_access",
+        "file_upload",
+        "role_change",
+        "failed_auth",
+        "pii_access",
+        "unauthorized_attempt"
+      ],
+      "description": "Type of audit event"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Email of user who performed action"
+    },
+    "user_id": {
+      "type": "string",
+      "description": "ID of user who performed action"
+    },
+    "action": {
+      "type": "string",
+      "description": "Action performed (read, create, update, delete, etc.)"
+    },
+    "resource": {
+      "type": "string",
+      "description": "Resource type affected (entity name, file, etc.)"
+    },
+    "resource_id": {
+      "type": "string",
+      "description": "ID of specific resource affected"
+    },
+    "details": {
+      "type": "object",
+      "description": "Additional context about the action"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failed"
+      ],
+      "default": "success",
+      "description": "Whether action succeeded or failed"
+    },
+    "ip_address": {
+      "type": "string",
+      "description": "IP address of request origin"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "low",
+      "description": "Severity level for security monitoring"
+    }
+  },
+  "required": [
+    "log_type",
+    "action",
+    "resource"
+  ]
+}

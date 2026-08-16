@@ -1,0 +1,87 @@
+{
+  "name": "Vendor",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Vendor company name"
+    },
+    "vendor_type": {
+      "type": "string",
+      "enum": [
+        "inspector",
+        "appraiser",
+        "title_company",
+        "escrow",
+        "contractor",
+        "photographer",
+        "stager",
+        "other"
+      ],
+      "description": "Type of vendor service"
+    },
+    "contact_name": {
+      "type": "string",
+      "description": "Primary contact person"
+    },
+    "email": {
+      "type": "string",
+      "description": "Vendor email"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Vendor phone number"
+    },
+    "website": {
+      "type": "string",
+      "description": "Vendor website"
+    },
+    "address": {
+      "type": "string",
+      "description": "Business address"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Average rating (1-5 stars)"
+    },
+    "total_jobs": {
+      "type": "number",
+      "default": 0,
+      "description": "Total jobs completed"
+    },
+    "typical_turnaround_days": {
+      "type": "number",
+      "description": "Average days to complete work"
+    },
+    "certifications": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Professional certifications"
+    },
+    "service_areas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Cities/regions served"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether vendor is actively accepting work"
+    }
+  },
+  "required": [
+    "name",
+    "vendor_type",
+    "email"
+  ]
+}

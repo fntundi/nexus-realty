@@ -1,0 +1,138 @@
+{
+  "name": "Transaction",
+  "type": "object",
+  "properties": {
+    "lead_id": {
+      "type": "string",
+      "description": "Reference to Lead entity"
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Reference to Market entity"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "Reference to Agent entity"
+    },
+    "buyer_email": {
+      "type": "string",
+      "description": "Reference to User entity (buyer)"
+    },
+    "lender_email": {
+      "type": "string",
+      "description": "Reference to User entity (lender)"
+    },
+    "current_stage": {
+      "type": "string",
+      "enum": [
+        "pre_qual",
+        "showing",
+        "offer",
+        "under_contract",
+        "closing",
+        "closed"
+      ],
+      "default": "pre_qual"
+    },
+    "stage_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "stage": {
+            "type": "string"
+          },
+          "entered_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completed_date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "description": "History of stage transitions"
+    },
+    "completed_milestones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "milestone_id": {
+            "type": "string"
+          },
+          "completed_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completed_by": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Milestones that have been completed"
+    },
+    "offer_amount": {
+      "type": "number"
+    },
+    "contract_price": {
+      "type": "number"
+    },
+    "closing_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "closed_won",
+        "closed_lost",
+        "cancelled"
+      ],
+      "default": "active"
+    },
+    "commission_amount": {
+      "type": "number",
+      "description": "Actual commission amount in dollars"
+    },
+    "commission_percentage": {
+      "type": "number",
+      "default": 3,
+      "description": "Commission percentage of contract price"
+    },
+    "commission_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "earned",
+        "paid"
+      ],
+      "default": "pending",
+      "description": "Current commission payment status"
+    },
+    "commission_paid_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date commission was paid out"
+    },
+    "commission_notes": {
+      "type": "string",
+      "description": "Notes about commission split, adjustments, etc."
+    }
+  },
+  "required": [
+    "lead_id",
+    "market_id",
+    "agent_id",
+    "buyer_email"
+  ]
+}

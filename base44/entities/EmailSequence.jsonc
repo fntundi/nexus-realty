@@ -1,0 +1,70 @@
+{
+  "name": "EmailSequence",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Sequence name (e.g., 'Hot Lead Nurture')"
+    },
+    "description": {
+      "type": "string",
+      "description": "Sequence description"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "lead_score_threshold",
+        "status_change",
+        "manual"
+      ],
+      "description": "What triggers this sequence"
+    },
+    "trigger_value": {
+      "type": "string",
+      "description": "Trigger value (e.g., score: 75, status: active)"
+    },
+    "emails": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "order": {
+            "type": "number",
+            "description": "Sequence order"
+          },
+          "template_id": {
+            "type": "string",
+            "description": "Reference to EmailTemplate"
+          },
+          "delay_hours": {
+            "type": "number",
+            "default": 0,
+            "description": "Hours to wait before sending"
+          }
+        }
+      },
+      "default": [],
+      "description": "Emails in this sequence"
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Market this sequence belongs to"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether sequence is active"
+    },
+    "execution_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of times executed"
+    }
+  },
+  "required": [
+    "name",
+    "trigger_type",
+    "trigger_value",
+    "emails"
+  ]
+}

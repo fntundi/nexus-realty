@@ -1,0 +1,78 @@
+{
+  "name": "EmailSequenceVariant",
+  "type": "object",
+  "properties": {
+    "sequence_id": {
+      "type": "string",
+      "description": "Reference to parent EmailSequence"
+    },
+    "template_id": {
+      "type": "string",
+      "description": "Reference to EmailTemplate"
+    },
+    "variant_type": {
+      "type": "string",
+      "enum": [
+        "subject_line",
+        "content",
+        "both"
+      ],
+      "description": "Type of A/B test"
+    },
+    "variant_letter": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B"
+      ],
+      "description": "Variant identifier"
+    },
+    "split_percentage": {
+      "type": "number",
+      "description": "Percentage of recipients for this variant (0-100)"
+    },
+    "subject_override": {
+      "type": "string",
+      "description": "Override subject for this variant"
+    },
+    "body_override": {
+      "type": "string",
+      "description": "Override body for this variant"
+    },
+    "sent_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of emails sent with this variant"
+    },
+    "open_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total opens"
+    },
+    "click_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Total clicks"
+    },
+    "open_rate": {
+      "type": "number",
+      "description": "Calculated open rate"
+    },
+    "click_rate": {
+      "type": "number",
+      "description": "Calculated click rate"
+    },
+    "is_winner": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this variant won the A/B test"
+    }
+  },
+  "required": [
+    "sequence_id",
+    "template_id",
+    "variant_type",
+    "variant_letter",
+    "split_percentage"
+  ]
+}

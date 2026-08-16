@@ -1,0 +1,109 @@
+{
+  "name": "Showing",
+  "type": "object",
+  "properties": {
+    "transaction_id": {
+      "type": "string",
+      "description": "Reference to Transaction entity"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "agent_email": {
+      "type": "string",
+      "description": "Agent proposing/managing the showing"
+    },
+    "buyer_email": {
+      "type": "string",
+      "description": "Buyer for the showing"
+    },
+    "proposed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Proposed showing date and time"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "default": 60,
+      "description": "Duration of showing in minutes"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "proposed",
+        "accepted",
+        "declined",
+        "completed",
+        "cancelled"
+      ],
+      "default": "proposed",
+      "description": "Current status of the showing"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes or instructions"
+    },
+    "location": {
+      "type": "string",
+      "description": "Meeting location details"
+    },
+    "counter_proposals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "proposed_by": {
+            "type": "string"
+          },
+          "proposed_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "created_date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "default": [],
+      "description": "Alternative time proposals"
+    },
+    "accepted_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the showing was accepted"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the showing was completed"
+    },
+    "calendar_event_id": {
+      "type": "string",
+      "description": "External calendar event ID (Google/Outlook)"
+    },
+    "calendar_provider": {
+      "type": "string",
+      "enum": [
+        "google",
+        "outlook"
+      ],
+      "description": "Calendar provider used"
+    },
+    "calendar_link": {
+      "type": "string",
+      "description": "Link to view the calendar event"
+    }
+  },
+  "required": [
+    "transaction_id",
+    "property_id",
+    "agent_email",
+    "buyer_email",
+    "proposed_date"
+  ]
+}

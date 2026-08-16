@@ -1,0 +1,388 @@
+{
+  "name": "Agent",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Reference to User entity email"
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Reference to Market entity"
+    },
+    "license_number": {
+      "type": "string",
+      "description": "Real estate license number"
+    },
+    "territories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Legacy zip codes (kept for backwards compatibility)"
+    },
+    "territory_definitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "zip_code",
+              "neighborhood",
+              "school_district",
+              "custom_area"
+            ],
+            "description": "Type of territory"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name"
+          },
+          "value": {
+            "type": "string",
+            "description": "The actual value (zip, name, etc.)"
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "description": "Polygon coordinates for map display [lat, lng]"
+          }
+        }
+      },
+      "description": "Detailed territory definitions with geographic boundaries"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "on_leave"
+      ],
+      "default": "active"
+    },
+    "current_workload": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of active leads currently assigned"
+    },
+    "max_workload": {
+      "type": "number",
+      "default": 10,
+      "description": "Maximum concurrent leads"
+    },
+    "complexity_score": {
+      "type": "number",
+      "default": 0,
+      "description": "Current workload complexity (weighted by deal size, stage, etc.)"
+    },
+    "max_complexity_score": {
+      "type": "number",
+      "default": 100,
+      "description": "Maximum complexity score the agent can handle"
+    },
+    "total_assignments": {
+      "type": "number",
+      "default": 0,
+      "description": "Total leads ever assigned (for rotation)"
+    },
+    "closed_deals": {
+      "type": "number",
+      "default": 0
+    },
+    "success_rate": {
+      "type": "number",
+      "default": 0,
+      "description": "Overall percentage of leads converted to closed deals"
+    },
+    "avg_days_to_close": {
+      "type": "number",
+      "default": 0,
+      "description": "Average number of days from lead assignment to closing"
+    },
+    "property_type_stats": {
+      "type": "object",
+      "description": "Success rates by property type",
+      "properties": {
+        "single_family": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "default": 0
+            },
+            "closed": {
+              "type": "number",
+              "default": 0
+            },
+            "success_rate": {
+              "type": "number",
+              "default": 0
+            },
+            "avg_days_to_close": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        },
+        "condo": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "default": 0
+            },
+            "closed": {
+              "type": "number",
+              "default": 0
+            },
+            "success_rate": {
+              "type": "number",
+              "default": 0
+            },
+            "avg_days_to_close": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        },
+        "townhouse": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "default": 0
+            },
+            "closed": {
+              "type": "number",
+              "default": 0
+            },
+            "success_rate": {
+              "type": "number",
+              "default": 0
+            },
+            "avg_days_to_close": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        }
+      }
+    },
+    "price_range_stats": {
+      "type": "object",
+      "description": "Success rates by price range",
+      "properties": {
+        "under_300k": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "default": 0
+            },
+            "closed": {
+              "type": "number",
+              "default": 0
+            },
+            "success_rate": {
+              "type": "number",
+              "default": 0
+            },
+            "avg_days_to_close": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        },
+        "300k_500k": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "default": 0
+            },
+            "closed": {
+              "type": "number",
+              "default": 0
+            },
+            "success_rate": {
+              "type": "number",
+              "default": 0
+            },
+            "avg_days_to_close": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        },
+        "500k_1m": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "default": 0
+            },
+            "closed": {
+              "type": "number",
+              "default": 0
+            },
+            "success_rate": {
+              "type": "number",
+              "default": 0
+            },
+            "avg_days_to_close": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        },
+        "over_1m": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "default": 0
+            },
+            "closed": {
+              "type": "number",
+              "default": 0
+            },
+            "success_rate": {
+              "type": "number",
+              "default": 0
+            },
+            "avg_days_to_close": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        }
+      }
+    },
+    "lead_source_stats": {
+      "type": "object",
+      "description": "Performance by lead source",
+      "properties": {
+        "property_inquiry": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "default": 0
+            },
+            "closed": {
+              "type": "number",
+              "default": 0
+            },
+            "success_rate": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        },
+        "registration": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "default": 0
+            },
+            "closed": {
+              "type": "number",
+              "default": 0
+            },
+            "success_rate": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        },
+        "showing_request": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "default": 0
+            },
+            "closed": {
+              "type": "number",
+              "default": 0
+            },
+            "success_rate": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        },
+        "favorite": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "default": 0
+            },
+            "closed": {
+              "type": "number",
+              "default": 0
+            },
+            "success_rate": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        },
+        "external_import": {
+          "type": "object",
+          "properties": {
+            "total": {
+              "type": "number",
+              "default": 0
+            },
+            "closed": {
+              "type": "number",
+              "default": 0
+            },
+            "success_rate": {
+              "type": "number",
+              "default": 0
+            }
+          }
+        }
+      }
+    },
+    "monthly_performance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "leads_assigned": {
+            "type": "number"
+          },
+          "deals_closed": {
+            "type": "number"
+          },
+          "conversion_rate": {
+            "type": "number"
+          }
+        }
+      },
+      "description": "Monthly performance tracking for trends"
+    }
+  },
+  "required": [
+    "user_email",
+    "market_id"
+  ]
+}

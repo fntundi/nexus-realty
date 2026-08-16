@@ -1,0 +1,362 @@
+{
+  "name": "NurtureWorkflow",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Workflow name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Workflow description"
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Reference to Market entity"
+    },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "lead_score_threshold",
+        "deal_stage",
+        "no_activity",
+        "new_lead",
+        "custom"
+      ],
+      "default": "lead_score_threshold",
+      "description": "What triggers this workflow"
+    },
+    "trigger_config": {
+      "type": "object",
+      "description": "Trigger configuration based on type",
+      "properties": {
+        "score_threshold": {
+          "type": "number",
+          "description": "Lead score threshold for trigger"
+        },
+        "stage": {
+          "type": "string",
+          "description": "Deal stage that triggers workflow"
+        },
+        "days_inactive": {
+          "type": "number",
+          "description": "Days without activity to trigger"
+        }
+      }
+    },
+    "sequence_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "step_id": {
+            "type": "string",
+            "description": "Unique ID for this step"
+          },
+          "order": {
+            "type": "number",
+            "description": "Step order in sequence"
+          },
+          "action_type": {
+            "type": "string",
+            "enum": [
+              "email",
+              "task",
+              "sms",
+              "both"
+            ],
+            "description": "Type of action"
+          },
+          "delay_hours": {
+            "type": "number",
+            "description": "Hours to wait before this step"
+          },
+          "email_template_id": {
+            "type": "string",
+            "description": "Reference to EmailTemplate"
+          },
+          "task_title": {
+            "type": "string",
+            "description": "Task title for follow-up"
+          },
+          "task_type": {
+            "type": "string",
+            "enum": [
+              "call",
+              "meeting",
+              "follow_up",
+              "email",
+              "document",
+              "other"
+            ],
+            "description": "Type of task"
+          },
+          "personalization_rules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "variable": {
+                  "type": "string"
+                },
+                "rule": {
+                  "type": "string",
+                  "description": "Rule for personalization (e.g., include lead score, property address)"
+                }
+              }
+            },
+            "default": [],
+            "description": "Personalization rules for this step"
+          },
+          "send_time_optimization": {
+            "type": "boolean",
+            "default": false,
+            "description": "Use AI to optimize send time"
+          },
+          "conditional_branches": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "branch_id": {
+                  "type": "string",
+                  "description": "Unique ID for this branch"
+                },
+                "condition_type": {
+                  "type": "string",
+                  "enum": [
+                    "email_opened",
+                    "email_clicked",
+                    "link_clicked",
+                    "no_action",
+                    "task_completed",
+                    "lead_score_change",
+                    "days_elapsed"
+                  ],
+                  "description": "Type of condition to evaluate"
+                },
+                "condition_details": {
+                  "type": "object",
+                  "description": "Condition-specific details",
+                  "properties": {
+                    "link_url": {
+                      "type": "string",
+                      "description": "For link_clicked condition"
+                    },
+                    "score_threshold": {
+                      "type": "number",
+                      "description": "For lead_score_change condition"
+                    },
+                    "days": {
+                      "type": "number",
+                      "description": "For days_elapsed condition"
+                    },
+                    "comparison": {
+                      "type": "string",
+                      "enum": [
+                        "greater_than",
+                        "less_than",
+                        "equals"
+                      ],
+                      "description": "Comparison operator"
+                    }
+                  }
+                },
+                "next_step_id": {
+                  "type": "string",
+                  "description": "Step ID to navigate to if condition is met"
+                },
+                "alternative_step_id": {
+                  "type": "string",
+                  "description": "Step ID to navigate to if condition is not met"
+                }
+              }
+            },
+            "default": [],
+            "description": "Conditional branches based on lead responses"
+          },
+          "ab_test": {
+            "type": "object",
+            "description": "A/B test configuration for this step",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "default": false,
+                "description": "Whether A/B test is enabled"
+              },
+              "variants": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "variant_id": {
+                      "type": "string",
+                      "description": "Variant ID (A, B, C, etc.)"
+                    },
+                    "split_percentage": {
+                      "type": "number",
+                      "description": "Percentage of recipients (0-100)"
+                    },
+                    "subject_override": {
+                      "type": "string",
+                      "description": "Email subject override"
+                    },
+                    "body_override": {
+                      "type": "string",
+                      "description": "Email body override"
+                    },
+                    "sent_count": {
+                      "type": "number",
+                      "default": 0
+                    },
+                    "open_count": {
+                      "type": "number",
+                      "default": 0
+                    },
+                    "click_count": {
+                      "type": "number",
+                      "default": 0
+                    },
+                    "conversion_count": {
+                      "type": "number",
+                      "default": 0
+                    }
+                  }
+                },
+                "default": [],
+                "description": "A/B test variants"
+              },
+              "winner": {
+                "type": "string",
+                "description": "ID of winning variant"
+              },
+              "winning_metric": {
+                "type": "string",
+                "enum": [
+                  "open_rate",
+                  "click_rate",
+                  "conversion_rate"
+                ],
+                "default": "click_rate",
+                "description": "Metric to determine winner"
+              }
+            }
+          }
+        }
+      },
+      "default": [],
+      "description": "Steps in the nurture sequence with conditional logic and A/B testing"
+    },
+    "recipient_segment": {
+      "type": "string",
+      "enum": [
+        "all_leads",
+        "custom_segment"
+      ],
+      "default": "all_leads",
+      "description": "Who receives this workflow"
+    },
+    "segment_criteria": {
+      "type": "object",
+      "description": "Custom segment criteria if applicable"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether workflow is active"
+    },
+    "execution_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "lead_id": {
+            "type": "string"
+          },
+          "started_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "current_step": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "in_progress",
+              "completed",
+              "paused",
+              "failed"
+            ]
+          },
+          "completion_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "branch_path": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Steps taken through conditional branches"
+          },
+          "ab_variant_assigned": {
+            "type": "object",
+            "description": "A/B variants assigned to lead",
+            "properties": {
+              "step_id": {
+                "type": "string"
+              },
+              "variant_id": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "default": [],
+      "description": "History of workflow executions"
+    },
+    "engagement_metrics": {
+      "type": "object",
+      "description": "Metrics for this workflow",
+      "properties": {
+        "total_triggered": {
+          "type": "number",
+          "default": 0
+        },
+        "completed": {
+          "type": "number",
+          "default": 0
+        },
+        "conversion_rate": {
+          "type": "number",
+          "description": "Percentage of triggered leads that converted"
+        },
+        "avg_time_to_conversion": {
+          "type": "number",
+          "description": "Average days to conversion"
+        },
+        "email_open_rate": {
+          "type": "number"
+        },
+        "email_click_rate": {
+          "type": "number"
+        },
+        "ab_test_performance": {
+          "type": "object",
+          "description": "A/B test performance metrics"
+        }
+      }
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Email of user who created workflow"
+    }
+  },
+  "required": [
+    "name",
+    "trigger_type",
+    "sequence_steps"
+  ]
+}

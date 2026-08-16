@@ -1,0 +1,72 @@
+{
+  "name": "Milestone",
+  "type": "object",
+  "properties": {
+    "market_id": {
+      "type": "string",
+      "description": "Reference to Market entity"
+    },
+    "name": {
+      "type": "string",
+      "description": "Milestone name (e.g., Pre-Approval Obtained)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of the milestone"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "pre_qual",
+        "showing",
+        "offer",
+        "under_contract",
+        "closing"
+      ],
+      "description": "Transaction stage this milestone belongs to"
+    },
+    "order": {
+      "type": "number",
+      "description": "Display order within the stage"
+    },
+    "is_critical": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether completion triggers notifications"
+    },
+    "notify_roles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "agent",
+          "buyer",
+          "lender",
+          "builder"
+        ]
+      },
+      "description": "Which roles to notify when completed"
+    },
+    "required_for_next_stage": {
+      "type": "boolean",
+      "default": false,
+      "description": "Must be completed before moving to next stage"
+    },
+    "responsible_role": {
+      "type": "string",
+      "enum": [
+        "agent",
+        "buyer",
+        "lender",
+        "any"
+      ],
+      "default": "any",
+      "description": "Which role is responsible for this task"
+    }
+  },
+  "required": [
+    "market_id",
+    "name",
+    "stage"
+  ]
+}

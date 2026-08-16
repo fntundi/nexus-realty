@@ -1,0 +1,58 @@
+{
+  "name": "ProjectMilestone",
+  "type": "object",
+  "properties": {
+    "project_id": {
+      "type": "string",
+      "description": "Reference to DevelopmentProject entity"
+    },
+    "title": {
+      "type": "string",
+      "description": "Milestone title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Milestone details"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "permitting",
+        "construction_phase",
+        "sales_event",
+        "completion"
+      ],
+      "description": "Type of milestone"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Planned date"
+    },
+    "actual_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Actual completion date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "delayed"
+      ],
+      "default": "pending",
+      "description": "Current status"
+    },
+    "order": {
+      "type": "number",
+      "description": "Display order in timeline"
+    }
+  },
+  "required": [
+    "project_id",
+    "title",
+    "scheduled_date"
+  ]
+}

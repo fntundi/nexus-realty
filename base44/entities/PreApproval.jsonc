@@ -1,0 +1,59 @@
+{
+  "name": "PreApproval",
+  "type": "object",
+  "properties": {
+    "buyer_email": {
+      "type": "string",
+      "description": "Email of buyer"
+    },
+    "lender_name": {
+      "type": "string",
+      "description": "Name of lending institution"
+    },
+    "approved_amount": {
+      "type": "number",
+      "description": "Pre-approved loan amount"
+    },
+    "interest_rate": {
+      "type": "number",
+      "description": "Estimated interest rate"
+    },
+    "approval_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Date of pre-approval"
+    },
+    "expiration_date": {
+      "type": "string",
+      "format": "date",
+      "description": "When pre-approval expires"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "expired",
+        "denied"
+      ],
+      "default": "pending",
+      "description": "Current status"
+    },
+    "letter_url": {
+      "type": "string",
+      "description": "URL to pre-approval letter document"
+    },
+    "conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "Conditions or requirements"
+    }
+  },
+  "required": [
+    "buyer_email",
+    "approved_amount"
+  ]
+}

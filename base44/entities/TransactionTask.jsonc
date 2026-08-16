@@ -1,0 +1,145 @@
+{
+  "name": "TransactionTask",
+  "type": "object",
+  "properties": {
+    "transaction_id": {
+      "type": "string",
+      "description": "Reference to Transaction entity"
+    },
+    "milestone_id": {
+      "type": "string",
+      "description": "Reference to Milestone template (optional)"
+    },
+    "title": {
+      "type": "string",
+      "description": "Task title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Task description"
+    },
+    "stage": {
+      "type": "string",
+      "enum": [
+        "pre_qual",
+        "showing",
+        "offer",
+        "under_contract",
+        "closing"
+      ],
+      "description": "Transaction stage this task belongs to"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "not_started",
+        "in_progress",
+        "completed",
+        "blocked"
+      ],
+      "default": "not_started",
+      "description": "Task status"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium",
+      "description": "Task priority"
+    },
+    "assigned_to_role": {
+      "type": "string",
+      "enum": [
+        "agent",
+        "buyer",
+        "lender",
+        "builder",
+        "any"
+      ],
+      "default": "any",
+      "description": "Which role is responsible"
+    },
+    "assigned_to_user": {
+      "type": "string",
+      "description": "Specific user email if assigned to individual"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Task due date"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When task was completed"
+    },
+    "completed_by": {
+      "type": "string",
+      "description": "Email of user who completed the task"
+    },
+    "is_critical": {
+      "type": "boolean",
+      "default": false,
+      "description": "Critical tasks block stage progression"
+    },
+    "order": {
+      "type": "number",
+      "description": "Display order within stage"
+    },
+    "comments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "user_email": {
+            "type": "string"
+          },
+          "user_name": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "default": [],
+      "description": "Task comments and activity log"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file_url": {
+            "type": "string"
+          },
+          "file_name": {
+            "type": "string"
+          },
+          "uploaded_by": {
+            "type": "string"
+          },
+          "uploaded_date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "default": [],
+      "description": "Task attachments"
+    }
+  },
+  "required": [
+    "transaction_id",
+    "title",
+    "stage"
+  ]
+}

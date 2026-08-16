@@ -1,0 +1,153 @@
+{
+  "name": "VendorAssignment",
+  "type": "object",
+  "properties": {
+    "transaction_id": {
+      "type": "string",
+      "description": "Reference to Transaction entity"
+    },
+    "vendor_id": {
+      "type": "string",
+      "description": "Reference to Vendor entity"
+    },
+    "vendor_type": {
+      "type": "string",
+      "enum": [
+        "inspector",
+        "appraiser",
+        "title_company",
+        "escrow",
+        "contractor",
+        "photographer",
+        "stager",
+        "other"
+      ],
+      "description": "Type of service being provided"
+    },
+    "assigned_by_email": {
+      "type": "string",
+      "description": "Email of user who assigned vendor"
+    },
+    "assigned_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When vendor was assigned"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Scheduled date for service"
+    },
+    "completion_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When service was completed"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "scheduled",
+        "in_progress",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending",
+      "description": "Current status"
+    },
+    "cost": {
+      "type": "number",
+      "description": "Cost of service"
+    },
+    "deliverables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "expected_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "received_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "document_id": {
+            "type": "string",
+            "description": "Reference to Document entity"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "received",
+              "approved",
+              "needs_revision"
+            ]
+          }
+        }
+      },
+      "default": [],
+      "description": "Expected deliverables from vendor"
+    },
+    "communications": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "from_email": {
+            "type": "string"
+          },
+          "to_email": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "email",
+              "phone",
+              "text",
+              "note"
+            ]
+          }
+        }
+      },
+      "default": [],
+      "description": "Communication history with vendor"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    },
+    "rating": {
+      "type": "number",
+      "description": "Rating for this specific job (1-5 stars)"
+    },
+    "feedback": {
+      "type": "string",
+      "description": "Feedback about vendor performance"
+    }
+  },
+  "required": [
+    "transaction_id",
+    "vendor_id",
+    "vendor_type",
+    "assigned_by_email"
+  ]
+}

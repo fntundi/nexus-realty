@@ -1,0 +1,80 @@
+{
+  "name": "Property",
+  "type": "object",
+  "properties": {
+    "market_id": {
+      "type": "string",
+      "description": "Reference to Market entity"
+    },
+    "idx_listing_id": {
+      "type": "string",
+      "description": "External IDX feed listing ID"
+    },
+    "address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "zip_code": {
+      "type": "string"
+    },
+    "price": {
+      "type": "number"
+    },
+    "bedrooms": {
+      "type": "number"
+    },
+    "bathrooms": {
+      "type": "number"
+    },
+    "square_feet": {
+      "type": "number"
+    },
+    "property_type": {
+      "type": "string",
+      "enum": [
+        "single_family",
+        "condo",
+        "townhouse",
+        "multi_family",
+        "land"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "pending",
+        "sold",
+        "off_market"
+      ],
+      "default": "active"
+    },
+    "description": {
+      "type": "string"
+    },
+    "photos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Photo URLs"
+    },
+    "last_synced": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last IDX sync timestamp"
+    }
+  },
+  "required": [
+    "market_id",
+    "address",
+    "city",
+    "state",
+    "price"
+  ]
+}

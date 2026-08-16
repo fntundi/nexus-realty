@@ -1,0 +1,51 @@
+{
+  "name": "ViewingHistory",
+  "type": "object",
+  "properties": {
+    "buyer_email": {
+      "type": "string",
+      "description": "Email of buyer who viewed the property"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property entity"
+    },
+    "viewed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the property was viewed"
+    },
+    "viewing_type": {
+      "type": "string",
+      "enum": [
+        "in_person",
+        "virtual_tour",
+        "listing_page"
+      ],
+      "default": "listing_page",
+      "description": "Type of viewing"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "description": "How long the property was viewed (in seconds)"
+    },
+    "liked": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether buyer liked/favorited the property"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Buyer's personal notes about the property"
+    },
+    "engagement_score": {
+      "type": "number",
+      "description": "Calculated engagement score (0-100) based on viewing behavior"
+    }
+  },
+  "required": [
+    "buyer_email",
+    "property_id",
+    "viewed_date"
+  ]
+}

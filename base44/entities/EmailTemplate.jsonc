@@ -1,0 +1,44 @@
+{
+  "name": "EmailTemplate",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Template name"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Email subject line (supports {{variables}})"
+    },
+    "body": {
+      "type": "string",
+      "description": "Email body HTML (supports {{variables}} like {{first_name}}, {{lead_score}}, {{contact_type}})"
+    },
+    "variables": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": [],
+      "description": "List of supported variables for this template"
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Market this template belongs to"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether template is active"
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Email of template creator"
+    }
+  },
+  "required": [
+    "name",
+    "subject",
+    "body"
+  ]
+}

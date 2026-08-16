@@ -1,0 +1,151 @@
+{
+  "name": "CRMConnection",
+  "type": "object",
+  "properties": {
+    "crm_type": {
+      "type": "string",
+      "enum": [
+        "salesforce",
+        "hubspot"
+      ],
+      "description": "Type of CRM system"
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether this CRM integration is active"
+    },
+    "market_id": {
+      "type": "string",
+      "description": "Market this connection applies to (optional)"
+    },
+    "salesforce_config": {
+      "type": "object",
+      "description": "Salesforce-specific configuration",
+      "properties": {
+        "instance_url": {
+          "type": "string",
+          "description": "Salesforce instance URL (e.g., https://yourinstance.salesforce.com)"
+        },
+        "lead_object_mapping": {
+          "type": "object",
+          "description": "Mapping of local contact fields to Salesforce Lead fields"
+        },
+        "task_object_mapping": {
+          "type": "object",
+          "description": "Mapping of local task fields to Salesforce Task fields"
+        },
+        "sync_direction": {
+          "type": "string",
+          "enum": [
+            "one_way_to_crm",
+            "one_way_from_crm",
+            "bidirectional"
+          ],
+          "default": "bidirectional",
+          "description": "Direction of data synchronization"
+        },
+        "auto_sync_enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically sync data changes"
+        },
+        "sync_interval_minutes": {
+          "type": "number",
+          "default": 30,
+          "description": "Minutes between sync checks"
+        }
+      }
+    },
+    "hubspot_config": {
+      "type": "object",
+      "description": "HubSpot-specific configuration",
+      "properties": {
+        "private_app_key": {
+          "type": "string",
+          "description": "HubSpot private app access key"
+        },
+        "contact_object_mapping": {
+          "type": "object",
+          "description": "Mapping of local contact fields to HubSpot contact properties"
+        },
+        "task_object_mapping": {
+          "type": "object",
+          "description": "Mapping of local task fields to HubSpot task properties"
+        },
+        "sync_direction": {
+          "type": "string",
+          "enum": [
+            "one_way_to_crm",
+            "one_way_from_crm",
+            "bidirectional"
+          ],
+          "default": "bidirectional",
+          "description": "Direction of data synchronization"
+        },
+        "auto_sync_enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically sync data changes"
+        },
+        "sync_interval_minutes": {
+          "type": "number",
+          "default": 30,
+          "description": "Minutes between sync checks"
+        }
+      }
+    },
+    "last_sync_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last successful synchronization timestamp"
+    },
+    "last_sync_status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failed",
+        "pending"
+      ],
+      "default": "pending",
+      "description": "Status of last sync attempt"
+    },
+    "last_sync_error": {
+      "type": "string",
+      "description": "Error message from last failed sync"
+    },
+    "sync_stats": {
+      "type": "object",
+      "description": "Statistics about synchronization",
+      "properties": {
+        "leads_synced": {
+          "type": "number",
+          "default": 0
+        },
+        "tasks_created": {
+          "type": "number",
+          "default": 0
+        },
+        "engagement_records_synced": {
+          "type": "number",
+          "default": 0
+        },
+        "total_sync_attempts": {
+          "type": "number",
+          "default": 0
+        },
+        "failed_sync_attempts": {
+          "type": "number",
+          "default": 0
+        }
+      }
+    },
+    "created_by": {
+      "type": "string",
+      "description": "Email of user who created this connection"
+    }
+  },
+  "required": [
+    "crm_type"
+  ]
+}

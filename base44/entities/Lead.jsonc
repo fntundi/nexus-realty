@@ -1,0 +1,85 @@
+{
+  "name": "Lead",
+  "type": "object",
+  "properties": {
+    "market_id": {
+      "type": "string",
+      "description": "Reference to Market entity"
+    },
+    "buyer_email": {
+      "type": "string",
+      "description": "Reference to User entity (buyer)"
+    },
+    "buyer_name": {
+      "type": "string"
+    },
+    "buyer_phone": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "property_inquiry",
+        "registration",
+        "showing_request",
+        "favorite",
+        "external_import"
+      ],
+      "description": "How the lead entered the system"
+    },
+    "property_id": {
+      "type": "string",
+      "description": "Reference to Property if lead came from specific listing"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "unassigned",
+        "assigned",
+        "contacted",
+        "qualified",
+        "active",
+        "closed_won",
+        "closed_lost"
+      ],
+      "default": "unassigned"
+    },
+    "assigned_agent_id": {
+      "type": "string",
+      "description": "Reference to Agent entity"
+    },
+    "assigned_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "assignment_method": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "manual_builder",
+        "manual_admin"
+      ],
+      "description": "How the lead was assigned"
+    },
+    "budget_min": {
+      "type": "number"
+    },
+    "budget_max": {
+      "type": "number"
+    },
+    "preferred_areas": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "market_id",
+    "buyer_name",
+    "source"
+  ]
+}

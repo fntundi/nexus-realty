@@ -1,0 +1,80 @@
+{
+  "name": "EmailSequenceSchedule",
+  "type": "object",
+  "properties": {
+    "sequence_id": {
+      "type": "string",
+      "description": "Reference to EmailSequence"
+    },
+    "schedule_type": {
+      "type": "string",
+      "enum": [
+        "immediate",
+        "scheduled",
+        "recurring"
+      ],
+      "default": "immediate",
+      "description": "Type of schedule"
+    },
+    "scheduled_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When to execute the sequence (for scheduled type)"
+    },
+    "recurring_pattern": {
+      "type": "object",
+      "description": "Recurring schedule pattern",
+      "properties": {
+        "frequency": {
+          "type": "string",
+          "enum": [
+            "daily",
+            "weekly",
+            "monthly"
+          ]
+        },
+        "day_of_week": {
+          "type": "number",
+          "description": "0-6 (0=Sunday)"
+        },
+        "time": {
+          "type": "string",
+          "description": "HH:MM format"
+        }
+      }
+    },
+    "segment_id": {
+      "type": "string",
+      "description": "Reference to ContactSegment for targeting"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "paused",
+        "completed"
+      ],
+      "default": "active",
+      "description": "Schedule status"
+    },
+    "total_recipients": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of recipients matched to segment"
+    },
+    "sent_count": {
+      "type": "number",
+      "default": 0,
+      "description": "Number of emails sent"
+    },
+    "next_execution": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Next scheduled execution time"
+    }
+  },
+  "required": [
+    "sequence_id",
+    "schedule_type"
+  ]
+}

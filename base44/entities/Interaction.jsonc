@@ -1,0 +1,102 @@
+{
+  "name": "Interaction",
+  "type": "object",
+  "properties": {
+    "contact_id": {
+      "type": "string",
+      "description": "Reference to Contact entity"
+    },
+    "interaction_type": {
+      "type": "string",
+      "enum": [
+        "call",
+        "email",
+        "meeting",
+        "note",
+        "sms"
+      ],
+      "description": "Type of interaction"
+    },
+    "subject": {
+      "type": "string",
+      "description": "Interaction subject/title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Detailed description of interaction"
+    },
+    "conducted_by": {
+      "type": "string",
+      "description": "Email of user who conducted the interaction"
+    },
+    "interaction_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the interaction took place"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "description": "Duration in minutes (for calls/meetings)"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "follow_up_needed",
+        "action_taken",
+        "no_action",
+        "scheduled"
+      ],
+      "description": "Outcome of the interaction"
+    },
+    "next_step": {
+      "type": "string",
+      "description": "Planned next step"
+    },
+    "follow_up_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Scheduled follow-up date"
+    },
+    "related_lead_id": {
+      "type": "string",
+      "description": "Related Lead entity ID (optional)"
+    },
+    "related_transaction_id": {
+      "type": "string",
+      "description": "Related Transaction entity ID (optional)"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "file_url": {
+            "type": "string"
+          },
+          "file_name": {
+            "type": "string"
+          }
+        }
+      },
+      "default": [],
+      "description": "Attached files"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "medium",
+      "description": "Interaction priority"
+    }
+  },
+  "required": [
+    "contact_id",
+    "interaction_type",
+    "subject",
+    "conducted_by",
+    "interaction_date"
+  ]
+}
