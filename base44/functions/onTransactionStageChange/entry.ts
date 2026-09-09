@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { INTERNAL_SECRET } from '../../shared/security.ts';
 
 /**
  * Entity Automation Handler — fires on Transaction create/update.
@@ -37,11 +38,13 @@ Deno.serve(async (req) => {
     // Fire the workflow engine
     const result = await base44.asServiceRole.functions.invoke('stageTransitionWorkflow', {
       transaction_id: transaction.id,
+      internal_secret: INTERNAL_SECRET,
       from_stage: oldStage || null,
       to_stage: newStage
     });
 
-    return Response.json({ success: true, workflow_result: result });
+    // Extract parsed data — the raw SDK response object is not JSON-serializable
+    return Response.json({ success: true, workflow_result: result?.data ?? result });
 
   } catch (error) {
     console.error('[onTransactionStageChange] Error:', error);

@@ -64,18 +64,8 @@ export default function LenderPortal() {
     queryFn: () => base44.entities.Property.list()
   });
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  const getProperty = (propertyId) => properties.find(p => p.id === propertyId);
-  const getTransactionDocuments = (txnId) => documents.filter(d => d.transaction_id === txnId);
-
-  // Eligibility check mutation
+  // Eligibility check mutation — declared before the loading early-return so the
+  // hook is called unconditionally on every render
   const eligibilityMutation = useMutation({
     mutationFn: async (transactionId) => {
       setCheckingEligibility(transactionId);
@@ -95,6 +85,17 @@ export default function LenderPortal() {
   const handleCheckEligibility = (txnId) => {
     eligibilityMutation.mutate(txnId);
   };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  const getProperty = (propertyId) => properties.find(p => p.id === propertyId);
+  const getTransactionDocuments = (txnId) => documents.filter(d => d.transaction_id === txnId);
 
   // Calculate metrics
   const activeLoans = transactions.filter(t => t.status === 'active');

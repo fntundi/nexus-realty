@@ -7,7 +7,10 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Calendar, Clock, MapPin, CheckCircle, XCircle, Plus } from 'lucide-react';
+import { Calendar, Clock, MapPin, CheckCircle, XCircle, Plus, ExternalLink, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 

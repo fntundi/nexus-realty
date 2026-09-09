@@ -1,9 +1,25 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { INTERNAL_SECRET } from '../../shared/security.ts';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { transaction_id, trigger_stage, milestone_id } = await req.json();
+    const payload = await req.json();
+    // Direct calls pass fields at top level; the automation compatibility layer
+    // passes the legacy event shape ({ event: {...}, data: {...} })
+    const transaction_id = payload.transaction_id ?? payload.event?.entity_id;
+    const trigger_stage = payload.trigger_stage ?? payload.data?.current_stage;
+    const milestone_id = payload.milestone_id;
+
+    // Authenticate: internal automation calls (verified by shared secret) or admin/agent users
+    const user = await base44.auth.me().catch(() => null);
+    if (user) {
+      if (!['admin', 'agent'].includes(user.role)) {
+        return Response.json({ error: 'Forbidden: Insufficient role' }, { status: 403 });
+      }
+    } else if ((payload.internal_secret ?? payload.args?.internal_secret) !== INTERNAL_SECRET) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     if (!transaction_id || !trigger_stage) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });

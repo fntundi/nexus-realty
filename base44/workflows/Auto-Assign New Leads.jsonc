@@ -1,16 +1,5 @@
 {
   "name": "Auto-Assign New Leads",
-  "description": "",
-  "trigger": {
-    "condition": null,
-    "config": {
-      "trigger_type": "entity",
-      "events": [
-        "create"
-      ],
-      "entity_name": "Lead"
-    }
-  },
   "definition": {
     "document": {
       "dsl": "1.0.0",
@@ -24,13 +13,26 @@
           "call": "invoke_backend_function",
           "with": {
             "function_name": "triggerLeadAssignment",
-            "args": {}
+            "args": {
+              "internal_secret": "9f4c2e7a1d8b6035c2f9a4e17d3b8f6a0c5e2d9b7f4a1c8e6d3b0a9f7c4e2d15"
+            }
           },
           "then": "end"
         }
       }
     ]
   },
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "entity",
+      "events": [
+        "create"
+      ],
+      "entity_name": "Lead"
+    }
+  },
+  "description": "",
   "x-base44-migrated-from-automation": {
     "legacy_payload_function": "triggerLeadAssignment"
   }

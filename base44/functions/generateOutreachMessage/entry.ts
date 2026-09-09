@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { loadAuthorizedTransaction } from '../../shared/security.ts';
 
 Deno.serve(async (req) => {
   try {
@@ -11,11 +12,9 @@ Deno.serve(async (req) => {
 
     const { transactionId, messageType = 'follow_up' } = await req.json();
 
-    // Fetch transaction and related data
-    const transaction = await base44.asServiceRole.entities.Transaction.get(transactionId);
-    if (!transaction) {
-      return Response.json({ error: 'Transaction not found' }, { status: 404 });
-    }
+    // Fetch transaction with ownership check (admin, assigned agent, or buyer only)
+    const { transaction, error: accessError } = await loadAuthorizedTransaction(base44, user, transactionId);
+    if (accessError) return accessError;
 
     const lead = await base44.asServiceRole.entities.Lead.get(transaction.lead_id).catch(() => null);
     const property = await base44.asServiceRole.entities.Property.get(transaction.property_id).catch(() => null);

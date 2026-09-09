@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
+import { INTERNAL_SECRET } from '../../shared/security.ts';
 
 /**
  * Stage Transition Workflow Engine
@@ -8,13 +9,18 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    // Allow service-role calls (from automations) or admin/agent users
-    const user = await base44.auth.me().catch(() => null);
-    if (user && !['admin', 'agent'].includes(user.role)) {
-      return Response.json({ error: 'Forbidden: Insufficient role' }, { status: 403 });
-    }
-
     const payload = await req.json();
+
+    // Allow internal service calls (onTransactionStageChange, verified via shared
+    // secret) or authenticated admin/agent users. Reject everyone else.
+    const user = await base44.auth.me().catch(() => null);
+    if (user) {
+      if (!['admin', 'agent'].includes(user.role)) {
+        return Response.json({ error: 'Forbidden: Insufficient role' }, { status: 403 });
+      }
+    } else if (payload.internal_secret !== INTERNAL_SECRET) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const { transaction_id, from_stage, to_stage } = payload;
 
     if (!transaction_id || !to_stage) {
