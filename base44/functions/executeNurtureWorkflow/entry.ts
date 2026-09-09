@@ -11,16 +11,27 @@ Deno.serve(async (req) => {
 
     const { workflowId, leadId } = await req.json();
 
-    // Fetch workflow
-    const workflow = await base44.asServiceRole.entities.NurtureWorkflow.get(workflowId);
+    // Fetch workflow and lead without throwing on missing records
+    const workflow = await base44.asServiceRole.entities.NurtureWorkflow.get(workflowId).catch(() => null);
     if (!workflow) {
       return Response.json({ error: 'Workflow not found' }, { status: 404 });
     }
 
-    // Fetch lead and related data
-    const lead = await base44.asServiceRole.entities.Lead.get(leadId);
+    const lead = await base44.asServiceRole.entities.Lead.get(leadId).catch(() => null);
     if (!lead) {
       return Response.json({ error: 'Lead not found' }, { status: 404 });
+    }
+
+    // Authorization: admin, or the agent assigned to this lead
+    if (user.role !== 'admin') {
+      let isAssignedAgent = false;
+      if (lead.assigned_agent_id) {
+        const agents = await base44.asServiceRole.entities.Agent.filter({ id: lead.assigned_agent_id }).catch(() => []);
+        isAssignedAgent = agents[0]?.user_email === user.email;
+      }
+      if (!isAssignedAgent) {
+        return Response.json({ error: 'Forbidden: You do not have access to this lead' }, { status: 403 });
+      }
     }
 
     const contact = await base44.asServiceRole.entities.Contact.filter({

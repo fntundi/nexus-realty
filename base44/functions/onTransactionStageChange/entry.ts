@@ -8,7 +8,18 @@ import { INTERNAL_SECRET } from '../../shared/security.ts';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const payload = await req.json();
+    const payload = await req.json().catch(() => ({}));
+
+    // Authenticate: internal automation calls (shared secret) or admin/agent
+    // users — rejects anonymous external callers
+    const user = await base44.auth.me().catch(() => null);
+    if (user) {
+      if (!['admin', 'agent'].includes(user.role)) {
+        return Response.json({ error: 'Forbidden: Insufficient role' }, { status: 403 });
+      }
+    } else if ((payload.internal_secret ?? payload.args?.internal_secret) !== INTERNAL_SECRET) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     const { event, data, old_data } = payload;
 

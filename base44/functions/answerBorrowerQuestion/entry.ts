@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { loadAuthorizedTransaction } from '../../shared/security.ts';
 
 Deno.serve(async (req) => {
   try {
@@ -12,18 +13,18 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { question, transactionId, borrowerEmail } = body;
 
-    if (!question || !transactionId) {
+    if (!question || !transactionId || typeof question !== 'string' || question.length > 2000) {
       return Response.json({ error: 'question and transactionId required' }, { status: 400 });
     }
 
-    // Fetch transaction details for context
-    const transaction = await base44.entities.Transaction.get(transactionId);
-    if (!transaction) {
-      return Response.json({ error: 'Transaction not found' }, { status: 404 });
-    }
+    // Authorization: only the buyer, assigned agent, lender, or an admin may
+    // ask questions about this transaction
+    const authTxn = await loadAuthorizedTransaction(base44, user, transactionId);
+    if (authTxn.error) return authTxn.error;
+    const transaction = authTxn.transaction;
 
-    // Fetch documents for this transaction
-    const documents = await base44.entities.Document.filter({ transaction_id: transactionId });
+    // Fetch documents for this transaction (service role is safe now that access is verified)
+    const documents = await base44.asServiceRole.entities.Document.filter({ transaction_id: transactionId }).catch(() => []);
     const pendingDocs = documents.filter(d => d.status === 'pending');
     const receivedDocs = documents.filter(d => d.status === 'received');
 

@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { loadAuthorizedTransaction } from '../../shared/security.ts';
 
 Deno.serve(async (req) => {
   try {
@@ -16,17 +17,21 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'transactionId required' }, { status: 400 });
     }
 
-    // Fetch transaction and related data
-    const transaction = await base44.entities.Transaction.get(transactionId);
-    if (!transaction) {
-      return Response.json({ error: 'Transaction not found' }, { status: 404 });
-    }
+    // Authorization: only the buyer, assigned agent, lender, or an admin may
+    // run an eligibility check on this transaction
+    const authTxn = await loadAuthorizedTransaction(base44, user, transactionId);
+    if (authTxn.error) return authTxn.error;
+    const transaction = authTxn.transaction;
 
-    // Fetch contact info for borrower
-    const contact = transaction.buyer_id ? await base44.entities.Contact.get(transaction.buyer_id) : null;
+    // Fetch contact info for borrower (service role is safe now that access is verified)
+    const contact = transaction.buyer_id
+      ? await base44.asServiceRole.entities.Contact.get(transaction.buyer_id).catch(() => null)
+      : null;
 
     // Fetch property details
-    const property = transaction.property_id ? await base44.entities.Property.get(transaction.property_id) : null;
+    const property = transaction.property_id
+      ? await base44.asServiceRole.entities.Property.get(transaction.property_id).catch(() => null)
+      : null;
 
     // Prepare borrower data for AI analysis
     const borrowerData = {

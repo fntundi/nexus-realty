@@ -2,7 +2,29 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const { trackingId, eventType, link } = await req.json();
+    const { trackingId, eventType, link } = await req.json().catch(() => ({}));
+
+    // This endpoint is intentionally anonymous: email open/click tracking is
+    // performed by recipients who are not logged in, so the unguessable
+    // tracking ID acts as the capability token and every input is strictly
+    // validated instead.
+    if (typeof trackingId !== 'string' || trackingId.length < 1 || trackingId.length > 256) {
+      return Response.json({ error: 'Invalid tracking ID' }, { status: 400 });
+    }
+    if (eventType !== 'open' && eventType !== 'click') {
+      return Response.json({ error: 'Invalid event type' }, { status: 400 });
+    }
+    if (eventType === 'click') {
+      if (typeof link !== 'string' || link.length > 2048) {
+        return Response.json({ error: 'Invalid link' }, { status: 400 });
+      }
+      try {
+        const parsedLink = new URL(link);
+        if (parsedLink.protocol !== 'https:' && parsedLink.protocol !== 'http:') throw new Error('bad protocol');
+      } catch {
+        return Response.json({ error: 'Invalid link' }, { status: 400 });
+      }
+    }
 
     const base44 = createClientFromRequest(req);
 
@@ -24,12 +46,12 @@ Deno.serve(async (req) => {
       updates.last_open_date = new Date().toISOString();
     } else if (eventType === 'click') {
       updates.click_count = (campaign.click_count || 0) + 1;
-      const clickEvents = campaign.click_events || [];
-      clickEvents.push({
+      const clickEvents = [...(campaign.click_events || []), {
         link,
         click_date: new Date().toISOString()
-      });
-      updates.click_events = clickEvents;
+      }];
+      // Cap stored events to prevent unbounded growth / analytics flooding
+      updates.click_events = clickEvents.slice(-100);
     }
 
     await base44.asServiceRole.entities.EmailCampaign.update(campaign.id, updates);

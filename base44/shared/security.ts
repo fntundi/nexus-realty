@@ -19,7 +19,7 @@ export async function loadAuthorizedTransaction(base44, user, transactionId) {
   if (!transaction) {
     return { error: Response.json({ error: 'Transaction not found' }, { status: 404 }) };
   }
-  if (user.role === 'admin' || transaction.buyer_email === user.email) {
+  if (user.role === 'admin' || transaction.buyer_email === user.email || transaction.lender_email === user.email) {
     return { transaction };
   }
   if (transaction.agent_id) {
@@ -29,4 +29,37 @@ export async function loadAuthorizedTransaction(base44, user, transactionId) {
     }
   }
   return { error: Response.json({ error: 'Forbidden: You do not have access to this transaction' }, { status: 403 }) };
+}
+
+/**
+ * Loads a document via service role only after verifying the caller is an
+ * admin, the uploader, or a participant on the document's transaction/lead
+ * (buyer / assigned agent / lender). Prevents IDOR on document mutations.
+ * Returns { document } on success, or { error: Response } when unauthorized/not found.
+ */
+export async function loadAuthorizedDocument(base44, user, documentId) {
+  const document = await base44.asServiceRole.entities.Document.get(documentId).catch(() => null);
+  if (!document) {
+    return { error: Response.json({ error: 'Document not found' }, { status: 404 }) };
+  }
+  if (user.role === 'admin') {
+    return { document };
+  }
+  const uploader = (document.uploaded_by_email || document.uploaded_by || '').toLowerCase();
+  if (uploader === (user.email || '').toLowerCase()) {
+    return { document };
+  }
+  if (document.transaction_id) {
+    const txnResult = await loadAuthorizedTransaction(base44, user, document.transaction_id);
+    if (txnResult.transaction) {
+      return { document };
+    }
+  }
+  if (document.lead_id) {
+    const lead = await base44.asServiceRole.entities.Lead.get(document.lead_id).catch(() => null);
+    if (lead && lead.buyer_email === user.email) {
+      return { document };
+    }
+  }
+  return { error: Response.json({ error: 'Forbidden: You do not have access to this document' }, { status: 403 }) };
 }

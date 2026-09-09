@@ -3,6 +3,10 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
 
     // Get all enabled reminder configs
     const configs = await base44.asServiceRole.entities.ReminderConfig.filter({
@@ -70,7 +74,7 @@ Deno.serve(async (req) => {
                   deal_value: txn.contract_price,
                   days_since_activity: daysSinceActivity
                 },
-                action_url: `${window.location.origin}/AgentTransactions`
+                action_url: `/AgentTransactions`
               });
               processed++;
             }
@@ -106,7 +110,7 @@ Deno.serve(async (req) => {
                   deal_value: txn.contract_price,
                   closing_date: txn.closing_date
                 },
-                action_url: `${window.location.origin}/AgentTransactions`
+                action_url: `/AgentTransactions`
               });
               processed++;
             }
@@ -148,7 +152,7 @@ Deno.serve(async (req) => {
                     buyer_name: txn.buyer_email,
                     deal_value: txn.contract_price
                   },
-                  action_url: `${window.location.origin}/AgentTransactions`
+                  action_url: `/AgentTransactions`
                 });
                 processed++;
               }
@@ -186,7 +190,7 @@ Deno.serve(async (req) => {
                   buyer_name: txn.buyer_email,
                   deal_value: property?.[0]?.price
                 },
-                action_url: `${window.location.origin}/AgentTransactions`
+                action_url: `/AgentTransactions`
               });
               processed++;
             }

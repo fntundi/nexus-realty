@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { loadAuthorizedDocument } from '../../shared/security.ts';
 
 Deno.serve(async (req) => {
   try {
@@ -34,8 +35,18 @@ Deno.serve(async (req) => {
 
     const { document_id, document_url, file_name, signers, message, due_date } = await req.json();
 
-    if (!document_id || !document_url || !signers || signers.length === 0) {
+    if (!document_id || !document_url || !Array.isArray(signers) || signers.length === 0) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // IDOR protection: only an admin, the uploader, or a transaction participant
+    // may create a signature request for this document
+    const authDoc = await loadAuthorizedDocument(base44, user, document_id);
+    if (authDoc.error) return authDoc.error;
+
+    // SSRF protection: only fetch https URLs pointing at public hosts
+    if (!isValidPublicHttpsUrl(document_url)) {
+      return Response.json({ error: 'Invalid document URL' }, { status: 400 });
     }
 
     // Get JWT access token
@@ -51,18 +62,18 @@ Deno.serve(async (req) => {
     });
 
     if (!authResponse.ok) {
-      const error = await authResponse.text();
-      return Response.json({ 
-        error: 'DocuSign authentication failed', 
-        details: error 
-      }, { status: 500 });
+      console.error('DocuSign auth failed:', await authResponse.text());
+      return Response.json({ error: 'DocuSign authentication failed' }, { status: 500 });
     }
 
     const authData = await authResponse.json();
     const accessToken = authData.access_token;
 
-    // Fetch document from URL
+    // Fetch document from URL (host already validated against SSRF above)
     const docResponse = await fetch(document_url);
+    if (!docResponse.ok) {
+      return Response.json({ error: 'Could not download the document file' }, { status: 400 });
+    }
     const docBlob = await docResponse.blob();
     const docBase64 = await blobToBase64(docBlob);
 
@@ -117,11 +128,8 @@ Deno.serve(async (req) => {
     );
 
     if (!envelopeResponse.ok) {
-      const error = await envelopeResponse.text();
-      return Response.json({ 
-        error: 'Failed to create DocuSign envelope', 
-        details: error 
-      }, { status: 500 });
+      console.error('DocuSign envelope creation failed:', await envelopeResponse.text());
+      return Response.json({ error: 'Failed to create DocuSign envelope' }, { status: 500 });
     }
 
     const envelopeData = await envelopeResponse.json();
@@ -235,4 +243,35 @@ async function blobToBase64(blob) {
     binary += String.fromCharCode(bytes[i]);
   }
   return btoa(binary);
+}
+
+/**
+ * SSRF protection: only https URLs on public hosts are fetchable.
+ * Rejects localhost, private/internal networks, and cloud metadata endpoints.
+ */
+function isValidPublicHttpsUrl(rawUrl) {
+  try {
+    const url = new URL(rawUrl);
+    if (url.protocol !== 'https:') return false;
+    const host = url.hostname.toLowerCase();
+    if (host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local') || host.endsWith('.internal')) {
+      return false;
+    }
+    if (/^\d{1,3}(\.\d{1,3}){3}$/.test(host)) {
+      const [a, b] = host.split('.').map(Number);
+      if (a === 0 || a === 10 || a === 127 || (a === 169 && b === 254) ||
+          (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168)) {
+        return false;
+      }
+    }
+    if (host.includes(':')) {
+      const h = host.replace(/^\[|\]$/g, '');
+      if (h === '::1' || h.startsWith('fc') || h.startsWith('fd') || h.startsWith('fe80')) {
+        return false;
+      }
+    }
+    return true;
+  } catch {
+    return false;
+  }
 }

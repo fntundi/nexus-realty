@@ -5,13 +5,17 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    // Mass-email operation: admin only (the scheduled automation invokes with admin context)
+    if (user.role !== 'admin') {
+      return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+    }
 
     const body = await req.json().catch(() => ({}));
     const { campaign_id } = body;
 
     // Fetch campaigns to process
     const allCampaigns = campaign_id
-      ? [await base44.asServiceRole.entities.DripCampaign.get(campaign_id)]
+      ? [await base44.asServiceRole.entities.DripCampaign.get(campaign_id).catch(() => null)]
       : await base44.asServiceRole.entities.DripCampaign.filter({ is_active: true });
 
     const contacts = await base44.asServiceRole.entities.Contact.list('-updated_date', 500);

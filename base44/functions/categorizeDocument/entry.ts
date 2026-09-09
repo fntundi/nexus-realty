@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { loadAuthorizedDocument } from '../../shared/security.ts';
 
 Deno.serve(async (req) => {
   try {
@@ -14,6 +15,11 @@ Deno.serve(async (req) => {
     if (!documentId || !fileUrl) {
       return Response.json({ error: 'Missing required parameters' }, { status: 400 });
     }
+
+    // IDOR protection: verify the caller is authorized for this document before
+    // the service-role update overwrites its category and notes
+    const authDoc = await loadAuthorizedDocument(base44, user, documentId);
+    if (authDoc.error) return authDoc.error;
 
     // Use AI to analyze document content and categorize
     const response = await base44.integrations.Core.InvokeLLM({
