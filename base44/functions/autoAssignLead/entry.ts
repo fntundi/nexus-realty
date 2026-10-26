@@ -25,7 +25,8 @@ Deno.serve(async (req) => {
 
     // Fetch agents in the same market
     const agents = await base44.asServiceRole.entities.Agent.filter({ market_id: lead.market_id });
-    const assignmentRules = await base44.asServiceRole.entities.AssignmentRule.filter({ market_id: lead.market_id });
+    // No AssignmentRule entity exists; per-agent overrides are optional, so scoring uses defaults
+    const assignmentRules = [];
 
     if (!agents || agents.length === 0) {
       return Response.json({ error: 'No agents available in this market' }, { status: 400 });
