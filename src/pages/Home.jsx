@@ -260,21 +260,25 @@ function AudienceTabsHome() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FeatureCard
                 icon={<Zap className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="AgentDashboard"
                 title="Lead Score Dashboard"
                 description="See your hot leads at a glance. Focus on prospects most likely to convert—all sorted and prioritized for you."
               />
               <FeatureCard
                 icon={<MessageSquare className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="TeamInbox"
                 title="Client Communication"
                 description="One thread with each buyer. Chat, share documents, and schedule showings without jumping between tools."
               />
               <FeatureCard
                 icon={<Calendar className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="TeamDeals"
                 title="Deal Tracking"
                 description="From offer to closing—track every milestone, document, and task in real time. Nothing falls through the cracks."
               />
               <FeatureCard
                 icon={<BarChart3 className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="Reminders"
                 title="Task Management"
                 description="Stay on top of follow-ups, showings, and next steps. See what's due today. Keep the pipeline moving."
               />
@@ -302,21 +306,25 @@ function AudienceTabsHome() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FeatureCard
                 icon={<DollarSign className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="LenderPortal"
                 title="Loan Portfolio Dashboard"
                 description="View all active loans at a glance. Track loan amounts, borrowers, closing dates, and current stage for each transaction."
               />
               <FeatureCard
                 icon={<FileText className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="LenderPortal"
                 title="Document Management"
                 description="Upload and organize loan documents securely. Appraisals, approvals, conditions, and disclosures all in one place."
               />
               <FeatureCard
                 icon={<MessageSquare className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="LenderPortal"
                 title="Direct Communication"
                 description="Chat with buyers and agents directly. No email chains—everything organized by transaction."
               />
               <FeatureCard
                 icon={<TrendingUp className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="LenderPortal"
                 title="Loan Status Tracking"
                 description="Follow each loan from pre-qualification through closing. See what stage each deal is in and what's needed next."
               />
@@ -344,21 +352,25 @@ function AudienceTabsHome() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FeatureCard
                 icon={<MapPin className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="PropertySearch"
                 title="Smart Property Search"
                 description="Filter by location, price, amenities, and more. Save your favorite searches and get instant alerts on new listings."
               />
               <FeatureCard
                 icon={<MessageSquare className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="BuyerPortal"
                 title="Agent Communication"
                 description="Chat directly with your agent, ask questions, and get expert advice whenever you need it."
               />
               <FeatureCard
                 icon={<Calendar className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="BuyerPortal"
                 title="Showing Scheduler"
                 description="Book property showings at your convenience. Get instant confirmations and directions."
               />
               <FeatureCard
                 icon={<BarChart3 className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="BuyerPortal"
                 title="Deal Transparency"
                 description="Track your transaction from offer to closing. Access documents and status updates in one place."
               />
@@ -375,21 +387,25 @@ function AudienceTabsHome() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FeatureCard
                 icon={<MapPin className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="DeveloperProjectShowcase"
                 title="Land Portfolio"
                 description="Organize and manage multiple land parcels. Track zoning, approvals, infrastructure, and buyer interest."
               />
               <FeatureCard
                 icon={<TrendingUp className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="DeveloperProjectShowcase"
                 title="Buyer Pipeline"
                 description="Capture and qualify developer buyers. Track which projects interest them and move deals forward."
               />
               <FeatureCard
                 icon={<MessageSquare className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="DeveloperProjectShowcase"
                 title="Project Updates"
                 description="Keep stakeholders, brokers, and prospective buyers updated on project milestones and status."
               />
               <FeatureCard
                 icon={<BarChart3 className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="DeveloperProjectShowcase"
                 title="Deal Analytics"
                 description="Track deal velocity, buyer conversion, and project profitability across your portfolio."
               />
@@ -406,21 +422,25 @@ function AudienceTabsHome() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <FeatureCard
                 icon={<Users className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="TerritoryManager"
                 title="Agent Management"
                 description="Hire, monitor, and support your sales team. See everyone's pipeline, commissions, and performance."
               />
               <FeatureCard
                 icon={<TrendingUp className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="TeamDeals"
                 title="Deal Pipeline"
                 description="View all deals in progress across your team. See bottlenecks, manage closings, forecast revenue."
               />
               <FeatureCard
                 icon={<Settings className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="LeadPool"
                 title="Lead Distribution"
                 description="Auto-assign and manually route leads to the right agents. Keep your team fed with qualified prospects."
               />
               <FeatureCard
                 icon={<BarChart3 className="w-6 h-6" style={{ color: '#D4AF37' }} />}
+                to="Reports"
                 title="Team Analytics"
                 description="Track KPIs, conversion rates, and profitability by agent. Identify top performers and coaching opportunities."
               />
@@ -444,18 +464,25 @@ function AudienceTabsHome() {
   );
 }
 
-function FeatureCard({ icon, title, description }) {
+function FeatureCard({ icon, title, description, to }) {
   return (
-    <Card className="border border-gray-200 hover:border-yellow-500 hover:shadow-xl transition-all bg-white">
-      <CardContent className="pt-6">
-        <div className="space-y-3">
-          <div className="flex items-center gap-3">
-            {icon}
-            <h3 className="text-lg font-semibold text-black">{title}</h3>
+    <Link
+      to={createPageUrl(to)}
+      aria-label={`${title}: open`}
+      className="group block rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-500"
+    >
+      <Card className="h-full border border-gray-200 group-hover:border-yellow-500 group-hover:shadow-xl transition-all bg-white cursor-pointer">
+        <CardContent className="pt-6">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              {icon}
+              <h3 className="text-lg font-semibold text-black flex-1">{title}</h3>
+              <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-yellow-600 group-hover:translate-x-1 transition-all" />
+            </div>
+            <p className="text-gray-600 leading-relaxed">{description}</p>
           </div>
-          <p className="text-gray-600 leading-relaxed">{description}</p>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
