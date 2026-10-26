@@ -9,6 +9,7 @@ import TeamInbox from './pages/TeamInbox';
 import FollowUpBossMigration from './pages/FollowUpBossMigration';
 import SeedTestData from './pages/SeedTestData';
 import DripCampaignEngine from './pages/DripCampaignEngine';
+import DealHub from './pages/DealHub';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
@@ -66,6 +67,7 @@ const AuthenticatedApp = () => {
       <Route path="/FollowUpBossMigration" element={<LayoutWrapper currentPageName="FollowUpBossMigration"><FollowUpBossMigration /></LayoutWrapper>} />
       <Route path="/SeedTestData" element={<LayoutWrapper currentPageName="SeedTestData"><SeedTestData /></LayoutWrapper>} />
       <Route path="/DripCampaignEngine" element={<LayoutWrapper currentPageName="DripCampaignEngine"><DripCampaignEngine /></LayoutWrapper>} />
+      <Route path="/DealHub" element={<LayoutWrapper currentPageName="DealHub"><DealHub /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
